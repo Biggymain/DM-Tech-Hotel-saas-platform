@@ -56,4 +56,9 @@ class MenuItem extends Model
     {
         return $this->belongsToMany(Modifier::class, 'menu_item_modifiers', 'menu_item_id', 'modifier_id')->withTimestamps();
     }
+
+    public function ingredients()
+    {
+        return $this->hasMany(MenuItemIngredient::class);
+    }
 }

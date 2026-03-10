@@ -11,7 +11,7 @@ class Hotel extends Model
     use SoftDeletes, Tenantable;
 
     protected $fillable = [
-        'name', 'domain', 'subscription_plan_id', 'email', 'phone', 'address', 'is_active'
+        'name', 'domain', 'subscription_plan_id', 'email', 'phone', 'address', 'is_active', 'currency_id'
     ];
 
     protected $casts = [
@@ -21,6 +21,11 @@ class Hotel extends Model
     public function subscriptionPlan()
     {
         return $this->belongsTo(SubscriptionPlan::class);
+    }
+
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
     }
 
     public function users()

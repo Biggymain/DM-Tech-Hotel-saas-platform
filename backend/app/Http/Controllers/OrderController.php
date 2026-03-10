@@ -132,6 +132,17 @@ class OrderController extends Controller
                 'changed_by' => $request->user()->id,
             ]);
 
+            // Dispatch inventory lifecycle events intelligently
+            if ($newStatus === 'confirmed') {
+                \App\Events\OrderConfirmed::dispatch($order);
+            } elseif ($newStatus === 'served') {
+                \App\Events\OrderServed::dispatch($order);
+            } elseif ($newStatus === 'cancelled') {
+                \App\Events\OrderCancelled::dispatch($order);
+            } else {
+                \App\Events\OrderUpdated::dispatch($order);
+            }
+
             return response()->json([
                 'message' => 'Order status updated',
                 'order' => $order

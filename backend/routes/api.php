@@ -78,6 +78,45 @@ Route::prefix('v1')->group(function () {
             Route::put('/items/{id}/status', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'updateItemStatus'])->middleware('role.verify:kds.update');
         });
 
+        // Inventory Management
+        Route::prefix('inventory')->group(function() {
+            // Suppliers
+            Route::apiResource('suppliers', \App\Http\Controllers\Api\V1\SupplierController::class)->middleware('role.verify:inventory.manage');
+            
+            // Inventory Items
+            Route::apiResource('items', \App\Http\Controllers\Api\V1\InventoryItemController::class)->middleware('role.verify:inventory.manage');
+            
+            // Transactions & Adjustments
+            Route::get('transactions', [\App\Http\Controllers\Api\V1\InventoryTransactionController::class, 'index'])->middleware('role.verify:inventory.view');
+            Route::post('transactions', [\App\Http\Controllers\Api\V1\InventoryTransactionController::class, 'store'])->middleware('role.verify:inventory.manage');
+            Route::get('transactions/{id}', [\App\Http\Controllers\Api\V1\InventoryTransactionController::class, 'show'])->middleware('role.verify:inventory.view');
+            
+            // Recipes / Bills of Materials
+            Route::get('menu-items/{menuItemId}/recipes', [\App\Http\Controllers\Api\V1\MenuRecipeController::class, 'index'])->middleware('role.verify:inventory.view');
+            Route::post('menu-items/{menuItemId}/recipes', [\App\Http\Controllers\Api\V1\MenuRecipeController::class, 'store'])->middleware('role.verify:inventory.manage');
+            Route::delete('menu-items/{menuItemId}/recipes/{ingredientId}', [\App\Http\Controllers\Api\V1\MenuRecipeController::class, 'destroy'])->middleware('role.verify:inventory.manage');
+
+            // Purchase Orders
+            Route::apiResource('purchase-orders', \App\Http\Controllers\Api\V1\PurchaseOrderController::class)->except(['update', 'destroy'])->middleware('role.verify:inventory.manage');
+            Route::post('purchase-orders/{id}/receive', [\App\Http\Controllers\Api\V1\PurchaseOrderController::class, 'receive'])->middleware('role.verify:inventory.manage');
+        });
+
+        // Billing & Payments
+        Route::prefix('billing')->group(function() {
+            // Invoices
+            Route::get('invoices', [\App\Http\Controllers\Api\V1\InvoiceController::class, 'index'])->middleware('role.verify:billing.view');
+            Route::get('invoices/{id}', [\App\Http\Controllers\Api\V1\InvoiceController::class, 'show'])->middleware('role.verify:billing.view');
+            Route::put('invoices/{id}', [\App\Http\Controllers\Api\V1\InvoiceController::class, 'update'])->middleware('role.verify:billing.manage');
+            
+            // Payment Methods
+            Route::apiResource('payment-methods', \App\Http\Controllers\Api\V1\PaymentMethodController::class)->middleware('role.verify:billing.manage');
+            
+            // Payments
+            Route::get('payments', [\App\Http\Controllers\Api\V1\PaymentController::class, 'index'])->middleware('role.verify:billing.view');
+            Route::post('payments', [\App\Http\Controllers\Api\V1\PaymentController::class, 'store'])->middleware('role.verify:payments.process');
+            Route::post('payments/{id}/refund', [\App\Http\Controllers\Api\V1\PaymentController::class, 'refund'])->middleware('role.verify:payments.refund');
+        });
+
         Route::prefix('finance')->group(function() {
             Route::middleware('role.verify:finance.manage')->group(function() {
                 Route::get('/', function() { return response()->json(['message' => 'Finance accessed']); });
