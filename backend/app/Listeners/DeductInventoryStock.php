@@ -16,6 +16,14 @@ class DeductInventoryStock
         $order = $event->order;
         $order->loadMissing('items.menuItem.ingredients');
 
+        // Idempotency: prevent double deduction on replay
+        if (InventoryTransaction::where('reference_type', 'order')
+            ->where('reference_id', $order->id)
+            ->where('type', 'out')
+            ->exists()) {
+            return;
+        }
+
         DB::transaction(function () use ($order) {
             foreach ($order->items as $orderItem) {
                 $menuItem = $orderItem->menuItem;

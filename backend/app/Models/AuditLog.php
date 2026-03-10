@@ -5,28 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Tenantable;
 
-class ActivityLog extends Model
+class AuditLog extends Model
 {
     use Tenantable;
 
     protected $fillable = [
-        'hotel_id', 'outlet_id', 'user_id', 'action', 
-        'model_type', 'model_id', 'description', 
-        'metadata', 'ip_address', 'device', 'severity'
+        'hotel_id', 'user_id', 'entity_type', 'entity_id',
+        'change_type', 'old_values', 'new_values', 'reason', 'source'
     ];
 
     protected $casts = [
-        'metadata' => 'array',
+        'old_values' => 'array',
+        'new_values' => 'array',
     ];
 
     public function hotel()
     {
         return $this->belongsTo(Hotel::class);
-    }
-    
-    public function outlet()
-    {
-        return $this->belongsTo(Outlet::class);
     }
 
     public function user()

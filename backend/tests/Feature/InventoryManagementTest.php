@@ -52,7 +52,6 @@ class InventoryManagementTest extends TestCase
 
         $this->outlet = Outlet::create([
             'hotel_id' => $this->hotel->id,
-            'department_id' => $this->department->id,
             'name' => 'Restaurant Grill',
             'type' => 'restaurant'
         ]);
@@ -112,7 +111,6 @@ class InventoryManagementTest extends TestCase
         $steakMenu = MenuItem::create([
             'hotel_id' => $this->hotel->id,
             'outlet_id' => $this->outlet->id,
-            'department_id' => $this->department->id,
             'name' => 'Wagyu Steak',
             'price' => 150,
         ]);
@@ -197,7 +195,6 @@ class InventoryManagementTest extends TestCase
         $steakMenu = MenuItem::create([
             'hotel_id' => $this->hotel->id,
             'outlet_id' => $this->outlet->id,
-            'department_id' => $this->department->id,
             'name' => 'Wagyu Steak',
             'price' => 150,
         ]);

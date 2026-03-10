@@ -17,9 +17,44 @@ Route::prefix('v1')->group(function () {
         })->middleware('auth:sanctum');
     });
 
-    Route::middleware(['auth:sanctum'])->group(function () {
+    Route::middleware(['auth:sanctum', \App\Http\Middleware\LogUserActivityMiddleware::class])->group(function () {
         Route::apiResource('departments', \App\Http\Controllers\DepartmentController::class)->middleware('role.verify:hotel.manage');
         Route::apiResource('hotels', \App\Http\Controllers\Controller::class)->only(['index'])->middleware('role.verify:hotel.manage');
+        // Kitchen Display System Endpoints
+        Route::get('/kds/tickets', [\App\Http\Controllers\API\V1\KDSController::class, 'index']);
+        Route::put('/kds/tickets/{ticket}/status', [\App\Http\Controllers\API\V1\KDSController::class, 'updateStatus']);
+
+        // PMS Routes
+        Route::prefix('pms')->group(function () {
+            // Availability
+            Route::get('/availability', [\App\Http\Controllers\API\V1\PMS\PmsAvailabilityController::class, 'index']);
+
+            // Room Types
+            Route::get('/room-types', [\App\Http\Controllers\API\V1\PMS\PmsRoomTypeController::class, 'index']);
+            Route::post('/room-types', [\App\Http\Controllers\API\V1\PMS\PmsRoomTypeController::class, 'store']);
+
+            // Rooms
+            Route::get('/rooms', [\App\Http\Controllers\API\V1\PMS\PmsRoomController::class, 'index']);
+            Route::post('/rooms', [\App\Http\Controllers\API\V1\PMS\PmsRoomController::class, 'store']);
+            Route::put('/rooms/{room}/status', [\App\Http\Controllers\API\V1\PMS\PmsRoomController::class, 'updateStatus']);
+            Route::put('/rooms/{room}/housekeeping', [\App\Http\Controllers\API\V1\PMS\PmsRoomController::class, 'updateHousekeeping']);
+
+            // Guests
+            Route::get('/guests', [\App\Http\Controllers\API\V1\PMS\PmsGuestController::class, 'index']);
+            Route::post('/guests', [\App\Http\Controllers\API\V1\PMS\PmsGuestController::class, 'store']);
+
+            // Reservations
+            Route::get('/reservations', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'index']);
+            Route::post('/reservations', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'store']);
+            Route::put('/reservations/{reservation}/confirm', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'confirm']);
+            Route::post('/reservations/{reservation}/check-in', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'checkIn']);
+            Route::post('/reservations/{reservation}/check-out', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'checkOut']);
+
+            // Folios
+            Route::get('/folios', [\App\Http\Controllers\API\V1\PMS\PmsFolioController::class, 'index']);
+            Route::post('/folios/{folio}/charge', [\App\Http\Controllers\API\V1\PMS\PmsFolioController::class, 'postCharge']);
+            Route::post('/folios/{folio}/payment', [\App\Http\Controllers\API\V1\PMS\PmsFolioController::class, 'postPayment']);
+        });
         Route::apiResource('users', \App\Http\Controllers\Controller::class)->only(['index']);
         Route::apiResource('roles', \App\Http\Controllers\Controller::class)->only(['index']);
         
@@ -117,10 +152,39 @@ Route::prefix('v1')->group(function () {
             Route::post('payments/{id}/refund', [\App\Http\Controllers\Api\V1\PaymentController::class, 'refund'])->middleware('role.verify:payments.refund');
         });
 
+        // Reports & Analytics BI
+        Route::prefix('reports')->group(function() {
+            Route::get('dashboard-summary', [\App\Http\Controllers\Api\V1\ReportController::class, 'dashboard'])->middleware('role.verify:reports.view');
+            Route::get('daily-sales', [\App\Http\Controllers\Api\V1\ReportController::class, 'dailySales'])->middleware('role.verify:reports.view');
+            Route::get('outlet-performance', [\App\Http\Controllers\Api\V1\ReportController::class, 'outletPerformance'])->middleware('role.verify:reports.view');
+            Route::get('menu-performance', [\App\Http\Controllers\Api\V1\ReportController::class, 'menuPerformance'])->middleware('role.verify:reports.view');
+            Route::get('payment-breakdown', [\App\Http\Controllers\Api\V1\ReportController::class, 'paymentBreakdown'])->middleware('role.verify:reports.view');
+            Route::get('inventory-usage', [\App\Http\Controllers\Api\V1\ReportController::class, 'inventoryUsage'])->middleware('role.verify:reports.view');
+            
+            Route::prefix('export')->group(function() {
+                Route::get('daily-sales', [\App\Http\Controllers\Api\V1\ReportController::class, 'exportDailySales'])->middleware('role.verify:reports.export');
+                Route::get('outlet-performance', [\App\Http\Controllers\Api\V1\ReportController::class, 'exportOutletPerformance'])->middleware('role.verify:reports.export');
+            });
+        });
+
+        // Notifications
+        Route::prefix('notifications')->group(function() {
+            Route::get('/', [\App\Http\Controllers\Api\V1\NotificationController::class, 'index'])->middleware('role.verify:notifications.view');
+            Route::put('/read-all', [\App\Http\Controllers\Api\V1\NotificationController::class, 'markAllAsRead'])->middleware('role.verify:notifications.view');
+            Route::put('/{id}/read', [\App\Http\Controllers\Api\V1\NotificationController::class, 'markAsRead'])->middleware('role.verify:notifications.view');
+            Route::delete('/{id}', [\App\Http\Controllers\Api\V1\NotificationController::class, 'destroy'])->middleware('role.verify:notifications.manage');
+        });
+
         Route::prefix('finance')->group(function() {
             Route::middleware('role.verify:finance.manage')->group(function() {
                 Route::get('/', function() { return response()->json(['message' => 'Finance accessed']); });
             });
+        });
+
+        // System Logs
+        Route::prefix('system')->group(function() {
+            Route::get('activity-logs', [\App\Http\Controllers\API\V1\SystemLogController::class, 'activityLogs'])->middleware('role.verify:system.activity.view');
+            Route::get('audit-logs', [\App\Http\Controllers\API\V1\SystemLogController::class, 'auditLogs'])->middleware('role.verify:system.audit.view');
         });
     });
 });
