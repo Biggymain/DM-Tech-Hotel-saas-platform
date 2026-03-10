@@ -14,7 +14,7 @@ trait Tenantable
      */
     protected static function bootTenantable(): void
     {
-        static::addGlobalScope(new TenantScope);
+        static::addGlobalScope(new \App\Models\Scopes\TenantScope);
 
         static::creating(function ($model) {
             if (Auth::hasUser()) {
