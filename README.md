@@ -13,7 +13,7 @@ A comprehensive, cloud-native Hospitality Management System (HMS) designed to br
 - **Automated GRC:** Built-in compliance logging and audit trails for financial and operational security.
 
 ### 🛠 Tech Stack
-- **Framework:** Laravel 11 (PHP 8.3+)
+- **Framework:** Laravel 12 (PHP 8.3+)
 - **Architecture:** Domain-Driven Design (DDD) with a Multi-Tenant Database Strategy.
 - **Real-time:** Integrated WebSocket support for live occupancy and inventory updates.
 - **API:** RESTful API documentation for 3rd-party integrations (Channel Managers, Door Locks).
