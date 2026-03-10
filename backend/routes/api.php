@@ -70,6 +70,14 @@ Route::prefix('v1')->group(function () {
             });
         });
 
+        // Kitchen Display System (KDS)
+        Route::prefix('kds')->group(function() {
+            Route::get('/tickets', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'index'])->middleware('role.verify:kds.view');
+            Route::get('/tickets/{id}', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'show'])->middleware('role.verify:kds.view');
+            Route::put('/tickets/{id}/status', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'updateStatus'])->middleware('role.verify:kds.update');
+            Route::put('/items/{id}/status', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'updateItemStatus'])->middleware('role.verify:kds.update');
+        });
+
         Route::prefix('finance')->group(function() {
             Route::middleware('role.verify:finance.manage')->group(function() {
                 Route::get('/', function() { return response()->json(['message' => 'Finance accessed']); });

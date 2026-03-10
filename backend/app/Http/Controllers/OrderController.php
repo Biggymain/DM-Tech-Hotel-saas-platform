@@ -86,6 +86,8 @@ class OrderController extends Controller
                 'changed_by' => $request->user()->id,
             ]);
 
+            \App\Events\OrderCreated::dispatch($order);
+
             return response()->json([
                 'message' => 'Order created successfully',
                 'order' => $order->load('items')
