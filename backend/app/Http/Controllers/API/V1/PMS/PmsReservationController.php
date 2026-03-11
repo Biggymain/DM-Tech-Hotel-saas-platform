@@ -65,6 +65,51 @@ class PmsReservationController extends Controller
     }
 
     /**
+     * Update an existing reservation.
+     */
+    public function update(Request $request, Reservation $reservation)
+    {
+        if ($reservation->hotel_id !== $request->user()->hotel_id) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $data = $request->validate([
+            'check_in_date' => 'nullable|date',
+            'check_out_date' => 'nullable|date|after:check_in_date',
+            'status' => 'nullable|string',
+            'adults' => 'nullable|integer|min:1',
+            'children' => 'nullable|integer|min:0',
+            'special_requests' => 'nullable|string',
+        ]);
+
+        $updatedReservation = $this->reservationService->updateReservation($reservation, $data, $request->user());
+
+        return response()->json([
+            'success' => true,
+            'data' => $updatedReservation->fresh(),
+            'message' => 'Reservation updated successfully.'
+        ]);
+    }
+
+    /**
+     * Cancel an existing reservation.
+     */
+    public function destroy(Request $request, Reservation $reservation)
+    {
+        if ($reservation->hotel_id !== $request->user()->hotel_id) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $cancelledReservation = $this->reservationService->cancelReservation($reservation, $request->user());
+
+        return response()->json([
+            'success' => true,
+            'data' => $cancelledReservation->fresh(),
+            'message' => 'Reservation cancelled successfully.'
+        ]);
+    }
+
+    /**
      * Confirm a pending reservation.
      */
     public function confirm(Request $request, Reservation $reservation)

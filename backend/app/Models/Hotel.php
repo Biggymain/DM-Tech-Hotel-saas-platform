@@ -12,7 +12,8 @@ class Hotel extends Model
     use HasFactory, SoftDeletes, Tenantable;
 
     protected $fillable = [
-        'name', 'domain', 'subscription_plan_id', 'email', 'phone', 'address', 'is_active', 'currency_id'
+        'name', 'domain', 'subscription_plan_id', 'email', 'phone', 'address', 'is_active', 'currency_id',
+        'reservation_deadline_hours_before_checkin', 'reservation_grace_hours', 'no_show_penalty_type'
     ];
 
     protected $casts = [

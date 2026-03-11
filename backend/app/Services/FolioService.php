@@ -63,5 +63,9 @@ class FolioService
             'total_payments' => $payments,
             'balance' => $charges - $payments,
         ]);
+
+        if (class_exists(\App\Events\GuestFolioUpdated::class)) {
+            event(new \App\Events\GuestFolioUpdated($folio->reservation_id));
+        }
     }
 }

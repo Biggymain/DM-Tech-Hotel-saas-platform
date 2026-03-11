@@ -82,11 +82,9 @@ class HotelOperationalWorkflowTest extends TestCase
             'quantity_required' => 0.5 // 0.5kg per steak
         ]);
 
-        // Payment Method
         $paymentMethod = PaymentMethod::create([
             'hotel_id' => $this->hotel->id,
             'name' => 'Credit Card',
-            'code' => 'cc',
             'is_active' => true
         ]);
 

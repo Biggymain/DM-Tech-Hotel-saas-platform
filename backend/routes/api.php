@@ -17,12 +17,21 @@ Route::prefix('v1')->group(function () {
         })->middleware('auth:sanctum');
     });
 
+    // Public Channel Webhooks
+    Route::post('/channels/webhook/{channel}', [\App\Http\Controllers\API\V1\ChannelWebhookController::class, 'handle']);
+
+    // Guest Portal (Public, protected by session token & PIN, throttled)
+    Route::prefix('guest')->middleware('throttle:10,1')->group(function () {
+        Route::post('/session/start', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'startSession']);
+        Route::post('/session/authenticate', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'authenticate']);
+        Route::get('/dashboard', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'dashboard']);
+        Route::get('/requests', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'index']);
+        Route::post('/requests', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'store']);
+    });
+
     Route::middleware(['auth:sanctum', \App\Http\Middleware\LogUserActivityMiddleware::class])->group(function () {
         Route::apiResource('departments', \App\Http\Controllers\DepartmentController::class)->middleware('role.verify:hotel.manage');
         Route::apiResource('hotels', \App\Http\Controllers\Controller::class)->only(['index'])->middleware('role.verify:hotel.manage');
-        // Kitchen Display System Endpoints
-        Route::get('/kds/tickets', [\App\Http\Controllers\API\V1\KDSController::class, 'index']);
-        Route::put('/kds/tickets/{ticket}/status', [\App\Http\Controllers\API\V1\KDSController::class, 'updateStatus']);
 
         // PMS Routes
         Route::prefix('pms')->group(function () {
@@ -46,6 +55,8 @@ Route::prefix('v1')->group(function () {
             // Reservations
             Route::get('/reservations', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'index']);
             Route::post('/reservations', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'store']);
+            Route::put('/reservations/{reservation}', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'update']);
+            Route::delete('/reservations/{reservation}', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'destroy']);
             Route::put('/reservations/{reservation}/confirm', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'confirm']);
             Route::post('/reservations/{reservation}/check-in', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'checkIn']);
             Route::post('/reservations/{reservation}/check-out', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'checkOut']);
@@ -55,9 +66,31 @@ Route::prefix('v1')->group(function () {
             Route::post('/folios/{folio}/charge', [\App\Http\Controllers\API\V1\PMS\PmsFolioController::class, 'postCharge']);
             Route::post('/folios/{folio}/payment', [\App\Http\Controllers\API\V1\PMS\PmsFolioController::class, 'postPayment']);
         });
+
+        // Housekeeping Tasks
+        Route::prefix('housekeeping/tasks')->group(function () {
+            Route::get('/', [\App\Http\Controllers\API\V1\HousekeepingTaskController::class, 'index'])->middleware('role.verify:housekeeping.tasks.view');
+            Route::post('/{task}/assign', [\App\Http\Controllers\API\V1\HousekeepingTaskController::class, 'assign'])->middleware('role.verify:housekeeping.tasks.manage');
+            Route::post('/{task}/start', [\App\Http\Controllers\API\V1\HousekeepingTaskController::class, 'start'])->middleware('role.verify:housekeeping.tasks.manage');
+            Route::post('/{task}/complete', [\App\Http\Controllers\API\V1\HousekeepingTaskController::class, 'complete'])->middleware('role.verify:housekeeping.tasks.manage');
+        });
+
+        // Maintenance Requests
+        Route::prefix('maintenance/requests')->group(function () {
+            Route::get('/', [\App\Http\Controllers\API\V1\MaintenanceRequestController::class, 'index'])->middleware('role.verify:maintenance.requests.view');
+            Route::post('/', [\App\Http\Controllers\API\V1\MaintenanceRequestController::class, 'store'])->middleware('role.verify:maintenance.requests.manage');
+            Route::post('/{maintenanceRequest}/assign', [\App\Http\Controllers\API\V1\MaintenanceRequestController::class, 'assign'])->middleware('role.verify:maintenance.requests.manage');
+            Route::post('/{maintenanceRequest}/start', [\App\Http\Controllers\API\V1\MaintenanceRequestController::class, 'start'])->middleware('role.verify:maintenance.requests.manage');
+            Route::post('/{maintenanceRequest}/resolve', [\App\Http\Controllers\API\V1\MaintenanceRequestController::class, 'resolve'])->middleware('role.verify:maintenance.requests.manage');
+        });
+
         Route::apiResource('users', \App\Http\Controllers\Controller::class)->only(['index']);
         Route::apiResource('roles', \App\Http\Controllers\Controller::class)->only(['index']);
         
+        Route::prefix('guest-requests')->group(function () {
+            Route::get('/', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'index'])->middleware('role.verify:guest.requests.view');
+        });
+
         // Placeholder protected routes as requested
         Route::prefix('rooms')->group(function() {
             Route::middleware('role.verify:rooms.manage')->group(function() {
@@ -186,6 +219,27 @@ Route::prefix('v1')->group(function () {
             Route::get('activity-logs', [\App\Http\Controllers\API\V1\SystemLogController::class, 'activityLogs'])->middleware('role.verify:system.activity.view');
             Route::get('audit-logs', [\App\Http\Controllers\API\V1\SystemLogController::class, 'auditLogs'])->middleware('role.verify:system.audit.view');
         });
+
+        // Dynamic Pricing & Rate Management
+        Route::prefix('pricing')->group(function () {
+            // Rate Plans
+            Route::get('/rate-plans', [\App\Http\Controllers\API\V1\RatePlanController::class, 'index'])->middleware('role.verify:pricing.rate_plans.view');
+            Route::post('/rate-plans', [\App\Http\Controllers\API\V1\RatePlanController::class, 'store'])->middleware('role.verify:pricing.rate_plans.manage');
+            Route::put('/rate-plans/{ratePlan}', [\App\Http\Controllers\API\V1\RatePlanController::class, 'update'])->middleware('role.verify:pricing.rate_plans.manage');
+            Route::delete('/rate-plans/{ratePlan}', [\App\Http\Controllers\API\V1\RatePlanController::class, 'destroy'])->middleware('role.verify:pricing.rate_plans.manage');
+
+            // Seasonal Rates
+            Route::get('/seasonal-rates', [\App\Http\Controllers\API\V1\SeasonalRateController::class, 'index'])->middleware('role.verify:pricing.rate_plans.view');
+            Route::post('/seasonal-rates', [\App\Http\Controllers\API\V1\SeasonalRateController::class, 'store'])->middleware('role.verify:pricing.seasonal_rates.manage');
+            Route::put('/seasonal-rates/{seasonalRate}', [\App\Http\Controllers\API\V1\SeasonalRateController::class, 'update'])->middleware('role.verify:pricing.seasonal_rates.manage');
+            Route::delete('/seasonal-rates/{seasonalRate}', [\App\Http\Controllers\API\V1\SeasonalRateController::class, 'destroy'])->middleware('role.verify:pricing.seasonal_rates.manage');
+
+            // Occupancy Rules
+            Route::get('/occupancy-rules', [\App\Http\Controllers\API\V1\OccupancyRateController::class, 'index'])->middleware('role.verify:pricing.rate_plans.view');
+            Route::post('/occupancy-rules', [\App\Http\Controllers\API\V1\OccupancyRateController::class, 'store'])->middleware('role.verify:pricing.occupancy_rules.manage');
+            Route::put('/occupancy-rules/{occupancyRateRule}', [\App\Http\Controllers\API\V1\OccupancyRateController::class, 'update'])->middleware('role.verify:pricing.occupancy_rules.manage');
+            Route::delete('/occupancy-rules/{occupancyRateRule}', [\App\Http\Controllers\API\V1\OccupancyRateController::class, 'destroy'])->middleware('role.verify:pricing.occupancy_rules.manage');
+        });
     });
 });
 
@@ -196,6 +250,8 @@ foreach ($modules as $module) {
     if (file_exists($moduleRoutePath)) {
         Route::prefix('v1/' . strtolower($module))
             ->middleware('api')
-            ->group($moduleRoutePath);
+            ->group(function () use ($moduleRoutePath) {
+                require $moduleRoutePath;
+            });
     }
 }

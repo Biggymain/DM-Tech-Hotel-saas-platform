@@ -32,4 +32,9 @@ class RoomType extends Model
     {
         return $this->hasMany(Room::class);
     }
+
+    public function ratePlans()
+    {
+        return $this->belongsToMany(RatePlan::class, 'room_type_rate_plan')->withPivot('base_price')->withTimestamps();
+    }
 }

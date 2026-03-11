@@ -22,6 +22,11 @@ class Reservation extends Model
         'adults',
         'children',
         'special_requests',
+        'modification_deadline',
+        'deposit_amount',
+        'deposit_paid',
+        'rate_plan_id',
+        'locked_price',
     ];
 
     protected $casts = [
@@ -30,6 +35,10 @@ class Reservation extends Model
         'total_amount' => 'decimal:2',
         'adults' => 'integer',
         'children' => 'integer',
+        'modification_deadline' => 'datetime',
+        'deposit_amount' => 'decimal:2',
+        'deposit_paid' => 'boolean',
+        'locked_price' => 'decimal:2',
     ];
 
     public function hotel()
@@ -50,5 +59,10 @@ class Reservation extends Model
     public function folios()
     {
         return $this->hasMany(Folio::class);
+    }
+
+    public function ratePlan()
+    {
+        return $this->belongsTo(RatePlan::class);
     }
 }

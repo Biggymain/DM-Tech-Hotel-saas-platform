@@ -7,6 +7,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Hotel;
 use App\Models\Room;
+use App\Models\RoomType;
 use App\Models\Role;
 
 class TenantIsolationTest extends TestCase
@@ -66,7 +67,8 @@ class TenantIsolationTest extends TestCase
 
         // Acting as user A, creating a room should auto-assign hotel_id globally
         $this->actingAs($userA);
-        $roomA = Room::create([]);
+        $roomTypeA = RoomType::create(['hotel_id' => $hotelA->id, 'name' => 'Standard A', 'base_price' => 100]);
+        $roomA = Room::create(['room_type_id' => $roomTypeA->id, 'room_number' => '101']);
         $this->assertEquals($hotelA->id, $roomA->hotel_id);
         
         // Fetch rooms for A, should only see 1
@@ -74,7 +76,8 @@ class TenantIsolationTest extends TestCase
 
         // Acting as user B, creating a room should auto-assign B's hotel_id
         $this->actingAs($userB);
-        $roomB = Room::create([]);
+        $roomTypeB = RoomType::create(['hotel_id' => $hotelB->id, 'name' => 'Standard B', 'base_price' => 100]);
+        $roomB = Room::create(['room_type_id' => $roomTypeB->id, 'room_number' => '201']);
         $this->assertEquals($hotelB->id, $roomB->hotel_id);
         
         // Fetch rooms for B, should only see 1

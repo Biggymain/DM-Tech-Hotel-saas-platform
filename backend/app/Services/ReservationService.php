@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Models\Reservation;
 use App\Models\Room;
+use App\Models\Hotel;
 use App\Models\RoomType;
+use App\Models\User;
 use App\Events\ReservationCreated;
 use App\Events\ReservationConfirmed;
 use Carbon\Carbon;
@@ -20,7 +22,15 @@ class ReservationService
     {
         $this->validateDates($data['check_in_date'], $data['check_out_date']);
 
-        return DB::transaction(function () use ($data) {
+        $hotel = Hotel::find($data['hotel_id']);
+        $modificationDeadline = null;
+        if ($hotel && $hotel->reservation_deadline_hours_before_checkin !== null) {
+            // Assume 14:00 (2:00 PM) as default check-in time if no specific time is provided.
+            $checkInDateTime = Carbon::parse($data['check_in_date'])->startOfDay()->addHours(14);
+            $modificationDeadline = $checkInDateTime->subHours($hotel->reservation_deadline_hours_before_checkin);
+        }
+
+        return DB::transaction(function () use ($data, $modificationDeadline) {
             $reservation = Reservation::create([
                 'hotel_id' => $data['hotel_id'],
                 'guest_id' => $data['guest_id'],
@@ -33,10 +43,20 @@ class ReservationService
                 'adults' => $data['adults'] ?? 1,
                 'children' => $data['children'] ?? 0,
                 'special_requests' => $data['special_requests'] ?? null,
+                'modification_deadline' => $modificationDeadline,
+                'deposit_amount' => $data['deposit_amount'] ?? null,
+                'deposit_paid' => $data['deposit_paid'] ?? false,
+                'rate_plan_id' => $data['rate_plan_id'] ?? null,
             ]);
 
             $totalAmount = 0;
             $nights = Carbon::parse($data['check_in_date'])->diffInDays(Carbon::parse($data['check_out_date']));
+            
+            $pricingService = app(\App\Services\PricingService::class);
+            $ratePlan = null;
+            if (isset($data['rate_plan_id'])) {
+                $ratePlan = \App\Models\RatePlan::find($data['rate_plan_id']);
+            }
 
             foreach ($data['rooms'] as $roomData) {
                 $room = Room::with('roomType')->findOrFail($roomData['id']);
@@ -48,13 +68,21 @@ class ReservationService
                     ]);
                 }
 
-                $rate = $roomData['rate'] ?? $room->roomType->base_price;
+                if (isset($roomData['rate'])) {
+                    $rate = $roomData['rate'];
+                } else {
+                    $calcDate = Carbon::parse($data['check_in_date']);
+                    $rate = $pricingService->calculateRoomPrice($room->roomType, $calcDate, $ratePlan);
+                }
                 
                 $reservation->rooms()->attach($room->id, ['rate' => $rate]);
                 $totalAmount += ($rate * $nights);
             }
 
-            $reservation->update(['total_amount' => $totalAmount]);
+            $reservation->update([
+                'total_amount' => $totalAmount,
+                'locked_price' => $totalAmount
+            ]);
 
             event(new ReservationCreated($reservation));
 
@@ -133,6 +161,55 @@ class ReservationService
         } while ($exists);
 
         return $number;
+    }
+
+    /**
+     * Update a reservation.
+     */
+    public function updateReservation(Reservation $reservation, array $data, ?User $user = null)
+    {
+        $this->enforceModificationDeadline($reservation, $user, 'modification');
+
+        if (isset($data['check_in_date']) && isset($data['check_out_date'])) {
+            $this->validateDates($data['check_in_date'], $data['check_out_date']);
+        }
+
+        $reservation->update($data);
+        return $reservation;
+    }
+
+    /**
+     * Cancel a reservation.
+     */
+    public function cancelReservation(Reservation $reservation, ?User $user = null)
+    {
+        $this->enforceModificationDeadline($reservation, $user, 'cancellation');
+
+        $reservation->update(['status' => 'cancelled']);
+        event(new \App\Events\ReservationCancelled($reservation));
+        
+        return $reservation;
+    }
+
+    /**
+     * Enforces the modification deadline logic.
+     */
+    private function enforceModificationDeadline(Reservation $reservation, ?User $user, string $actionType)
+    {
+        if ($reservation->modification_deadline && now()->isAfter($reservation->modification_deadline)) {
+            $isAdmin = false;
+            if ($user && ($user->is_super_admin || $user->roles->contains(function ($role) {
+                return in_array($role->name, ['Manager', 'Admin', 'HotelOwner', 'SuperAdmin']);
+            }))) {
+                $isAdmin = true;
+            }
+
+            if (!$isAdmin) {
+                throw ValidationException::withMessages([
+                    'modification_deadline' => "The {$actionType} deadline for this reservation has passed and cannot be performed."
+                ]);
+            }
+        }
     }
 
     /**

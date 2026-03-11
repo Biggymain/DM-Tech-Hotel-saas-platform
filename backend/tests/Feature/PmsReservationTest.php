@@ -166,4 +166,163 @@ class PmsReservationTest extends TestCase
         $this->assertDatabaseHas('reservations', ['id' => $reservation->id, 'status' => 'checked_out']);
         $this->assertDatabaseHas('rooms', ['id' => $this->room->id, 'status' => 'available', 'housekeeping_status' => 'dirty']);
     }
+
+    public function test_cannot_modify_reservation_after_deadline()
+    {
+        $this->hotel->update(['reservation_deadline_hours_before_checkin' => 24]);
+        
+        $reservation = Reservation::create([
+            'hotel_id' => $this->hotel->id,
+            'guest_id' => $this->guest->id,
+            'reservation_number' => 'RSV-004',
+            'check_in_date' => Carbon::now()->addDays(2),
+            'check_out_date' => Carbon::now()->addDays(5),
+            'modification_deadline' => Carbon::now()->subHour(), // deadline passed
+            'status' => 'confirmed'
+        ]);
+
+        $staff = User::factory()->create(['hotel_id' => $this->hotel->id]);
+
+        $response = $this->actingAs($staff)->putJson("/api/v1/pms/reservations/{$reservation->id}", [
+            'special_requests' => 'Late check-in please'
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('modification_deadline');
+    }
+
+    public function test_admin_can_modify_reservation_after_deadline()
+    {
+        $this->manager->update(['is_super_admin' => true]);
+
+        $reservation = Reservation::create([
+            'hotel_id' => $this->hotel->id,
+            'guest_id' => $this->guest->id,
+            'reservation_number' => 'RSV-005',
+            'check_in_date' => Carbon::now()->addDays(2),
+            'check_out_date' => Carbon::now()->addDays(5),
+            'modification_deadline' => Carbon::now()->subHour(), // deadline passed
+            'status' => 'confirmed'
+        ]);
+
+        // Manager is admin/manager role
+        $response = $this->actingAs($this->manager)->putJson("/api/v1/pms/reservations/{$reservation->id}", [
+            'special_requests' => 'Urgent modification by admin'
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('reservations', ['id' => $reservation->id, 'special_requests' => 'Urgent modification by admin']);
+    }
+
+    public function test_no_show_job_marks_reservation_and_adds_penalty()
+    {
+        $this->hotel->update(['no_show_penalty_type' => 'full_stay']);
+
+        $reservation = Reservation::create([
+            'hotel_id' => $this->hotel->id,
+            'guest_id' => $this->guest->id,
+            'reservation_number' => 'RSV-006',
+            'check_in_date' => Carbon::yesterday(), // passed check-in
+            'check_out_date' => Carbon::now()->addDays(2),
+            'total_amount' => 500,
+            'status' => 'confirmed'
+        ]);
+        $reservation->rooms()->attach($this->room->id, ['rate' => 150]);
+
+        $job = new \App\Jobs\MarkNoShowReservationsJob();
+        $job->handle(app(\App\Services\FolioService::class), app(\App\Services\AuditLogService::class), app(\App\Services\ActivityLogService::class));
+
+        $this->assertDatabaseHas('reservations', ['id' => $reservation->id, 'status' => 'no_show']);
+        
+        $folio = $reservation->folios()->first();
+        $this->assertNotNull($folio);
+
+        $this->assertDatabaseHas('folio_items', [
+            'folio_id' => $folio->id,
+            'description' => 'No-Show Penalty',
+            'amount' => 500
+        ]);
+    }
+
+    public function test_no_show_respects_grace_period()
+    {
+        $this->hotel->update(['reservation_grace_hours' => 24]);
+
+        $reservation = Reservation::create([
+            'hotel_id' => $this->hotel->id,
+            'guest_id' => $this->guest->id,
+            'reservation_number' => 'RSV-007',
+            'check_in_date' => Carbon::today(), // today, assuming checkin is 14:00 today. + 24 hrs > now
+            'check_out_date' => Carbon::now()->addDays(2),
+            'status' => 'confirmed'
+        ]);
+
+        $job = new \App\Jobs\MarkNoShowReservationsJob();
+        $job->handle(app(\App\Services\FolioService::class), app(\App\Services\AuditLogService::class), app(\App\Services\ActivityLogService::class));
+
+        $this->assertDatabaseHas('reservations', ['id' => $reservation->id, 'status' => 'confirmed']);
+    }
+
+    public function test_no_show_penalty_deposit_type()
+    {
+        $this->hotel->update(['no_show_penalty_type' => 'deposit']);
+
+        $reservation = Reservation::create([
+            'hotel_id' => $this->hotel->id,
+            'guest_id' => $this->guest->id,
+            'reservation_number' => 'RSV-008',
+            'check_in_date' => Carbon::yesterday(), // passed check-in
+            'check_out_date' => Carbon::now()->addDays(2),
+            'status' => 'confirmed',
+            'deposit_amount' => 75.50,
+            'deposit_paid' => true
+        ]);
+
+        $job = new \App\Jobs\MarkNoShowReservationsJob();
+        $job->handle(app(\App\Services\FolioService::class), app(\App\Services\AuditLogService::class), app(\App\Services\ActivityLogService::class));
+
+        $this->assertDatabaseHas('reservations', ['id' => $reservation->id, 'status' => 'no_show']);
+        
+        $folio = $reservation->folios()->first();
+        $this->assertNotNull($folio);
+
+        $this->assertDatabaseHas('folio_items', [
+            'folio_id' => $folio->id,
+            'description' => 'No-Show Penalty',
+            'amount' => 75.50
+        ]);
+    }
+
+    public function test_qr_session_invalidated_after_no_show()
+    {
+        $this->hotel->update(['no_show_penalty_type' => 'deposit']);
+
+        $reservation = Reservation::create([
+            'hotel_id' => $this->hotel->id,
+            'guest_id' => $this->guest->id,
+            'reservation_number' => 'RSV-009',
+            'check_in_date' => Carbon::yesterday(), // passed check-in
+            'check_out_date' => Carbon::now()->addDays(2),
+            'status' => 'confirmed'
+        ]);
+
+        if (!\Illuminate\Support\Facades\Schema::hasTable('room_qr_sessions')) {
+            \Illuminate\Support\Facades\Schema::create('room_qr_sessions', function ($table) {
+                $table->id();
+                $table->foreignId('reservation_id');
+                $table->boolean('is_active')->default(true);
+            });
+        }
+
+        $sessionId = \Illuminate\Support\Facades\DB::table('room_qr_sessions')->insertGetId([
+            'reservation_id' => $reservation->id,
+            'is_active' => true
+        ]);
+
+        $job = new \App\Jobs\MarkNoShowReservationsJob();
+        $job->handle(app(\App\Services\FolioService::class), app(\App\Services\AuditLogService::class), app(\App\Services\ActivityLogService::class));
+
+        $sessionActive = \Illuminate\Support\Facades\DB::table('room_qr_sessions')->where('id', $sessionId)->value('is_active');
+        $this->assertFalse((bool)$sessionActive);
+    }
 }
