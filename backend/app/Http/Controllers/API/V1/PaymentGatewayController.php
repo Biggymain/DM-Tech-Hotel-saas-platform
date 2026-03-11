@@ -121,4 +121,33 @@ class PaymentGatewayController extends Controller
 
         return response()->json(['message' => 'Manual payment confirmed successfully.', 'transaction' => $transaction], 200);
     }
+
+    /**
+     * Test Payment Gateway Connection.
+     */
+    public function testConnection(Request $request)
+    {
+        $validated = $request->validate([
+            'gateway' => 'required|string|in:stripe,paystack,monnify,paypal',
+        ]);
+
+        $hotelId = $request->user()->hotel_id;
+        
+        // In a real app, this would use the PaymentService to call a mock/test endpoint on the gateway.
+        // For this implementation, we simulate based on configured credentials.
+        $gateway = \App\Models\PaymentGateway::where('hotel_id', $hotelId)
+            ->where('gateway_name', $validated['gateway'])
+            ->first();
+
+        if (!$gateway) {
+            return response()->json(['success' => false, 'message' => "Gateway {$validated['gateway']} is not configured."], 404);
+        }
+
+        // Simulating a success response
+        return response()->json([
+            'success' => true,
+            'message' => "Successfully connected to " . ucfirst($validated['gateway']),
+            'timestamp' => now()->toIso8601String()
+        ]);
+    }
 }

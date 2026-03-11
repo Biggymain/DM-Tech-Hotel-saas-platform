@@ -155,10 +155,6 @@ class OrderController extends Controller
         $hotelId = $request->user()->hotel_id;
         $order = Order::where('hotel_id', $hotelId)->findOrFail($id);
 
-        // Instead of hard delete, usually we just cancel.
-        // Let's implement destroy as standard REST hard delete as per plan, 
-        // normally only possible if pending.
-        
         if (!in_array($order->status, ['pending', 'cancelled'])) {
             return response()->json(['message' => 'Can only delete pending or cancelled orders.'], 400);
         }
@@ -166,5 +162,31 @@ class OrderController extends Controller
         $order->delete();
         
         return response()->json(['message' => 'Order deleted successfully']);
+    }
+
+    public function live(Request $request)
+    {
+        $hotelId = $request->user()->hotel_id;
+        $orders = Order::where('hotel_id', $hotelId)
+            ->whereIn('order_source', ['room_service', 'qr_room', 'mobile'])
+            ->with(['items.menuItem'])
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+            
+        return response()->json($orders);
+    }
+
+    public function posOrders(Request $request)
+    {
+        $hotelId = $request->user()->hotel_id;
+        $orders = Order::where('hotel_id', $hotelId)
+            ->whereIn('order_source', ['pos', 'qr_table'])
+            ->with(['items.menuItem', 'outlet'])
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+            
+        return response()->json($orders);
     }
 }

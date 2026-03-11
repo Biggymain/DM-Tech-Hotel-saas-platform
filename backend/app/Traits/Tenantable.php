@@ -17,14 +17,19 @@ trait Tenantable
         static::addGlobalScope(new \App\Models\Scopes\TenantScope);
 
         static::creating(function ($model) {
+            $tenantId = null;
+
             if (Auth::hasUser()) {
                 $user = Auth::user();
-
-                if (! $user->is_super_admin) {
-                    if ($model->getTable() !== 'hotels' && empty($model->hotel_id)) {
-                        $model->hotel_id = $user->hotel_id;
-                    }
+                if (!$user->is_super_admin) {
+                    $tenantId = $user->hotel_id;
                 }
+            } elseif (app()->bound('tenant_id')) {
+                $tenantId = app('tenant_id');
+            }
+
+            if ($tenantId && $model->getTable() !== 'hotels' && empty($model->hotel_id)) {
+                $model->hotel_id = $tenantId;
             }
         });
     }

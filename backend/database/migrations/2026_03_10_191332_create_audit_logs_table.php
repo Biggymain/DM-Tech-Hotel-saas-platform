@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('audit_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('hotel_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('hotel_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('entity_type');
             $table->unsignedBigInteger('entity_id');

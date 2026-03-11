@@ -53,4 +53,17 @@ class HousekeepingTaskController extends Controller
 
         return response()->json(['message' => 'Task completed successfully.', 'data' => $task->fresh()]);
     }
+
+    public function statusSummary(Request $request)
+    {
+        $tenantId = app('tenant_id') ?? $request->user()->hotel_id;
+        
+        $summary = [
+            'pending' => HousekeepingTask::where('hotel_id', $tenantId)->where('status', 'pending')->count(),
+            'in_progress' => HousekeepingTask::where('hotel_id', $tenantId)->where('status', 'in_progress')->count(),
+            'completed' => HousekeepingTask::where('hotel_id', $tenantId)->where('status', 'completed')->count(),
+        ];
+
+        return response()->json($summary);
+    }
 }

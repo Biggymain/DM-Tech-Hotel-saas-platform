@@ -14,18 +14,22 @@ Route::post('v1/payments/webhook/{gateway}', [\App\Http\Controllers\API\V1\Payme
 Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('register-hotel', [\App\Http\Controllers\Auth\HotelRegistrationController::class, 'register']);
-        // Auth routes will be defined here
-        Route::get('me', function(Request $request) {
-            return $request->user();
-        })->middleware('auth:sanctum');
+        Route::post('login', [\App\Http\Controllers\API\V1\AuthController::class, 'login']);
+        Route::post('forgot-password', [\App\Http\Controllers\API\V1\AuthController::class, 'forgotPassword']);
+        Route::post('reset-password', [\App\Http\Controllers\API\V1\AuthController::class, 'resetPassword']);
+        
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::get('me', [\App\Http\Controllers\API\V1\AuthController::class, 'user']);
+            Route::post('logout', [\App\Http\Controllers\API\V1\AuthController::class, 'logout']);
+        });
     });
 
     // Public Channel Webhooks
     Route::post('/channels/webhook/{channel}', [\App\Http\Controllers\API\V1\ChannelWebhookController::class, 'handle']);
 
-    // Guest Portal (Public, protected by session token & PIN, throttled)
-    Route::prefix('guest')->middleware('throttle:10,1')->group(function () {
-        Route::post('/session/start', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'startSession']);
+    // Guest Portal (Public start, then protected by TenantMiddleware)
+    Route::prefix('guest')->middleware(['throttle:10,1', \App\Http\Middleware\TenantMiddleware::class])->group(function () {
+        Route::post('/session/start', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'startSession'])->withoutMiddleware(\App\Http\Middleware\TenantMiddleware::class);
         Route::post('/session/authenticate', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'authenticate']);
         Route::get('/dashboard', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'dashboard']);
         
@@ -46,9 +50,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/reservations', [\App\Http\Controllers\API\V1\GuestReservationController::class, 'store']);
     });
 
-    Route::middleware(['auth:sanctum', \App\Http\Middleware\TenantIsolationMiddleware::class])->group(function () {
-        Route::get('/auth/user', [\App\Http\Controllers\API\V1\AuthController::class, 'user']);
-        Route::post('/auth/logout', [\App\Http\Controllers\API\V1\AuthController::class, 'logout']);
+    Route::middleware(['auth:sanctum', \App\Http\Middleware\TenantMiddleware::class])->group(function () {
         Route::apiResource('departments', \App\Http\Controllers\DepartmentController::class)->middleware('role.verify:hotel.manage');
         Route::apiResource('hotels', \App\Http\Controllers\Controller::class)->only(['index'])->middleware('role.verify:hotel.manage');
 
@@ -266,6 +268,33 @@ Route::prefix('v1')->group(function () {
             Route::post('/occupancy-rules', [\App\Http\Controllers\API\V1\OccupancyRateController::class, 'store'])->middleware('role.verify:pricing.occupancy_rules.manage');
             Route::put('/occupancy-rules/{occupancyRateRule}', [\App\Http\Controllers\API\V1\OccupancyRateController::class, 'update'])->middleware('role.verify:pricing.occupancy_rules.manage');
             Route::delete('/occupancy-rules/{occupancyRateRule}', [\App\Http\Controllers\API\V1\OccupancyRateController::class, 'destroy'])->middleware('role.verify:pricing.occupancy_rules.manage');
+        });
+        // Global Admin Dashboard & Resources
+        Route::prefix('admin')->group(function () {
+            // Protected by active subscription
+            Route::middleware('subscription.active')->group(function() {
+                Route::post('/payment-gateways/test', [\App\Http\Controllers\API\V1\PaymentGatewayController::class, 'testConnection']);
+                Route::get('/dashboard/occupancy', [\App\Http\Controllers\API\V1\DashboardController::class, 'occupancy']);
+                Route::get('/dashboard/revenue', [\App\Http\Controllers\API\V1\DashboardController::class, 'revenue']);
+                Route::get('/dashboard/operations', [\App\Http\Controllers\API\V1\DashboardController::class, 'operations']);
+                
+                Route::get('/orders/live', [\App\Http\Controllers\OrderController::class, 'live']);
+                Route::get('/orders/pos', [\App\Http\Controllers\OrderController::class, 'posOrders']);
+                
+                Route::get('/housekeeping/status', [\App\Http\Controllers\API\V1\HousekeepingTaskController::class, 'statusSummary']);
+                Route::get('/service-requests', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'index']); // Alias
+            });
+
+            // Subscription management for hotel admins - EXEMPT from subscription.active
+            Route::prefix('subscription')->group(function() {
+                Route::get('/current', [\App\Http\Controllers\API\V1\PlatformSubscriptionController::class, 'current']);
+                Route::get('/plans', [\App\Http\Controllers\API\V1\PlatformSubscriptionController::class, 'plans']);
+                Route::post('/checkout', [\App\Http\Controllers\API\V1\PlatformSubscriptionController::class, 'checkout']);
+                Route::get('/invoices', [\App\Http\Controllers\API\V1\PlatformSubscriptionController::class, 'invoices']);
+            });
+
+            // Platform owner analytics (Usually restricted to super-admin)
+            Route::get('/platform/analytics', [\App\Http\Controllers\API\V1\PlatformSubscriptionController::class, 'analytics']);
         });
     });
 });

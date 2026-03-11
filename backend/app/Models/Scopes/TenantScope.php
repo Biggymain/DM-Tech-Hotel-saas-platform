@@ -14,14 +14,21 @@ class TenantScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        if (Auth::hasUser()) {
+        $tenantId = null;
+
+        if (Auth::check()) {
             $user = Auth::user();
-            
-            // SuperAdmins bypass the isolation scope
-            if (! $user->is_super_admin) {
-                $column = $model->getTable() === 'hotels' ? 'id' : 'hotel_id';
-                $builder->where($model->getTable() . '.' . $column, $user->hotel_id);
+            if ($user->is_super_admin) {
+                return;
             }
+            $tenantId = $user->hotel_id;
+        } elseif (app()->bound('tenant_id')) {
+            $tenantId = app('tenant_id');
+        }
+
+        if ($tenantId) {
+            $column = $model->getTable() === 'hotels' ? 'id' : 'hotel_id';
+            $builder->where($model->getTable() . '.' . $column, $tenantId);
         }
     }
 }

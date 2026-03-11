@@ -25,6 +25,16 @@ class Hotel extends Model
         return $this->belongsTo(SubscriptionPlan::class);
     }
 
+    public function subscription()
+    {
+        return $this->hasOne(HotelSubscription::class);
+    }
+
+    public function hasActiveSubscription()
+    {
+        return $this->subscription && $this->subscription->isActive();
+    }
+
     public function currency()
     {
         return $this->belongsTo(Currency::class);

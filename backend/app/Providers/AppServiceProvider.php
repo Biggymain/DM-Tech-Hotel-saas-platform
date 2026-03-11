@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Auth\Events\Login::class,
+            \App\Listeners\SendLoginAlert::class
+        );
+
+        $router = $this->app['router'];
+        $router->aliasMiddleware('subscription.active', \App\Http\Middleware\EnsureActiveSubscription::class);
     }
 }

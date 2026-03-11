@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Tenantable;
+use App\Traits\DashboardCacheCleaner;
 
 class Reservation extends Model
 {
-    use HasFactory, Tenantable;
+    use HasFactory, Tenantable, DashboardCacheCleaner;
 
     protected $fillable = [
         'hotel_id',

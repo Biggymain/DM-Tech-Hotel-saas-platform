@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Tenantable;
+use App\Traits\DashboardCacheCleaner;
 
 class Order extends Model
 {
-    use Tenantable;
+    use Tenantable, DashboardCacheCleaner;
 
     protected $fillable = [
         'hotel_id',

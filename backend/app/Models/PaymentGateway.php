@@ -25,6 +25,7 @@ class PaymentGateway extends Model
         'is_active' => 'boolean',
         'api_key' => 'encrypted',
         'api_secret' => 'encrypted',
+        'webhook_secret' => 'encrypted',
     ];
 
     public function hotel()
