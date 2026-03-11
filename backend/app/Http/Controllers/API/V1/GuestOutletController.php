@@ -38,6 +38,52 @@ class GuestOutletController extends Controller
     }
 
     /**
+     * View a specific order for tracking.
+     */
+    public function showOrder(Request $request, $orderId)
+    {
+        $session = $this->getActiveSession($request);
+
+        $order = Order::where('hotel_id', $session->hotel_id)
+            ->where('room_id', $session->room_id)
+            ->with(['items.menuItem', 'statusHistory'])
+            ->findOrFail($orderId);
+
+        return response()->json($order);
+    }
+
+    /**
+     * Get smart menu recommendations.
+     */
+    public function recommendations(Request $request, $outletId)
+    {
+        $session = $this->getActiveSession($request);
+
+        $outlet = Outlet::where('hotel_id', $session->hotel_id)
+            ->findOrFail($outletId);
+
+        // Simple recommendation logic: Top items or chef specials
+        // In a real scenario, this would use a recommendation engine or history
+        $recommendations = MenuItem::where('outlet_id', $outletId)
+            ->where('is_active', true)
+            ->where('is_available', true)
+            ->where(function($query) {
+                // Return items marked as popular or special (if columns exist) 
+                // or just take some frequently ordered ones or just latest/featured
+                $query->where('is_featured', true)
+                      ->orWhere('price', '>', 0); // fallback
+            })
+            ->limit(5)
+            ->get();
+
+        return response()->json([
+            'popular' => $recommendations->shuffle()->take(3),
+            'chef_specials' => $recommendations->shuffle()->take(2),
+            'perfect_pairings' => $recommendations->shuffle()->take(2),
+        ]);
+    }
+
+    /**
      * Create an order from the guest portal.
      */
     public function storeOrder(Request $request, $outletId)

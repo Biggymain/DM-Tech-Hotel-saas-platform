@@ -28,10 +28,20 @@ Route::prefix('v1')->group(function () {
         Route::post('/session/start', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'startSession']);
         Route::post('/session/authenticate', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'authenticate']);
         Route::get('/dashboard', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'dashboard']);
+        
+        // Orders & Tracking
+        Route::get('/orders/{order}', [\App\Http\Controllers\API\V1\GuestOutletController::class, 'showOrder']);
+        Route::post('/orders/{outlet}', [\App\Http\Controllers\API\V1\GuestOutletController::class, 'storeOrder']);
+        
+        // Menu & Recommendations
+        Route::get('/menu/{outlet}', [\App\Http\Controllers\API\V1\GuestOutletController::class, 'menu']);
+        Route::get('/menu/{outlet}/recommendations', [\App\Http\Controllers\API\V1\GuestOutletController::class, 'recommendations']);
+        
+        // Service Requests
         Route::get('/requests', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'index']);
         Route::post('/requests', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'store']);
-        Route::get('/menu/{outlet}', [\App\Http\Controllers\API\V1\GuestOutletController::class, 'menu']);
-        Route::post('/orders/{outlet}', [\App\Http\Controllers\API\V1\GuestOutletController::class, 'storeOrder']);
+        Route::post('/service-request', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'store']); // Alias for the enhancement requirement
+        
         Route::post('/reservations/availability', [\App\Http\Controllers\API\V1\GuestReservationController::class, 'searchAvailability']);
         Route::post('/reservations', [\App\Http\Controllers\API\V1\GuestReservationController::class, 'store']);
     });
