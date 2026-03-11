@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\V1\RevenueInsightController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,8 +25,8 @@ Route::prefix('v1')->group(function () {
         });
     });
 
-    // Public Channel Webhooks
-    Route::post('/channels/webhook/{channel}', [\App\Http\Controllers\API\V1\ChannelWebhookController::class, 'handle']);
+    // Public Channel Webhooks — OTA push notifications
+    Route::post('/channels/webhook/{channel}', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'webhook']);
 
     // Guest Portal (Public start, then protected by TenantMiddleware)
     Route::prefix('guest')->middleware(['throttle:10,1', \App\Http\Middleware\TenantMiddleware::class])->group(function () {
@@ -64,6 +65,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/room-types', [\App\Http\Controllers\API\V1\PMS\PmsRoomTypeController::class, 'store']);
 
             // Rooms
+            Route::get('/rooms/map', [\App\Http\Controllers\API\V1\PMS\PmsRoomController::class, 'roomMap']);
             Route::get('/rooms', [\App\Http\Controllers\API\V1\PMS\PmsRoomController::class, 'index']);
             Route::post('/rooms', [\App\Http\Controllers\API\V1\PMS\PmsRoomController::class, 'store']);
             Route::put('/rooms/{room}/status', [\App\Http\Controllers\API\V1\PMS\PmsRoomController::class, 'updateStatus']);
@@ -283,6 +285,27 @@ Route::prefix('v1')->group(function () {
                 
                 Route::get('/housekeeping/status', [\App\Http\Controllers\API\V1\HousekeepingTaskController::class, 'statusSummary']);
                 Route::get('/service-requests', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'index']); // Alias
+
+                // Revenue Intelligence
+        Route::prefix('revenue')->group(function () {
+            Route::get('/insights', [RevenueInsightController::class, 'index']);
+            Route::get('/summary', [RevenueInsightController::class, 'summary']);
+            Route::post('/trigger', [RevenueInsightController::class, 'triggerSync']);
+            Route::put('/config', [RevenueInsightController::class, 'updateConfig']);
+        });
+
+        // OTA Channel Manager
+                Route::prefix('ota')->group(function () {
+                    Route::get('/channels', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'index']);
+                    Route::get('/connections', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'connections']);
+                    Route::post('/connect', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'connect']);
+                    Route::delete('/disconnect/{channelId}', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'disconnect']);
+                    Route::post('/sync', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'triggerSync']);
+                    Route::post('/map/room-type', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'mapRoomType']);
+                    Route::post('/map/rate-plan', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'mapRatePlan']);
+                    Route::get('/sync-logs', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'syncLogs']);
+                    Route::get('/reservations', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'otaReservations']);
+                });
             });
 
             // Subscription management for hotel admins - EXEMPT from subscription.active

@@ -3,32 +3,29 @@
 namespace App\Models;
 
 use App\Traits\Tenantable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ChannelSyncLog extends Model
 {
-    use HasFactory, Tenantable;
+    use Tenantable;
 
     protected $fillable = [
         'hotel_id',
-        'channel_integration_id',
-        'sync_type',
+        'ota_channel_id',
+        'operation',
         'status',
         'request_payload',
         'response_payload',
         'error_message',
-        'synced_at',
     ];
 
     protected $casts = [
         'request_payload' => 'array',
         'response_payload' => 'array',
-        'synced_at' => 'datetime',
     ];
 
-    public function channelIntegration()
+    public function otaChannel()
     {
-        return $this->belongsTo(ChannelIntegration::class);
+        return $this->belongsTo(OtaChannel::class);
     }
 }

@@ -1,0 +1,91 @@
+name: OmniStay CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: omnistay_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.4'
+        extensions: mbstring, xml, bcmath, mysql, intl, gd
+        coverage: xdebug
+
+    - name: Install Dependencies
+      working-directory: ./backend
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Prepare Backend
+      working-directory: ./backend
+      run: |
+        cp .env.example .env
+        php artisan key:generate
+
+    - name: Run Backend Tests
+      working-directory: ./backend
+      env:
+        DB_CONNECTION: mysql
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_DATABASE: omnistay_test
+        DB_USERNAME: root
+        REDIS_HOST: 127.0.0.1
+      run: php artisan test
+
+  nextjs-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: './frontend/package-lock.json'
+
+    - name: Install Dependencies
+      working-directory: ./frontend
+      run: npm install
+
+    - name: Build Frontend
+      working-directory: ./frontend
+      env:
+        NEXT_PUBLIC_API_URL: http://localhost
+      run: npm run build
+
+  docker-build:
+    needs: [laravel-tests, nextjs-build]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker Images
+      run: |
+        docker compose build
+        # In a real scenario, you would push to a registry (Docker Hub, ECR, GCR)
+        # docker compose push

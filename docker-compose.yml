@@ -1,0 +1,128 @@
+version: '3.8'
+
+services:
+  # PHP App
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        user: omnistay
+        uid: 1000
+    image: omnistay-backend
+    container_name: omnistay-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www
+    environment:
+      - DB_HOST=db
+      - REDIS_HOST=redis
+      - CACHE_STORE=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+    networks:
+      - omnistay-network
+
+  # Queue Worker
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        user: omnistay
+        uid: 1000
+    image: omnistay-backend
+    container_name: omnistay-worker
+    restart: unless-stopped
+    command: php artisan queue:work --verbose --tries=3 --timeout=90
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www
+    depends_on:
+      - app
+      - redis
+      - db
+    networks:
+      - omnistay-network
+
+  # Scheduler
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        user: omnistay
+        uid: 1000
+    image: omnistay-backend
+    container_name: omnistay-scheduler
+    restart: unless-stopped
+    command: php artisan schedule:work
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www
+    depends_on:
+      - app
+      - db
+    networks:
+      - omnistay-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: omnistay-frontend
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost
+    networks:
+      - omnistay-network
+
+  # Nginx
+  nginx:
+    image: nginx:alpine
+    container_name: omnistay-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./backend:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+      - frontend
+    networks:
+      - omnistay-network
+
+  # Database
+  db:
+    image: mysql:8.0
+    container_name: omnistay-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-omnistay}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_USER: ${DB_USERNAME:-omnistay}
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - omnistay-network
+
+  # Redis
+  redis:
+    image: redis:alpine
+    container_name: omnistay-redis
+    restart: unless-stopped
+    networks:
+      - omnistay-network
+
+networks:
+  omnistay-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local

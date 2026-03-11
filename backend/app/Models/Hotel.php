@@ -45,6 +45,21 @@ class Hotel extends Model
         return $this->hasMany(User::class);
     }
 
+    public function rooms()
+    {
+        return $this->hasMany(Room::class);
+    }
+
+    public function roomTypes()
+    {
+        return $this->hasMany(RoomType::class);
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
     public function settings()
     {
         return $this->hasMany(HotelSetting::class);

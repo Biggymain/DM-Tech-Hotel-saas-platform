@@ -98,4 +98,25 @@ class PmsRoomController extends Controller
             'message' => 'Housekeeping status updated successfully.'
         ]);
     }
+
+    /**
+     * Get rooms grouped by floor for visual map.
+     */
+    public function roomMap(Request $request)
+    {
+        $rooms = Room::with('roomType')
+            ->where('hotel_id', $request->user()->hotel_id)
+            ->orderBy('floor', 'asc')
+            ->orderBy('room_number', 'asc')
+            ->get();
+
+        $grouped = $rooms->groupBy(function($room) {
+            return $room->floor ?? 'Ground Floor';
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $grouped
+        ]);
+    }
 }
