@@ -36,7 +36,7 @@ class GuestPortalTest extends TestCase
 
         $this->hotel = Hotel::create(['name' => 'Portal Hotel']);
         
-        $roomType = RoomType::create(['hotel_id' => $this->hotel->id, 'name' => 'Standard', 'base_price' => 100, 'total_rooms' => 10]);
+        $roomType = RoomType::create(['hotel_id' => $this->hotel->id, 'name' => 'Standard', 'base_price' => 100]);
         $this->room = Room::create(['hotel_id' => $this->hotel->id, 'room_type_id' => $roomType->id, 'room_number' => '101', 'status' => 'available']);
         
         $this->guest = Guest::create(['hotel_id' => $this->hotel->id, 'first_name' => 'John', 'last_name' => 'Doe', 'phone' => '12345']);
@@ -59,7 +59,9 @@ class GuestPortalTest extends TestCase
     public function test_guest_portal_session_creation()
     {
         $response = $this->postJson('/api/v1/guest/session/start', [
-            'room_id' => $this->room->id,
+            'hotel_id' => $this->hotel->id,
+            'context_type' => 'room',
+            'context_id' => $this->room->id,
             'device_info' => 'iPhone 13'
         ]);
 

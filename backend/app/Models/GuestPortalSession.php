@@ -15,6 +15,8 @@ class GuestPortalSession extends Model
         'guest_id',
         'room_id',
         'reservation_id',
+        'context_type',
+        'context_id',
         'session_token',
         'pin_code',
         'device_info',

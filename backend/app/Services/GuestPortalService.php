@@ -11,28 +11,35 @@ use Illuminate\Validation\ValidationException;
 class GuestPortalService
 {
     /**
-     * Create a new portal session from a scanned room QR code.
+     * Create a new portal session from a scanned QR code context.
      */
-    public function createSessionFromQR(Room $room, ?string $deviceInfo = null)
+    public function createSessionFromContext(int $hotelId, string $contextType, $contextId, ?string $deviceInfo = null)
     {
-        // Find active reservation for this room
-        $reservation = Reservation::whereHas('rooms', function ($q) use ($room) {
-            $q->where('rooms.id', $room->id);
-        })
-        ->whereIn('status', ['checked_in'])
-        ->whereDate('check_in_date', '<=', now())
-        ->whereDate('check_out_date', '>=', now())
-        ->first();
+        $reservation = null;
+        $roomId = null;
 
-        // For security, require a reservation to generate a pin setup.
-        // The PIN defaults to the guest's last name or a custom value in a real scenario.
-        $pinCode = $reservation ? strtolower($reservation->guest->last_name) : '1234';
+        if ($contextType === 'room') {
+            $roomId = $contextId;
+            // Find active reservation for this room
+            $reservation = Reservation::whereHas('rooms', function ($q) use ($roomId) {
+                $q->where('rooms.id', $roomId);
+            })
+            ->whereIn('status', ['checked_in'])
+            ->whereDate('check_in_date', '<=', now())
+            ->whereDate('check_out_date', '>=', now())
+            ->first();
+        }
+
+        // For security, only require a PIN if it's a room guest mode (and they have a reservation)
+        $pinCode = ($contextType === 'room' && $reservation) ? strtolower($reservation->guest->last_name) : null;
 
         $session = GuestPortalSession::create([
-            'hotel_id' => $room->hotel_id,
-            'room_id' => $room->id,
+            'hotel_id' => $hotelId,
+            'room_id' => $roomId,
             'reservation_id' => $reservation ? $reservation->id : null,
             'guest_id' => $reservation ? $reservation->guest_id : null,
+            'context_type' => $contextType,
+            'context_id' => $contextId,
             'session_token' => Str::random(64),
             'pin_code' => $pinCode,
             'device_info' => $deviceInfo,
@@ -98,8 +105,10 @@ class GuestPortalService
         }
 
         return [
-            'hotel_name' => $session->room->hotel->name ?? 'Hotel',
-            'room_number' => $session->room->room_number,
+            'hotel_name' => $session->hotel_id ? \App\Models\Hotel::find($session->hotel_id)->name : 'Hotel',
+            'room_number' => $session->room ? $session->room->room_number : null,
+            'context_type' => $session->context_type,
+            'context_id' => $session->context_id,
             'guest' => $session->guest,
             'reservation' => $session->reservation ? [
                 'check_in_date' => $session->reservation->check_in_date,

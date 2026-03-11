@@ -21,13 +21,18 @@ class GuestPortalController extends Controller
     public function startSession(Request $request)
     {
         $request->validate([
-            'room_id' => 'required|exists:rooms,id',
+            'hotel_id' => 'required|exists:hotels,id',
+            'context_type' => 'required|in:room,outlet,table',
+            'context_id' => 'required|integer',
             'device_info' => 'nullable|string',
         ]);
 
-        $room = Room::findOrFail($request->room_id);
-
-        $session = $this->portalService->createSessionFromQR($room, $request->device_info);
+        $session = $this->portalService->createSessionFromContext(
+            $request->hotel_id,
+            $request->context_type,
+            $request->context_id,
+            $request->device_info
+        );
 
         event(new GuestPortalSessionCreated($session));
 
@@ -35,6 +40,7 @@ class GuestPortalController extends Controller
             'message' => 'Session created successfully.',
             'session_token' => $session->session_token,
             'requires_pin' => !empty($session->pin_code),
+            'context_type' => $session->context_type
         ], 201);
     }
 

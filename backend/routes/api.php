@@ -7,6 +7,9 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+// Payment Webhooks (No Auth Required)
+Route::post('v1/payments/webhook/{gateway}', [\App\Http\Controllers\API\V1\PaymentWebhookController::class, 'handleWebhook']);
+
 // Basic API routes
 Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
@@ -27,9 +30,15 @@ Route::prefix('v1')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'dashboard']);
         Route::get('/requests', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'index']);
         Route::post('/requests', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'store']);
+        Route::get('/menu/{outlet}', [\App\Http\Controllers\API\V1\GuestOutletController::class, 'menu']);
+        Route::post('/orders/{outlet}', [\App\Http\Controllers\API\V1\GuestOutletController::class, 'storeOrder']);
+        Route::post('/reservations/availability', [\App\Http\Controllers\API\V1\GuestReservationController::class, 'searchAvailability']);
+        Route::post('/reservations', [\App\Http\Controllers\API\V1\GuestReservationController::class, 'store']);
     });
 
-    Route::middleware(['auth:sanctum', \App\Http\Middleware\LogUserActivityMiddleware::class])->group(function () {
+    Route::middleware(['auth:sanctum', \App\Http\Middleware\TenantIsolationMiddleware::class])->group(function () {
+        Route::get('/auth/user', [\App\Http\Controllers\API\V1\AuthController::class, 'user']);
+        Route::post('/auth/logout', [\App\Http\Controllers\API\V1\AuthController::class, 'logout']);
         Route::apiResource('departments', \App\Http\Controllers\DepartmentController::class)->middleware('role.verify:hotel.manage');
         Route::apiResource('hotels', \App\Http\Controllers\Controller::class)->only(['index'])->middleware('role.verify:hotel.manage');
 
@@ -183,6 +192,14 @@ Route::prefix('v1')->group(function () {
             Route::get('payments', [\App\Http\Controllers\Api\V1\PaymentController::class, 'index'])->middleware('role.verify:billing.view');
             Route::post('payments', [\App\Http\Controllers\Api\V1\PaymentController::class, 'store'])->middleware('role.verify:payments.process');
             Route::post('payments/{id}/refund', [\App\Http\Controllers\Api\V1\PaymentController::class, 'refund'])->middleware('role.verify:payments.refund');
+        });
+
+        // Payments (new integration)
+        Route::prefix('payments')->group(function() {
+            Route::post('create-intent', [\App\Http\Controllers\API\V1\PaymentGatewayController::class, 'createIntent']);
+            Route::post('confirm', [\App\Http\Controllers\API\V1\PaymentGatewayController::class, 'confirm']);
+            Route::post('manual-confirm', [\App\Http\Controllers\API\V1\PaymentGatewayController::class, 'manualConfirm']);
+            Route::post('refund', [\App\Http\Controllers\API\V1\PaymentGatewayController::class, 'refund']);
         });
 
         // Reports & Analytics BI
