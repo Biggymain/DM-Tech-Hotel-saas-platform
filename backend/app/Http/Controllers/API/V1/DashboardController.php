@@ -16,16 +16,25 @@ class DashboardController extends Controller
      */
     public function occupancy(Request $request)
     {
-        $hotelId = $request->user()->hotel_id;
-        $cacheKey = "dashboard_occupancy_{$hotelId}";
+        $user = $request->user();
+        $hotelId = $user->hotel_id;
+        $outletId = $user->isKitchenManager() ? $user->outlet_id : null;
+        
+        $cacheKey = "dashboard_occupancy_{$hotelId}" . ($outletId ? "_outlet_{$outletId}" : "");
 
-        $data = Cache::remember($cacheKey, 30, function () use ($hotelId) {
+        $data = Cache::remember($cacheKey, 30, function () use ($hotelId, $outletId) {
+            $query = Room::where('hotel_id', $hotelId);
+            
+            // Note: If rooms are linked to outlets, apply filter. 
+            // Currently rooms are usually hotel-wide, but we can filter associated orders/tasks if needed.
+            // For this specific requirement, we filter metrics based on user role.
+
             return [
-                'total_rooms' => Room::where('hotel_id', $hotelId)->count(),
-                'occupied_rooms' => Room::where('hotel_id', $hotelId)->where('status', 'occupied')->count(),
-                'available_rooms' => Room::where('hotel_id', $hotelId)->where('status', 'available')->count(),
-                'cleaning_rooms' => Room::where('hotel_id', $hotelId)->where('housekeeping_status', 'dirty')->count(),
-                'maintenance_rooms' => Room::where('hotel_id', $hotelId)->where('status', 'maintenance')->count(),
+                'total_rooms' => (clone $query)->count(),
+                'occupied_rooms' => (clone $query)->where('status', 'occupied')->count(),
+                'available_rooms' => (clone $query)->where('status', 'available')->count(),
+                'cleaning_rooms' => (clone $query)->where('housekeeping_status', 'dirty')->count(),
+                'maintenance_rooms' => (clone $query)->where('status', 'maintenance')->count(),
             ];
         });
 
@@ -37,32 +46,31 @@ class DashboardController extends Controller
      */
     public function revenue(Request $request)
     {
-        $hotelId = $request->user()->hotel_id;
-        $cacheKey = "dashboard_revenue_{$hotelId}";
+        $user = $request->user();
+        $hotelId = $user->hotel_id;
+        $outletId = $user->isKitchenManager() ? $user->outlet_id : null;
 
-        $data = Cache::remember($cacheKey, 30, function () use ($hotelId) {
+        $cacheKey = "dashboard_revenue_{$hotelId}" . ($outletId ? "_outlet_{$outletId}" : "");
+
+        $data = Cache::remember($cacheKey, 30, function () use ($hotelId, $outletId) {
             $today = now()->startOfDay();
+            $query = Order::where('hotel_id', $hotelId)->where('created_at', '>=', $today);
 
-            $totalRevenue = Order::where('hotel_id', $hotelId)
-                ->where('created_at', '>=', $today)
-                ->where('payment_status', 'paid')
-                ->sum('total_amount');
+            if ($outletId) {
+                $query->where('outlet_id', $outletId);
+            }
 
-            $restaurantRevenue = Order::where('hotel_id', $hotelId)
-                ->where('created_at', '>=', $today)
-                ->where('payment_status', 'paid')
+            $totalRevenue = (clone $query)->where('payment_status', 'paid')->sum('total_amount');
+
+            $restaurantRevenue = (clone $query)->where('payment_status', 'paid')
                 ->whereIn('order_source', ['pos', 'qr_table'])
                 ->sum('total_amount');
 
-            $roomRevenue = Order::where('hotel_id', $hotelId)
-                ->where('created_at', '>=', $today)
-                ->where('payment_status', 'paid')
+            $roomRevenue = (clone $query)->where('payment_status', 'paid')
                 ->where('order_source', 'room_service')
                 ->sum('total_amount');
 
-            $pendingPayments = Order::where('hotel_id', $hotelId)
-                ->where('created_at', '>=', $today)
-                ->where('payment_status', 'unpaid')
+            $pendingPayments = (clone $query)->where('payment_status', 'unpaid')
                 ->sum('total_amount');
 
             return [
@@ -70,7 +78,7 @@ class DashboardController extends Controller
                 'restaurant_revenue' => (float) $restaurantRevenue,
                 'room_revenue' => (float) $roomRevenue,
                 'pending_payments' => (float) $pendingPayments,
-                'currency' => 'USD', // Could be dynamic based on hotel settings
+                'currency' => 'USD',
             ];
         });
 
@@ -82,23 +90,29 @@ class DashboardController extends Controller
      */
     public function operations(Request $request)
     {
-        $hotelId = $request->user()->hotel_id;
-        $cacheKey = "dashboard_operations_{$hotelId}";
+        $user = $request->user();
+        $hotelId = $user->hotel_id;
+        $outletId = $user->isKitchenManager() ? $user->outlet_id : null;
 
-        $data = Cache::remember($cacheKey, 30, function () use ($hotelId) {
+        $cacheKey = "dashboard_operations_{$hotelId}" . ($outletId ? "_outlet_{$outletId}" : "");
+
+        $data = Cache::remember($cacheKey, 30, function () use ($hotelId, $outletId) {
+            $reservationQuery = \App\Models\Reservation::where('hotel_id', $hotelId);
+            $orderQuery = \App\Models\Order::where('hotel_id', $hotelId);
+            
+            if ($outletId) {
+                $orderQuery->where('outlet_id', $outletId);
+            }
+
             return [
-                'active_guests' => \App\Models\Reservation::where('hotel_id', $hotelId)
-                    ->where('status', 'checked_in')->count(),
+                'active_guests' => $reservationQuery->where('status', 'checked_in')->count(),
                 'pending_service_requests' => \App\Models\GuestServiceRequest::where('hotel_id', $hotelId)
                     ->whereIn('status', ['pending', 'in_progress'])->count(),
                 'active_housekeeping' => \App\Models\HousekeepingTask::where('hotel_id', $hotelId)
                     ->whereIn('status', ['pending', 'in_progress'])->count(),
                 'open_maintenance' => \App\Models\MaintenanceRequest::where('hotel_id', $hotelId)
                     ->whereIn('status', ['pending', 'in_progress'])->count(),
-                'recent_orders' => \App\Models\Order::where('hotel_id', $hotelId)
-                    ->latest()
-                    ->take(5)
-                    ->get(),
+                'recent_orders' => $orderQuery->latest()->take(5)->get(),
             ];
         });
 

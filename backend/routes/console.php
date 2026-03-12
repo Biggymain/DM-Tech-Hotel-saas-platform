@@ -30,3 +30,10 @@ Artisan::command('revenue:generate-insights', function () {
     $this->info('Revenue insights job dispatched.');
 })->purpose('Generate AI-assisted revenue and pricing insights for all hotels')
   ->dailyAt('00:00');
+
+Artisan::command('pms:night-audit', function () {
+    $this->info('Starting automated night audit...');
+    $this->call('pms:night-audit');
+    $this->info('Night audit finished.');
+})->purpose('Post daily room charges for all active reservations')
+  ->dailyAt('02:00');

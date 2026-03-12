@@ -8,20 +8,42 @@ use Illuminate\Support\Facades\DB;
 
 class FolioService
 {
+    protected $inventoryService;
+
+    public function __construct(InventoryService $inventoryService)
+    {
+        $this->inventoryService = $inventoryService;
+    }
+
     /**
      * Add a charge to a Folio.
+     * Atomic: rolls back if inventory deduction fails.
      */
-    public function addCharge(Folio $folio, string $description, float $amount, ?string $attachableType = null, ?int $attachableId = null)
+    public function addCharge(Folio $folio, string $description, float $amount, ?string $attachableType = null, ?int $attachableId = null, string $source = 'ROOM', ?int $inventoryItemId = null)
     {
-        return DB::transaction(function () use ($folio, $description, $amount, $attachableType, $attachableId) {
+        // Validate active reservation
+        if ($folio->reservation->status !== 'checked_in') {
+            throw new \Exception("Cannot post charge: Reservation is not in 'checked_in' status.");
+        }
+
+        return DB::transaction(function () use ($folio, $description, $amount, $attachableType, $attachableId, $source, $inventoryItemId) {
             $item = FolioItem::create([
                 'folio_id' => $folio->id,
+                'hotel_id' => $folio->hotel_id,
                 'attachable_type' => $attachableType,
                 'attachable_id' => $attachableId,
                 'description' => $description,
                 'amount' => $amount,
                 'is_charge' => true,
+                'source' => $source,
+                'status' => 'PAID', // Default to PAID for POS/Room charges
+                'inventory_item_id' => $inventoryItemId,
             ]);
+
+            // Atomic inventory deduction if applicable
+            if ($inventoryItemId && $source === 'POS') {
+                $this->inventoryService->deductStock($inventoryItemId, 1, 'folio_item', $item->id);
+            }
 
             $this->recalculateFolio($folio);
 
@@ -37,17 +59,29 @@ class FolioService
         return DB::transaction(function () use ($folio, $description, $amount, $attachableType, $attachableId) {
             $item = FolioItem::create([
                 'folio_id' => $folio->id,
+                'hotel_id' => $folio->hotel_id,
                 'attachable_type' => $attachableType,
                 'attachable_id' => $attachableId,
                 'description' => $description,
                 'amount' => $amount,
                 'is_charge' => false,
+                'status' => 'PAID',
             ]);
 
             $this->recalculateFolio($folio);
 
             return $item;
         });
+    }
+
+    /**
+     * Get aggregated folio data for a reservation.
+     */
+    public function getGuestFolio(int $reservationId)
+    {
+        return Folio::with(['items', 'reservation.guest'])
+            ->where('reservation_id', $reservationId)
+            ->first();
     }
 
     /**

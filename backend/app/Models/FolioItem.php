@@ -4,18 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Tenantable;
 
 class FolioItem extends Model
 {
-    use HasFactory;
+    use HasFactory, Tenantable;
 
     protected $fillable = [
         'folio_id',
+        'hotel_id',
         'attachable_type',
         'attachable_id',
         'description',
         'amount',
         'is_charge',
+        'source',
+        'status',
+        'inventory_item_id',
     ];
 
     protected $casts = [
@@ -31,5 +36,10 @@ class FolioItem extends Model
     public function attachable()
     {
         return $this->morphTo();
+    }
+
+    public function inventoryItem()
+    {
+        return $this->belongsTo(InventoryItem::class);
     }
 }
