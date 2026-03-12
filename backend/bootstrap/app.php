@@ -12,6 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         channels: __DIR__.'/../routes/channels.php',
         health: '/up',
     )
+    ->withBroadcasting(
+        __DIR__.'/../routes/channels.php',
+        ['middleware' => ['auth:sanctum', 'tenant']],
+    )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role.verify' => \App\Http\Middleware\RoleVerificationMiddleware::class,

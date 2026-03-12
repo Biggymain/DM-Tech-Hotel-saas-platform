@@ -60,3 +60,9 @@ Broadcast::channel('hotel.{hotelId}.dashboard', function ($user, $hotelId) {
         || ((int) $user->hotel_id === (int) $hotelId && $user->roles->pluck('slug')->contains('general-manager'));
     return $isAdmin ? ['id' => $user->id, 'name' => $user->name] : false;
 });
+
+// ── Kitchen Display System (KDS) common channel ──────────────────────────────
+// Only staff in the specific hotel can subscribe.
+Broadcast::channel('hotel.{hotelId}.kds', function ($user, $hotelId) {
+    return (int) $user->hotel_id === (int) $hotelId;
+});

@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'paystack' => [
+        'secret' => env('PAYSTACK_SECRET_KEY'),
+    ],
+
+    'flutterwave' => [
+        'secret_hash' => env('FLUTTERWAVE_SECRET_HASH'),
+    ],
+
 ];

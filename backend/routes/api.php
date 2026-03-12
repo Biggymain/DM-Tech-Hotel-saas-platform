@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\API\V1\RevenueInsightController;
+use App\Http\Controllers\Api\V1\RevenueInsightController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,46 +9,46 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // Payment Webhooks (No Auth Required)
-Route::post('v1/payments/webhook/{gateway}', [\App\Http\Controllers\API\V1\PaymentWebhookController::class, 'handleWebhook']);
+Route::post('v1/payments/webhook/{gateway}', [\App\Http\Controllers\Api\V1\PaymentWebhookController::class, 'handleWebhook']);
 
 // Basic API routes
 Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('register-hotel', [\App\Http\Controllers\Auth\HotelRegistrationController::class, 'register']);
-        Route::post('register-group', [\App\Http\Controllers\API\V1\GroupRegistrationController::class, 'register']); // Public — no tenant scope
-        Route::post('login', [\App\Http\Controllers\API\V1\AuthController::class, 'login']);
-        Route::post('forgot-password', [\App\Http\Controllers\API\V1\AuthController::class, 'forgotPassword']);
-        Route::post('reset-password', [\App\Http\Controllers\API\V1\AuthController::class, 'resetPassword']);
+        Route::post('register-group', [\App\Http\Controllers\Api\V1\GroupRegistrationController::class, 'register']); // Public — no tenant scope
+        Route::post('login', [\App\Http\Controllers\Api\V1\AuthController::class, 'login']);
+        Route::post('forgot-password', [\App\Http\Controllers\Api\V1\AuthController::class, 'forgotPassword']);
+        Route::post('reset-password', [\App\Http\Controllers\Api\V1\AuthController::class, 'resetPassword']);
 
         Route::middleware('auth:sanctum')->group(function () {
-            Route::get('me', [\App\Http\Controllers\API\V1\AuthController::class, 'user']);
-            Route::post('logout', [\App\Http\Controllers\API\V1\AuthController::class, 'logout']);
+            Route::get('me', [\App\Http\Controllers\Api\V1\AuthController::class, 'user']);
+            Route::post('logout', [\App\Http\Controllers\Api\V1\AuthController::class, 'logout']);
         });
     });
 
     // Organization Management (GROUP_ADMIN + SUPER_ADMIN only — no single-hotel tenant scope needed)
     Route::prefix('organization')->middleware('auth:sanctum')->group(function () {
-        Route::get('/overview', [\App\Http\Controllers\API\V1\OrganizationController::class, 'overview']);
-        Route::get('/branches', [\App\Http\Controllers\API\V1\OrganizationController::class, 'branches']);
-        Route::post('/branches', [\App\Http\Controllers\API\V1\OrganizationController::class, 'store']);
+        Route::get('/overview', [\App\Http\Controllers\Api\V1\OrganizationController::class, 'overview']);
+        Route::get('/branches', [\App\Http\Controllers\Api\V1\OrganizationController::class, 'branches']);
+        Route::post('/branches', [\App\Http\Controllers\Api\V1\OrganizationController::class, 'store']);
     });
 
     // ── HARDWARE INTEGRATION — DOOR LOCKS ────────────────────────────────────
     // Webhook: No auth — secured by HMAC-SHA256 Shared Secret inside the controller.
-    Route::post('/integration/lock-events', [\App\Http\Controllers\API\V1\LockEventController::class, 'receive'])
+    Route::post('/integration/lock-events', [\App\Http\Controllers\Api\V1\LockEventController::class, 'receive'])
         ->middleware('throttle:60,1');
     // Admin view of lock events (auth required)
-    Route::get('/integration/lock-events', [\App\Http\Controllers\API\V1\LockEventController::class, 'index'])
+    Route::get('/integration/lock-events', [\App\Http\Controllers\Api\V1\LockEventController::class, 'index'])
         ->middleware('auth:sanctum');
 
     // Public Channel Webhooks — OTA push notifications
-    Route::post('/channels/webhook/{channel}', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'webhook']);
+    Route::post('/channels/webhook/{channel}', [\App\Http\Controllers\Api\V1\OtaChannelController::class, 'webhook']);
 
     // ── PUBLIC BOOKING ENGINE ─────────────────────────────────────────────────
     // No auth required. Tenant is resolved from {hotel_slug} or Host header
     // via DomainTenantMiddleware. Rate-limited to prevent abuse.
     Route::prefix('booking')->middleware(['throttle:60,1'])->group(function () {
-        $ctrl = \App\Http\Controllers\API\V1\PublicBookingController::class;
+        $ctrl = \App\Http\Controllers\Api\V1\PublicBookingController::class;
         Route::get('/{hotel_slug}',                  [$ctrl, 'show']);
         Route::get('/{hotel_slug}/availability',     [$ctrl, 'availability']);
         Route::post('/{hotel_slug}/reserve',         [$ctrl, 'reserve']);
@@ -57,112 +57,102 @@ Route::prefix('v1')->group(function () {
 
     // Guest Portal (Public start, then protected by TenantMiddleware)
     Route::prefix('guest')->middleware(['throttle:10,1', \App\Http\Middleware\TenantMiddleware::class])->group(function () {
-        Route::post('/session/start', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'startSession'])->withoutMiddleware(\App\Http\Middleware\TenantMiddleware::class);
-        Route::post('/session/authenticate', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'authenticate']);
-        Route::get('/dashboard', [\App\Http\Controllers\API\V1\GuestPortalController::class, 'dashboard']);
+        Route::post('/session/start', [\App\Http\Controllers\Api\V1\GuestPortalController::class, 'startSession'])->withoutMiddleware(\App\Http\Middleware\TenantMiddleware::class);
+        Route::post('/session/authenticate', [\App\Http\Controllers\Api\V1\GuestPortalController::class, 'authenticate']);
+        Route::get('/dashboard', [\App\Http\Controllers\Api\V1\GuestPortalController::class, 'dashboard']);
         
         // Orders & Tracking
-        Route::get('/orders/{order}', [\App\Http\Controllers\API\V1\GuestOutletController::class, 'showOrder']);
-        Route::post('/orders/{outlet}', [\App\Http\Controllers\API\V1\GuestOutletController::class, 'storeOrder']);
+        Route::get('/orders/{order}', [\App\Http\Controllers\Api\V1\GuestOutletController::class, 'showOrder']);
+        Route::post('/orders/{outlet}', [\App\Http\Controllers\Api\V1\GuestOutletController::class, 'storeOrder']);
         
         // Menu & Recommendations
-        Route::get('/menu/{outlet}', [\App\Http\Controllers\API\V1\GuestOutletController::class, 'menu']);
-        Route::get('/menu/{outlet}/recommendations', [\App\Http\Controllers\API\V1\GuestOutletController::class, 'recommendations']);
+        Route::get('/menus/{outlet}', [\App\Http\Controllers\Api\V1\GuestOutletController::class, 'menu']);
+        Route::get('/menus/{outlet}/recommendations', [\App\Http\Controllers\Api\V1\GuestOutletController::class, 'recommendations']);
         
         // Service Requests
-        Route::get('/requests', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'index']);
-        Route::post('/requests', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'store']);
-        Route::post('/service-request', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'store']); // Alias for the enhancement requirement
+        Route::get('/requests', [\App\Http\Controllers\Api\V1\GuestRequestController::class, 'index']);
+        Route::post('/requests', [\App\Http\Controllers\Api\V1\GuestRequestController::class, 'store']);
+        Route::post('/service-requests', [\App\Http\Controllers\Api\V1\GuestRequestController::class, 'store']); // Alias for the enhancement requirement
         
-        Route::post('/reservations/availability', [\App\Http\Controllers\API\V1\GuestReservationController::class, 'searchAvailability']);
-        Route::post('/reservations', [\App\Http\Controllers\API\V1\GuestReservationController::class, 'store']);
+        Route::post('/reservations/availability', [\App\Http\Controllers\Api\V1\GuestReservationController::class, 'searchAvailability']);
+        Route::post('/reservations', [\App\Http\Controllers\Api\V1\GuestReservationController::class, 'store']);
     });
 
     Route::middleware(['auth:sanctum', \App\Http\Middleware\TenantMiddleware::class])->group(function () {
-        Route::apiResource('departments', \App\Http\Controllers\DepartmentController::class)->middleware('role.verify:hotel.manage');
+        Route::apiResource('departments', \App\Http\Controllers\Api\V1\DepartmentController::class)->middleware('role.verify:hotel.manage');
         Route::apiResource('hotels', \App\Http\Controllers\Controller::class)->only(['index'])->middleware('role.verify:hotel.manage');
 
         // PMS Routes
         Route::prefix('pms')->group(function () {
             // Availability
-            Route::get('/availability', [\App\Http\Controllers\API\V1\PMS\PmsAvailabilityController::class, 'index']);
+            Route::get('/availability', [\App\Http\Controllers\Api\V1\PMS\PmsAvailabilityController::class, 'index']);
 
             // Room Types
-            Route::get('/room-types', [\App\Http\Controllers\API\V1\PMS\PmsRoomTypeController::class, 'index']);
-            Route::post('/room-types', [\App\Http\Controllers\API\V1\PMS\PmsRoomTypeController::class, 'store']);
+            Route::get('/room-types', [\App\Http\Controllers\Api\V1\PMS\PmsRoomTypeController::class, 'index']);
+            Route::post('/room-types', [\App\Http\Controllers\Api\V1\PMS\PmsRoomTypeController::class, 'store']);
 
             // Rooms
-            Route::get('/rooms/map', [\App\Http\Controllers\API\V1\PMS\PmsRoomController::class, 'roomMap']);
-            Route::get('/rooms', [\App\Http\Controllers\API\V1\PMS\PmsRoomController::class, 'index']);
-            Route::post('/rooms', [\App\Http\Controllers\API\V1\PMS\PmsRoomController::class, 'store']);
-            Route::put('/rooms/{room}/status', [\App\Http\Controllers\API\V1\PMS\PmsRoomController::class, 'updateStatus']);
-            Route::put('/rooms/{room}/housekeeping', [\App\Http\Controllers\API\V1\PMS\PmsRoomController::class, 'updateHousekeeping']);
+            Route::get('/rooms/map', [\App\Http\Controllers\Api\V1\PMS\PmsRoomController::class, 'roomMap']);
+            Route::get('/rooms', [\App\Http\Controllers\Api\V1\PMS\PmsRoomController::class, 'index']);
+            Route::post('/rooms', [\App\Http\Controllers\Api\V1\PMS\PmsRoomController::class, 'store']);
+            Route::put('/rooms/{room}/status', [\App\Http\Controllers\Api\V1\PMS\PmsRoomController::class, 'updateStatus']);
+            Route::put('/rooms/{room}/housekeeping', [\App\Http\Controllers\Api\V1\PMS\PmsRoomController::class, 'updateHousekeeping']);
 
             // Guests
-            Route::get('/guests', [\App\Http\Controllers\API\V1\PMS\PmsGuestController::class, 'index']);
-            Route::post('/guests', [\App\Http\Controllers\API\V1\PMS\PmsGuestController::class, 'store']);
+            Route::get('/guests', [\App\Http\Controllers\Api\V1\PMS\PmsGuestController::class, 'index']);
+            Route::post('/guests', [\App\Http\Controllers\Api\V1\PMS\PmsGuestController::class, 'store']);
 
             // Reservations
-            Route::get('/reservations', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'index']);
-            Route::post('/reservations', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'store']);
-            Route::put('/reservations/{reservation}', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'update']);
-            Route::delete('/reservations/{reservation}', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'destroy']);
-            Route::put('/reservations/{reservation}/confirm', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'confirm']);
-            Route::post('/reservations/{reservation}/check-in', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'checkIn']);
-            Route::post('/reservations/{reservation}/check-out', [\App\Http\Controllers\API\V1\PMS\PmsReservationController::class, 'checkOut']);
+            Route::get('/reservations', [\App\Http\Controllers\Api\V1\PMS\PmsReservationController::class, 'index']);
+            Route::post('/reservations', [\App\Http\Controllers\Api\V1\PMS\PmsReservationController::class, 'store']);
+            Route::put('/reservations/{reservation}', [\App\Http\Controllers\Api\V1\PMS\PmsReservationController::class, 'update']);
+            Route::delete('/reservations/{reservation}', [\App\Http\Controllers\Api\V1\PMS\PmsReservationController::class, 'destroy']);
+            Route::put('/reservations/{reservation}/confirm', [\App\Http\Controllers\Api\V1\PMS\PmsReservationController::class, 'confirm']);
+            Route::post('/reservations/{reservation}/check-in', [\App\Http\Controllers\Api\V1\PMS\PmsReservationController::class, 'checkIn']);
+            Route::post('/reservations/{reservation}/check-out', [\App\Http\Controllers\Api\V1\PMS\PmsReservationController::class, 'checkOut']);
 
             // Folios
-            Route::get('/folios', [\App\Http\Controllers\API\V1\PMS\PmsFolioController::class, 'index']);
-            Route::post('/folios/{folio}/charge', [\App\Http\Controllers\API\V1\PMS\PmsFolioController::class, 'postCharge']);
-            Route::post('/folios/{folio}/payment', [\App\Http\Controllers\API\V1\PMS\PmsFolioController::class, 'postPayment']);
+            Route::get('/folios', [\App\Http\Controllers\Api\V1\PMS\PmsFolioController::class, 'index']);
+            Route::post('/folios/{folio}/charge', [\App\Http\Controllers\Api\V1\PMS\PmsFolioController::class, 'postCharge']);
+            Route::post('/folios/{folio}/payment', [\App\Http\Controllers\Api\V1\PMS\PmsFolioController::class, 'postPayment']);
         });
 
         // Housekeeping Tasks
         Route::prefix('housekeeping/tasks')->group(function () {
-            Route::get('/', [\App\Http\Controllers\API\V1\HousekeepingTaskController::class, 'index'])->middleware('role.verify:housekeeping.tasks.view');
-            Route::post('/{task}/assign', [\App\Http\Controllers\API\V1\HousekeepingTaskController::class, 'assign'])->middleware('role.verify:housekeeping.tasks.manage');
-            Route::post('/{task}/start', [\App\Http\Controllers\API\V1\HousekeepingTaskController::class, 'start'])->middleware('role.verify:housekeeping.tasks.manage');
-            Route::post('/{task}/complete', [\App\Http\Controllers\API\V1\HousekeepingTaskController::class, 'complete'])->middleware('role.verify:housekeeping.tasks.manage');
+            Route::get('/', [\App\Http\Controllers\Api\V1\HousekeepingTaskController::class, 'index'])->middleware('role.verify:housekeeping.tasks.view');
+            Route::post('/{task}/assign', [\App\Http\Controllers\Api\V1\HousekeepingTaskController::class, 'assign'])->middleware('role.verify:housekeeping.tasks.manage');
+            Route::post('/{task}/start', [\App\Http\Controllers\Api\V1\HousekeepingTaskController::class, 'start'])->middleware('role.verify:housekeeping.tasks.manage');
+            Route::post('/{task}/complete', [\App\Http\Controllers\Api\V1\HousekeepingTaskController::class, 'complete'])->middleware('role.verify:housekeeping.tasks.manage');
         });
 
         // Maintenance Requests
         Route::prefix('maintenance/requests')->group(function () {
-            Route::get('/', [\App\Http\Controllers\API\V1\MaintenanceRequestController::class, 'index'])->middleware('role.verify:maintenance.requests.view');
-            Route::post('/', [\App\Http\Controllers\API\V1\MaintenanceRequestController::class, 'store'])->middleware('role.verify:maintenance.requests.manage');
-            Route::post('/{maintenanceRequest}/assign', [\App\Http\Controllers\API\V1\MaintenanceRequestController::class, 'assign'])->middleware('role.verify:maintenance.requests.manage');
-            Route::post('/{maintenanceRequest}/start', [\App\Http\Controllers\API\V1\MaintenanceRequestController::class, 'start'])->middleware('role.verify:maintenance.requests.manage');
-            Route::post('/{maintenanceRequest}/resolve', [\App\Http\Controllers\API\V1\MaintenanceRequestController::class, 'resolve'])->middleware('role.verify:maintenance.requests.manage');
+            Route::get('/', [\App\Http\Controllers\Api\V1\MaintenanceRequestController::class, 'index'])->middleware('role.verify:maintenance.requests.view');
+            Route::post('/', [\App\Http\Controllers\Api\V1\MaintenanceRequestController::class, 'store'])->middleware('role.verify:maintenance.requests.manage');
+            Route::post('/{maintenanceRequest}/assign', [\App\Http\Controllers\Api\V1\MaintenanceRequestController::class, 'assign'])->middleware('role.verify:maintenance.requests.manage');
+            Route::post('/{maintenanceRequest}/start', [\App\Http\Controllers\Api\V1\MaintenanceRequestController::class, 'start'])->middleware('role.verify:maintenance.requests.manage');
+            Route::post('/{maintenanceRequest}/resolve', [\App\Http\Controllers\Api\V1\MaintenanceRequestController::class, 'resolve'])->middleware('role.verify:maintenance.requests.manage');
         });
 
         Route::apiResource('users', \App\Http\Controllers\Controller::class)->only(['index']);
         Route::apiResource('roles', \App\Http\Controllers\Controller::class)->only(['index']);
         
         Route::prefix('guest-requests')->group(function () {
-            Route::get('/', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'index'])->middleware('role.verify:guest.requests.view');
+            Route::get('/', [\App\Http\Controllers\Api\V1\GuestRequestController::class, 'index'])->middleware('role.verify:guest.requests.view');
         });
 
-        // Placeholder protected routes as requested
-        Route::prefix('rooms')->group(function() {
-            Route::middleware('role.verify:rooms.manage')->group(function() {
-                Route::get('/', function() { return response()->json(['message' => 'Rooms accessed']); });
-            });
-        });
-        Route::prefix('reservations')->group(function() {
-            Route::middleware('role.verify:reservations.manage')->group(function() {
-                Route::get('/', function() { return response()->json(['message' => 'Reservations accessed']); });
-            });
-        });
         // POS Orders
         Route::prefix('orders')->group(function() {
-            Route::get('/', [\App\Http\Controllers\OrderController::class, 'index'])->middleware('role.verify:orders.view');
-            Route::post('/', [\App\Http\Controllers\OrderController::class, 'store'])->middleware('role.verify:orders.create');
-            Route::get('/{id}', [\App\Http\Controllers\OrderController::class, 'show'])->middleware('role.verify:orders.view');
-            Route::put('/{id}/status', [\App\Http\Controllers\OrderController::class, 'updateStatus'])->middleware('role.verify:orders.update');
-            Route::delete('/{id}', [\App\Http\Controllers\OrderController::class, 'destroy'])->middleware('role.verify:orders.delete');
+            Route::get('/', [\App\Http\Controllers\Api\V1\OrderController::class, 'index'])->middleware('role.verify:orders.view');
+            Route::post('/', [\App\Http\Controllers\Api\V1\OrderController::class, 'store'])->middleware('role.verify:orders.create');
+            Route::get('/{id}', [\App\Http\Controllers\Api\V1\OrderController::class, 'show'])->middleware('role.verify:orders.view');
+            Route::put('/{id}/status', [\App\Http\Controllers\Api\V1\OrderController::class, 'updateStatus'])->middleware('role.verify:orders.update');
+            Route::delete('/{id}', [\App\Http\Controllers\Api\V1\OrderController::class, 'destroy'])->middleware('role.verify:orders.delete');
+            Route::get('/kds', [\App\Http\Controllers\Api\V1\OrderController::class, 'kds'])->middleware('role.verify:kds.view');
         });
 
         // Menu Management
-        Route::prefix('menu')->group(function() {
+        Route::prefix('menus')->group(function() {
             Route::prefix('categories')->group(function() {
                 Route::get('/', [\App\Http\Controllers\Api\V1\MenuCategoryController::class, 'index'])->middleware('role.verify:menu.view');
                 Route::post('/', [\App\Http\Controllers\Api\V1\MenuCategoryController::class, 'store'])->middleware('role.verify:menu.create');
@@ -237,10 +227,10 @@ Route::prefix('v1')->group(function () {
 
         // Payments (new integration)
         Route::prefix('payments')->group(function() {
-            Route::post('create-intent', [\App\Http\Controllers\API\V1\PaymentGatewayController::class, 'createIntent']);
-            Route::post('confirm', [\App\Http\Controllers\API\V1\PaymentGatewayController::class, 'confirm']);
-            Route::post('manual-confirm', [\App\Http\Controllers\API\V1\PaymentGatewayController::class, 'manualConfirm']);
-            Route::post('refund', [\App\Http\Controllers\API\V1\PaymentGatewayController::class, 'refund']);
+            Route::post('create-intent', [\App\Http\Controllers\Api\V1\PaymentGatewayController::class, 'createIntent']);
+            Route::post('confirm', [\App\Http\Controllers\Api\V1\PaymentGatewayController::class, 'confirm']);
+            Route::post('manual-confirm', [\App\Http\Controllers\Api\V1\PaymentGatewayController::class, 'manualConfirm']);
+            Route::post('refund', [\App\Http\Controllers\Api\V1\PaymentGatewayController::class, 'refund']);
         });
 
         // Reports & Analytics BI
@@ -266,98 +256,80 @@ Route::prefix('v1')->group(function () {
             Route::delete('/{id}', [\App\Http\Controllers\Api\V1\NotificationController::class, 'destroy'])->middleware('role.verify:notifications.manage');
         });
 
-        Route::prefix('finance')->group(function() {
-            Route::middleware('role.verify:finance.manage')->group(function() {
-                Route::get('/', function() { return response()->json(['message' => 'Finance accessed']); });
-            });
-        });
-
         // System Logs
         Route::prefix('system')->group(function() {
-            Route::get('activity-logs', [\App\Http\Controllers\API\V1\SystemLogController::class, 'activityLogs'])->middleware('role.verify:system.activity.view');
-            Route::get('audit-logs', [\App\Http\Controllers\API\V1\SystemLogController::class, 'auditLogs'])->middleware('role.verify:system.audit.view');
+            Route::get('activity-logs', [\App\Http\Controllers\Api\V1\SystemLogController::class, 'activityLogs'])->middleware('role.verify:system.activity.view');
+            Route::get('audit-logs', [\App\Http\Controllers\Api\V1\SystemLogController::class, 'auditLogs'])->middleware('role.verify:system.audit.view');
         });
 
         // Dynamic Pricing & Rate Management
         Route::prefix('pricing')->group(function () {
             // Rate Plans
-            Route::get('/rate-plans', [\App\Http\Controllers\API\V1\RatePlanController::class, 'index'])->middleware('role.verify:pricing.rate_plans.view');
-            Route::post('/rate-plans', [\App\Http\Controllers\API\V1\RatePlanController::class, 'store'])->middleware('role.verify:pricing.rate_plans.manage');
-            Route::put('/rate-plans/{ratePlan}', [\App\Http\Controllers\API\V1\RatePlanController::class, 'update'])->middleware('role.verify:pricing.rate_plans.manage');
-            Route::delete('/rate-plans/{ratePlan}', [\App\Http\Controllers\API\V1\RatePlanController::class, 'destroy'])->middleware('role.verify:pricing.rate_plans.manage');
+            Route::get('/rate-plans', [\App\Http\Controllers\Api\V1\RatePlanController::class, 'index'])->middleware('role.verify:pricing.rate_plans.view');
+            Route::post('/rate-plans', [\App\Http\Controllers\Api\V1\RatePlanController::class, 'store'])->middleware('role.verify:pricing.rate_plans.manage');
+            Route::put('/rate-plans/{ratePlan}', [\App\Http\Controllers\Api\V1\RatePlanController::class, 'update'])->middleware('role.verify:pricing.rate_plans.manage');
+            Route::delete('/rate-plans/{ratePlan}', [\App\Http\Controllers\Api\V1\RatePlanController::class, 'destroy'])->middleware('role.verify:pricing.rate_plans.manage');
 
             // Seasonal Rates
-            Route::get('/seasonal-rates', [\App\Http\Controllers\API\V1\SeasonalRateController::class, 'index'])->middleware('role.verify:pricing.rate_plans.view');
-            Route::post('/seasonal-rates', [\App\Http\Controllers\API\V1\SeasonalRateController::class, 'store'])->middleware('role.verify:pricing.seasonal_rates.manage');
-            Route::put('/seasonal-rates/{seasonalRate}', [\App\Http\Controllers\API\V1\SeasonalRateController::class, 'update'])->middleware('role.verify:pricing.seasonal_rates.manage');
-            Route::delete('/seasonal-rates/{seasonalRate}', [\App\Http\Controllers\API\V1\SeasonalRateController::class, 'destroy'])->middleware('role.verify:pricing.seasonal_rates.manage');
+            Route::get('/seasonal-rates', [\App\Http\Controllers\Api\V1\SeasonalRateController::class, 'index'])->middleware('role.verify:pricing.rate_plans.view');
+            Route::post('/seasonal-rates', [\App\Http\Controllers\Api\V1\SeasonalRateController::class, 'store'])->middleware('role.verify:pricing.seasonal_rates.manage');
+            Route::put('/seasonal-rates/{seasonalRate}', [\App\Http\Controllers\Api\V1\SeasonalRateController::class, 'update'])->middleware('role.verify:pricing.seasonal_rates.manage');
+            Route::delete('/seasonal-rates/{seasonalRate}', [\App\Http\Controllers\Api\V1\SeasonalRateController::class, 'destroy'])->middleware('role.verify:pricing.seasonal_rates.manage');
 
             // Occupancy Rules
-            Route::get('/occupancy-rules', [\App\Http\Controllers\API\V1\OccupancyRateController::class, 'index'])->middleware('role.verify:pricing.rate_plans.view');
-            Route::post('/occupancy-rules', [\App\Http\Controllers\API\V1\OccupancyRateController::class, 'store'])->middleware('role.verify:pricing.occupancy_rules.manage');
-            Route::put('/occupancy-rules/{occupancyRateRule}', [\App\Http\Controllers\API\V1\OccupancyRateController::class, 'update'])->middleware('role.verify:pricing.occupancy_rules.manage');
-            Route::delete('/occupancy-rules/{occupancyRateRule}', [\App\Http\Controllers\API\V1\OccupancyRateController::class, 'destroy'])->middleware('role.verify:pricing.occupancy_rules.manage');
+            Route::get('/occupancy-rules', [\App\Http\Controllers\Api\V1\OccupancyRateController::class, 'index'])->middleware('role.verify:pricing.rate_plans.view');
+            Route::post('/occupancy-rules', [\App\Http\Controllers\Api\V1\OccupancyRateController::class, 'store'])->middleware('role.verify:pricing.occupancy_rules.manage');
+            Route::put('/occupancy-rules/{occupancyRateRule}', [\App\Http\Controllers\Api\V1\OccupancyRateController::class, 'update'])->middleware('role.verify:pricing.occupancy_rules.manage');
+            Route::delete('/occupancy-rules/{occupancyRateRule}', [\App\Http\Controllers\Api\V1\OccupancyRateController::class, 'destroy'])->middleware('role.verify:pricing.occupancy_rules.manage');
         });
         // Global Admin Dashboard & Resources
         Route::prefix('admin')->group(function () {
             // Protected by active subscription
             Route::middleware('subscription.active')->group(function() {
-                Route::post('/payment-gateways/test', [\App\Http\Controllers\API\V1\PaymentGatewayController::class, 'testConnection']);
-                Route::get('/dashboard/occupancy', [\App\Http\Controllers\API\V1\DashboardController::class, 'occupancy']);
-                Route::get('/dashboard/revenue', [\App\Http\Controllers\API\V1\DashboardController::class, 'revenue']);
-                Route::get('/dashboard/operations', [\App\Http\Controllers\API\V1\DashboardController::class, 'operations']);
+                Route::post('/payment-gateways/test', [\App\Http\Controllers\Api\V1\PaymentGatewayController::class, 'testConnection']);
+                Route::get('/dashboard/occupancy', [\App\Http\Controllers\Api\V1\DashboardController::class, 'occupancy']);
+                Route::get('/dashboard/revenue', [\App\Http\Controllers\Api\V1\DashboardController::class, 'revenue']);
+                Route::get('/dashboard/operations', [\App\Http\Controllers\Api\V1\DashboardController::class, 'operations']);
                 
-                Route::get('/orders/live', [\App\Http\Controllers\OrderController::class, 'live']);
-                Route::get('/orders/pos', [\App\Http\Controllers\OrderController::class, 'posOrders']);
+                Route::get('/orders/live', [\App\Http\Controllers\Api\V1\OrderController::class, 'live']);
+                Route::get('/orders/pos', [\App\Http\Controllers\Api\V1\OrderController::class, 'posOrders']);
                 
-                Route::get('/housekeeping/status', [\App\Http\Controllers\API\V1\HousekeepingTaskController::class, 'statusSummary']);
-                Route::get('/service-requests', [\App\Http\Controllers\API\V1\GuestRequestController::class, 'index']); // Alias
+                Route::get('/housekeeping/status', [\App\Http\Controllers\Api\V1\HousekeepingTaskController::class, 'statusSummary']);
+                Route::get('/service-requests', [\App\Http\Controllers\Api\V1\GuestRequestController::class, 'index']); // Alias
 
                 // Revenue Intelligence
-        Route::prefix('revenue')->group(function () {
-            Route::get('/insights', [RevenueInsightController::class, 'index']);
-            Route::get('/summary', [RevenueInsightController::class, 'summary']);
-            Route::post('/trigger', [RevenueInsightController::class, 'triggerSync']);
-            Route::put('/config', [RevenueInsightController::class, 'updateConfig']);
-        });
+                Route::prefix('revenue')->group(function () {
+                    Route::get('/insights', [RevenueInsightController::class, 'index']);
+                    Route::get('/summary', [RevenueInsightController::class, 'summary']);
+                    Route::post('/trigger', [RevenueInsightController::class, 'triggerSync']);
+                    Route::put('/config', [RevenueInsightController::class, 'updateConfig']);
+                });
 
-        // OTA Channel Manager
+                // OTA Channel Manager
                 Route::prefix('ota')->group(function () {
-                    Route::get('/channels', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'index']);
-                    Route::get('/connections', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'connections']);
-                    Route::post('/connect', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'connect']);
-                    Route::delete('/disconnect/{channelId}', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'disconnect']);
-                    Route::post('/sync', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'triggerSync']);
-                    Route::post('/map/room-type', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'mapRoomType']);
-                    Route::post('/map/rate-plan', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'mapRatePlan']);
-                    Route::get('/sync-logs', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'syncLogs']);
-                    Route::get('/reservations', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'otaReservations']);
+                    Route::get('/channels', [\App\Http\Controllers\Api\V1\OtaChannelController::class, 'index']);
+                    Route::get('/connections', [\App\Http\Controllers\Api\V1\OtaChannelController::class, 'connections']);
+                    Route::post('/connect', [\App\Http\Controllers\Api\V1\OtaChannelController::class, 'connect']);
+                    Route::delete('/disconnect/{channelId}', [\App\Http\Controllers\Api\V1\OtaChannelController::class, 'disconnect']);
+                    Route::post('/sync', [\App\Http\Controllers\Api\V1\OtaChannelController::class, 'triggerSync']);
+                    Route::post('/map/room-type', [\App\Http\Controllers\Api\V1\OtaChannelController::class, 'mapRoomType']);
+                    Route::post('/map/rate-plan', [\App\Http\Controllers\Api\V1\OtaChannelController::class, 'mapRatePlan']);
+                    Route::get('/sync-logs', [\App\Http\Controllers\Api\V1\OtaChannelController::class, 'syncLogs']);
+                    Route::get('/reservations', [\App\Http\Controllers\Api\V1\OtaChannelController::class, 'otaReservations']);
                 });
             });
 
             // Subscription management for hotel admins - EXEMPT from subscription.active
             Route::prefix('subscription')->group(function() {
-                Route::get('/current', [\App\Http\Controllers\API\V1\PlatformSubscriptionController::class, 'current']);
-                Route::get('/plans', [\App\Http\Controllers\API\V1\PlatformSubscriptionController::class, 'plans']);
-                Route::post('/checkout', [\App\Http\Controllers\API\V1\PlatformSubscriptionController::class, 'checkout']);
-                Route::get('/invoices', [\App\Http\Controllers\API\V1\PlatformSubscriptionController::class, 'invoices']);
+                Route::get('/current', [\App\Http\Controllers\Api\V1\PlatformSubscriptionController::class, 'current']);
+                Route::get('/plans', [\App\Http\Controllers\Api\V1\PlatformSubscriptionController::class, 'plans']);
+                Route::post('/checkout', [\App\Http\Controllers\Api\V1\PlatformSubscriptionController::class, 'checkout']);
+                Route::get('/invoices', [\App\Http\Controllers\Api\V1\PlatformSubscriptionController::class, 'invoices']);
             });
 
             // Platform owner analytics (Usually restricted to super-admin)
-            Route::get('/platform/analytics', [\App\Http\Controllers\API\V1\PlatformSubscriptionController::class, 'analytics']);
+            Route::get('/platform/analytics', [\App\Http\Controllers\Api\V1\PlatformSubscriptionController::class, 'analytics']);
         });
     });
 });
 
-// Load Module Routes
-$modules = ['HotelManagement', 'Rooms', 'Reservations', 'Restaurant', 'POS', 'Inventory', 'Finance', 'Notifications', 'Analytics'];
-foreach ($modules as $module) {
-    $moduleRoutePath = base_path("modules/{$module}/Routes/api.php");
-    if (file_exists($moduleRoutePath)) {
-        Route::prefix('v1/' . strtolower($module))
-            ->middleware('api')
-            ->group(function () use ($moduleRoutePath) {
-                require $moduleRoutePath;
-            });
-    }
-}
