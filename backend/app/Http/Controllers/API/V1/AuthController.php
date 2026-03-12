@@ -21,11 +21,11 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::with(['roles', 'hotel', 'hotelGroup'])->where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
@@ -35,13 +35,12 @@ class AuthController extends Controller
 
         $token = $user->createToken('admin-token')->plainTextToken;
 
-        // Dispatch Login Event for Alerts
         event(new \Illuminate\Auth\Events\Login('sanctum', $user, false));
 
         return response()->json([
-            'user' => $user,
-            'token' => $token,
-            'message' => 'Login successful'
+            'user'    => $this->formatUser($user),
+            'token'   => $token,
+            'message' => 'Login successful',
         ]);
     }
 
@@ -58,9 +57,39 @@ class AuthController extends Controller
     /**
      * Get Current Authenticated User
      */
+    /**
+     * GET /api/v1/auth/user and /api/v1/auth/me (AuthProvider calls /me)
+     */
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json($this->formatUser($request->user()->load(['roles', 'hotel', 'hotelGroup'])));
+    }
+
+    public function me(Request $request)
+    {
+        return $this->user($request);
+    }
+
+    /**
+     * Return a consistent user payload to the frontend, including slugs needed
+     * for role-based redirect routing in AuthProvider.tsx.
+     */
+    private function formatUser(User $user): array
+    {
+        return [
+            'id'              => $user->id,
+            'name'            => $user->name,
+            'email'           => $user->email,
+            'hotel_id'        => $user->hotel_id,
+            'hotel_group_id'  => $user->hotel_group_id ?? null,
+            'outlet_id'       => $user->outlet_id ?? null,
+            'is_super_admin'  => (bool) $user->is_super_admin,
+            'roles'           => $user->roles->map(fn($r) => [
+                'id'   => $r->id,
+                'name' => $r->name,
+                'slug' => strtolower(str_replace(' ', '-', $r->name)),
+            ])->values(),
+        ];
     }
 
     /**

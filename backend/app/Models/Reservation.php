@@ -2,68 +2,57 @@
 
 namespace App\Models;
 
+use App\Jobs\GenerateDigitalKeyJob;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Tenantable;
-use App\Traits\DashboardCacheCleaner;
 
 class Reservation extends Model
 {
-    use HasFactory, Tenantable, DashboardCacheCleaner;
+    use HasFactory, Tenantable;
 
     protected $fillable = [
         'hotel_id',
+        'room_id',
         'guest_id',
-        'reservation_number',
         'check_in_date',
         'check_out_date',
         'status',
-        'source',
-        'total_amount',
         'adults',
         'children',
+        'total_amount',
         'special_requests',
-        'modification_deadline',
-        'deposit_amount',
-        'deposit_paid',
-        'rate_plan_id',
-        'locked_price',
+        'source',
+        'payment_reference',
     ];
 
     protected $casts = [
-        'check_in_date' => 'date',
+        'check_in_date'  => 'date',
         'check_out_date' => 'date',
-        'total_amount' => 'decimal:2',
-        'adults' => 'integer',
-        'children' => 'integer',
-        'modification_deadline' => 'datetime',
-        'deposit_amount' => 'decimal:2',
-        'deposit_paid' => 'boolean',
-        'locked_price' => 'decimal:2',
+        'total_amount'   => 'decimal:2',
     ];
 
-    public function hotel()
-    {
-        return $this->belongsTo(Hotel::class);
-    }
+    // ─── Relationships ────────────────────────────────────────────────────────
 
-    public function guest()
-    {
-        return $this->belongsTo(Guest::class);
-    }
-    
-    public function rooms()
-    {
-        return $this->belongsToMany(Room::class, 'reservation_rooms')->withPivot('rate')->withTimestamps();
-    }
-    
-    public function folios()
-    {
-        return $this->hasMany(Folio::class);
-    }
+    public function hotel()     { return $this->belongsTo(Hotel::class); }
+    public function room()      { return $this->belongsTo(Room::class); }
+    public function guest()     { return $this->belongsTo(Guest::class); }
+    public function folio()     { return $this->hasOne(Folio::class); }
+    public function digitalKeys() { return $this->hasMany(DigitalKey::class); }
 
-    public function ratePlan()
+    // ─── Check-in trigger ─────────────────────────────────────────────────────
+
+    protected static function booted(): void
     {
-        return $this->belongsTo(RatePlan::class);
+        static::updated(function (Reservation $reservation) {
+            // When status transitions to 'checked_in', generate the digital door key
+            if (
+                $reservation->isDirty('status') &&
+                $reservation->status === 'checked_in' &&
+                $reservation->getOriginal('status') !== 'checked_in'
+            ) {
+                GenerateDigitalKeyJob::dispatch($reservation)->onQueue('lock-keys');
+            }
+        });
     }
 }

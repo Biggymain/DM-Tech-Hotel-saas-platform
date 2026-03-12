@@ -15,18 +15,45 @@ Route::post('v1/payments/webhook/{gateway}', [\App\Http\Controllers\API\V1\Payme
 Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('register-hotel', [\App\Http\Controllers\Auth\HotelRegistrationController::class, 'register']);
+        Route::post('register-group', [\App\Http\Controllers\API\V1\GroupRegistrationController::class, 'register']); // Public — no tenant scope
         Route::post('login', [\App\Http\Controllers\API\V1\AuthController::class, 'login']);
         Route::post('forgot-password', [\App\Http\Controllers\API\V1\AuthController::class, 'forgotPassword']);
         Route::post('reset-password', [\App\Http\Controllers\API\V1\AuthController::class, 'resetPassword']);
-        
+
         Route::middleware('auth:sanctum')->group(function () {
             Route::get('me', [\App\Http\Controllers\API\V1\AuthController::class, 'user']);
             Route::post('logout', [\App\Http\Controllers\API\V1\AuthController::class, 'logout']);
         });
     });
 
+    // Organization Management (GROUP_ADMIN + SUPER_ADMIN only — no single-hotel tenant scope needed)
+    Route::prefix('organization')->middleware('auth:sanctum')->group(function () {
+        Route::get('/overview', [\App\Http\Controllers\API\V1\OrganizationController::class, 'overview']);
+        Route::get('/branches', [\App\Http\Controllers\API\V1\OrganizationController::class, 'branches']);
+        Route::post('/branches', [\App\Http\Controllers\API\V1\OrganizationController::class, 'store']);
+    });
+
+    // ── HARDWARE INTEGRATION — DOOR LOCKS ────────────────────────────────────
+    // Webhook: No auth — secured by HMAC-SHA256 Shared Secret inside the controller.
+    Route::post('/integration/lock-events', [\App\Http\Controllers\API\V1\LockEventController::class, 'receive'])
+        ->middleware('throttle:60,1');
+    // Admin view of lock events (auth required)
+    Route::get('/integration/lock-events', [\App\Http\Controllers\API\V1\LockEventController::class, 'index'])
+        ->middleware('auth:sanctum');
+
     // Public Channel Webhooks — OTA push notifications
     Route::post('/channels/webhook/{channel}', [\App\Http\Controllers\API\V1\OtaChannelController::class, 'webhook']);
+
+    // ── PUBLIC BOOKING ENGINE ─────────────────────────────────────────────────
+    // No auth required. Tenant is resolved from {hotel_slug} or Host header
+    // via DomainTenantMiddleware. Rate-limited to prevent abuse.
+    Route::prefix('booking')->middleware(['throttle:60,1'])->group(function () {
+        $ctrl = \App\Http\Controllers\API\V1\PublicBookingController::class;
+        Route::get('/{hotel_slug}',                  [$ctrl, 'show']);
+        Route::get('/{hotel_slug}/availability',     [$ctrl, 'availability']);
+        Route::post('/{hotel_slug}/reserve',         [$ctrl, 'reserve']);
+        Route::post('/{hotel_slug}/confirm-payment', [$ctrl, 'confirmPayment']);
+    });
 
     // Guest Portal (Public start, then protected by TenantMiddleware)
     Route::prefix('guest')->middleware(['throttle:10,1', \App\Http\Middleware\TenantMiddleware::class])->group(function () {

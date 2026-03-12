@@ -15,10 +15,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role.verify' => \App\Http\Middleware\RoleVerificationMiddleware::class,
+            'tenant'      => \App\Http\Middleware\TenantIsolationMiddleware::class,
         ]);
         $middleware->api(prepend: [
-            \App\Http\Middleware\ForceJsonResponse::class,
-            \App\Http\Middleware\TenantIsolationMiddleware::class,
+            \App\Http\Middleware\CorsMiddleware::class,           // 1st — handle preflight OPTIONS
+            \App\Http\Middleware\ForceJsonResponse::class,        // 2nd — always JSON
+            \App\Http\Middleware\TenantIsolationMiddleware::class, // 3rd — tenant scoping
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
