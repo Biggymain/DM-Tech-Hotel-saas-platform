@@ -1,0 +1,16 @@
+{
+  "name": "DM Tech Guest Portal",
+  "short_name": "DM Guest",
+  "description": "Premium Guest Portal for DM Tech Hotel",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
