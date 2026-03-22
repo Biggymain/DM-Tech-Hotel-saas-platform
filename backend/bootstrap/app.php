@@ -18,12 +18,15 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'role.verify' => \App\Http\Middleware\RoleVerificationMiddleware::class,
-            'tenant'      => \App\Http\Middleware\TenantIsolationMiddleware::class,
+            'role.verify'   => \App\Http\Middleware\RoleVerificationMiddleware::class,
+            'tenant'        => \App\Http\Middleware\TenantIsolationMiddleware::class,
+            'tenant.branch' => \App\Http\Middleware\TenantBranchContext::class,
+            'module.active' => \App\Http\Middleware\ModuleAccessMiddleware::class,
         ]);
         $middleware->api(prepend: [
             \App\Http\Middleware\ForceJsonResponse::class,        // 2nd — always JSON
             \App\Http\Middleware\TenantIsolationMiddleware::class, // 3rd — tenant scoping
+            \App\Http\Middleware\TenantBranchContext::class,       // newly added context
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

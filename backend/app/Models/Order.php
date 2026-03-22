@@ -2,13 +2,45 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Traits\Tenantable;
+use App\Models\BaseModel;
 use App\Traits\DashboardCacheCleaner;
 
-class Order extends Model
+class Order extends BaseModel
 {
-    use Tenantable, DashboardCacheCleaner;
+    use DashboardCacheCleaner;
+
+    protected static function booted()
+    {
+        $createSyncRecord = function ($order, $action) {
+            if (empty($order->uuid) && $action === 'created') {
+                $order->uuid = (string) \Illuminate\Support\Str::uuid();
+                $order->saveQuietly();
+            }
+
+            $sync = \App\Models\SyncQueue::create([
+                'uuid' => (string) \Illuminate\Support\Str::uuid(),
+                'model_type' => get_class($order),
+                'model_uuid' => $order->uuid ?? null,
+                'action' => $action,
+                'payload' => [
+                    'uuid' => $order->uuid,
+                    'model' => get_class($order),
+                    'data' => clone $order,
+                    'action' => $action,
+                    'device_timestamp' => now()->toIso8601String()
+                ],
+                'status' => 'pending'
+            ]);
+
+            if (\App\Helpers\InternetConnection::isConnected()) {
+                \App\Jobs\SyncOrderToCloudJob::dispatch($sync->id);
+            }
+        };
+
+        static::created(fn($order) => $createSyncRecord($order, 'created'));
+        static::updated(fn($order) => $createSyncRecord($order, 'updated'));
+        static::deleted(fn($order) => $createSyncRecord($order, 'deleted'));
+    }
 
     protected $fillable = [
         'hotel_id',

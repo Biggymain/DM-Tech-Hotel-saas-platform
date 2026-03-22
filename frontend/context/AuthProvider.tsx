@@ -14,6 +14,8 @@ export interface User {
   outlet_id: number | null;
   is_super_admin: boolean;
   roles: { id: number; name: string; slug: string }[];
+  active_modules: string[];
+  permissions: string[];
   is_on_duty: boolean;
   last_duty_toggle_at: string | null;
   must_change_password: boolean;
@@ -26,6 +28,8 @@ interface AuthContextType {
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
   toggleDuty: () => Promise<void>;
+  hasModule: (moduleSlug: string) => boolean;
+  hasPermission: (permissionSlug: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -153,8 +157,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const hasModule = (moduleSlug: string) => {
+    if (!user) return false;
+    if (user.is_super_admin) return true;
+    if (user.hotel_group_id && !user.hotel_id) return true; // Group Admin bypass
+    return user.active_modules?.includes(moduleSlug) || false;
+  };
+
+  const hasPermission = (permissionSlug: string) => {
+    if (!user) return false;
+    if (user.is_super_admin) return true;
+    return user.permissions?.includes(permissionSlug) || user.permissions?.includes('*') || false;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, checkAuth, toggleDuty }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout, checkAuth, toggleDuty, hasModule, hasPermission }}>
       {children}
     </AuthContext.Provider>
   );

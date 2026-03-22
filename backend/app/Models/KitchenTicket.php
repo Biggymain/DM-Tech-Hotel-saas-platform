@@ -2,14 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel;
 
-use App\Traits\Tenantable;
-
-class KitchenTicket extends Model
+class KitchenTicket extends BaseModel
 {
-    use Tenantable;
-
     protected $fillable = [
         'hotel_id',
         'order_id',

@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { PlusIcon, Loader2, Wine, ChefHat, Store, Trash2, ChevronRight } from 'lucide-react';
+import { PlusIcon, Loader2, Wine, ChefHat, Store, Trash2, ChevronRight, PrinterIcon } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger,
 } from '@/components/ui/dialog';
@@ -30,6 +30,50 @@ export default function OutletsPage() {
       return data ?? [];
     },
   });
+
+  const { data: overview } = useQuery({
+    queryKey: ['org-overview'],
+    queryFn: async () => {
+      const { data } = await api.get('/api/v1/organization/overview');
+      return data;
+    },
+  });
+
+  const printOutletQrs = (outlet: any) => {
+    if (!outlet.tables_count || outlet.tables_count === 0) {
+        toast.error('This outlet has no tables configured. Please update tables count in POS Settings.');
+        return;
+    }
+    const tenantId = overview?.group?.id || '';
+    const branchId = overview?.hotel?.id || '';
+    
+    const win = window.open('', '_blank');
+    if (win) {
+      win.document.write(`<html><head><title>Bulk QRs - ${outlet.name}</title><style>
+          body { font-family: sans-serif; margin: 0; padding: 20px; }
+          .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+          .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+          .qr-card { border: 1px solid #ddd; border-radius: 8px; padding: 15px; text-align: center; page-break-inside: avoid; }
+          .label { font-weight: bold; font-size: 14px; margin-top: 5px; }
+          .sub-label { font-size: 10px; color: #666; margin-top: 2px; }
+          @media print { .no-print { display: none; } }
+      </style></head><body>`);
+      win.document.write(`<div class="header"><h1>${outlet.name} - Table QR Codes</h1><button onclick="window.print()" class="no-print">Print Now</button></div>`);
+      win.document.write('<div class="grid">');
+      
+      for(let i=1; i<=outlet.tables_count; i++) {
+          const url = `http://localhost:3002/?tenant=${tenantId}&branch=${branchId}&outlet_id=${outlet.id}&table=${i}`;
+          const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`;
+          win.document.write(`<div class="qr-card">
+              <img src="${qrImgUrl}" width="150" height="150" />
+              <div class="label">TABLE ${i}</div>
+              <div class="sub-label">${outlet.name}</div>
+          </div>`);
+      }
+      win.document.write('</div></body></html>');
+      win.document.close();
+    }
+  };
 
   const createMutation = useMutation({
     mutationFn: (data: any) => api.post('/api/v1/outlets', data),
@@ -147,7 +191,13 @@ export default function OutletsPage() {
                           {outlet.is_active ? 'Active' : 'Inactive'}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right space-x-2">
+                      <TableCell className="text-right flex items-center justify-end gap-2">
+                        {outlet.tables_count > 0 && (
+                          <Button variant="outline" size="sm" className="h-8 gap-1" onClick={() => printOutletQrs(outlet)}>
+                            <PrinterIcon className="h-3 w-3" />
+                            Print Tables
+                          </Button>
+                        )}
                         <Button variant="outline" size="sm" className="h-8 gap-1" asChild>
                           <Link href={`/branch/${params.slug}/pos?outlet_id=${outlet.id}`}>
                             Manage

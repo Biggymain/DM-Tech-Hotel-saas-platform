@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Traits\Tenantable;
+use App\Models\BaseModel;
 
-class RestaurantOrder extends Model
+class RestaurantOrder extends BaseModel
 {
-    use Tenantable;
 }

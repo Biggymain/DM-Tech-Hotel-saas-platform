@@ -80,6 +80,32 @@ class AuthController extends Controller
      */
     private function formatUser(User $user): array
     {
+        $active_modules = [];
+        $permissions = [];
+
+        if ($user->hotel_id) {
+            $active_modules = DB::table('hotel_modules')
+                ->join('modules', 'hotel_modules.module_id', '=', 'modules.id')
+                ->where('hotel_modules.hotel_id', $user->hotel_id)
+                ->where('hotel_modules.is_enabled', true)
+                ->pluck('modules.slug')
+                ->toArray();
+        }
+
+        if ($user->is_super_admin) {
+            $permissions = ['*'];
+        } else {
+            foreach ($user->roles as $role) {
+                $rolePerms = DB::table('role_permissions')
+                    ->join('permissions', 'role_permissions.permission_id', '=', 'permissions.id')
+                    ->where('role_permissions.role_id', $role->id)
+                    ->pluck('permissions.slug')
+                    ->toArray();
+                $permissions = array_merge($permissions, $rolePerms);
+            }
+            $permissions = array_values(array_unique($permissions));
+        }
+
         return [
             'id'              => $user->id,
             'name'            => $user->name,
@@ -95,6 +121,8 @@ class AuthController extends Controller
                 'name' => $r->name,
                 'slug' => strtolower(str_replace(' ', '-', $r->name)),
             ])->values(),
+            'active_modules'  => $active_modules,
+            'permissions'     => $permissions,
         ];
     }
 

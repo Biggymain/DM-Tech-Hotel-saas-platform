@@ -15,6 +15,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./backend:/var/www
+      - sqlite_data:/var/www/database/sqlite
     environment:
       - DB_HOST=db
       - REDIS_HOST=redis
@@ -39,6 +40,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./backend:/var/www
+      - sqlite_data:/var/www/database/sqlite
     depends_on:
       - app
       - redis
@@ -61,6 +63,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./backend:/var/www
+      - sqlite_data:/var/www/database/sqlite
     depends_on:
       - app
       - db
@@ -125,4 +128,6 @@ networks:
 
 volumes:
   dbdata:
+    driver: local
+  sqlite_data:
     driver: local
