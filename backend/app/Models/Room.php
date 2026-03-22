@@ -9,7 +9,7 @@ use App\Traits\DashboardCacheCleaner;
 
 class Room extends Model
 {
-    use HasFactory, Tenantable, DashboardCacheCleaner;
+    use HasFactory, Tenantable, DashboardCacheCleaner, \App\Traits\Syncable;
 
     protected $fillable = [
         'hotel_id',

@@ -26,7 +26,13 @@ class User extends Authenticatable
         'last_duty_toggle_at',
         'is_super_admin',
         'must_change_password',
+        'kitchen_station_id',
     ];
+
+    public function kitchenStation()
+    {
+        return $this->belongsTo(KitchenStation::class);
+    }
 
     protected $hidden = [
         'password',

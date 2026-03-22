@@ -232,26 +232,8 @@ class PublicBookingController extends Controller
                 $reservation->rooms()->attach($room->id, ['rate' => $roomType->base_price]);
             }
 
-            // 3. Create Folio for the reservation (financial ledger)
-            $folio = Folio::withoutGlobalScopes()->create([
-                'hotel_id'          => $hotel->id,
-                'reservation_id'    => $reservation->id,
-                'guest_id'          => $guest->id,
-                'status'            => 'open',
-                'currency'          => $hotel->group?->currency ?? 'USD',
-            ]);
-
-            // 4. Post room charge to folio (PENDING — awaits payment)
-            FolioItem::withoutGlobalScopes()->create([
-                'hotel_id'       => $hotel->id,
-                'folio_id'       => $folio->id,
-                'description'    => "Room Charge – {$nights} night(s) × {$quantity} {$roomType->name}",
-                'amount'         => $totalAmount,
-                'source'         => 'ROOM',
-                'status'         => 'PENDING',
-                'posted_at'      => now(),
-                'audit_date'     => $checkIn,
-            ]);
+            // [OFFLOADED TO JOB] Folio and FolioItem creation moved to ProcessBookingJob
+            \App\Jobs\ProcessBookingJob::dispatch($reservation)->afterCommit();
 
             // 5. Resolve payment gateway for frontend to initiate payment
             $paymentConfig = app(PaymentGatewayResolver::class)->publicConfig($hotel);
@@ -259,7 +241,6 @@ class PublicBookingController extends Controller
             return response()->json([
                 'message'        => 'Reservation created. Complete payment to confirm.',
                 'reservation_id' => $reservation->id,
-                'folio_id'       => $folio->id,
                 'amount'         => $totalAmount,
                 'nights'         => $nights,
                 'guest_email'    => $validated['guest_email'],
@@ -299,17 +280,17 @@ class PublicBookingController extends Controller
                 'payment_reference'  => $validated['reference'],
             ]);
 
-            // Mark folio items as paid
-            FolioItem::withoutGlobalScopes()
-                ->where('folio_id', $reservation->folio?->id)
-                ->where('status', 'PENDING')
-                ->update(['status' => 'PAID']);
+            // [CHAINED JOB] Booking Confirmation -> Sync to Cloud
+            \Illuminate\Support\Facades\Bus::chain([
+                new \App\Jobs\ProcessBookingJob($reservation),
+                new \App\Jobs\SyncToCloudJob(),
+            ])->dispatch();
         });
 
         return response()->json([
-            'message'        => 'Reservation confirmed successfully!',
+            'message'        => 'Reservation processing initiated.',
             'reservation_id' => $reservation->id,
-            'status'         => 'confirmed',
+            'status'         => 'processing',
         ]);
     }
 }

@@ -18,8 +18,11 @@ Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('register-hotel', [\App\Http\Controllers\Auth\HotelRegistrationController::class, 'register']);
         Route::post('register-group', [GroupRegistrationController::class, 'register']); // Public — no tenant scope
-        Route::post('login', [AuthController::class, 'login']);
-        Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
+        Route::get('sla/dashboard', [SLADashboardController::class, 'activeTickets']);
+        Route::get('sla/branch-overview', [SLADashboardController::class, 'branchOverview']);
+        Route::get('sla/report', [SLADashboardController::class, 'performanceReport']);
+        Route::post('login', [AuthController::class, 'login']); // Kept existing route
+        Route::post('forgot-password', [AuthController::class, 'forgotPassword']); // Kept existing route
         Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
         Route::middleware('auth:sanctum')->group(function () {
@@ -59,6 +62,7 @@ Route::prefix('v1')->group(function () {
     // Cloud Edge-Node Sync Ingestion Endpoint
     Route::get('/sync/status', [\App\Http\Controllers\Api\V1\SyncController::class, 'syncStatus']);
     Route::post('/sync/batch', [\App\Http\Controllers\Api\V1\SyncController::class, 'batchSync']);
+    Route::post('/sync/ingest', [\App\Http\Controllers\Api\V1\CloudSyncController::class, 'ingest']);
 
     // ── PUBLIC BOOKING ENGINE ─────────────────────────────────────────────────
     // No auth required. Tenant is resolved from {hotel_slug} or Host header
@@ -216,10 +220,17 @@ Route::prefix('v1')->group(function () {
 
         // Kitchen Display System (KDS)
         Route::middleware(['module.active:kitchen'])->prefix('kds')->group(function() {
+            Route::apiResource('stations', \App\Http\Controllers\Api\V1\KitchenStationController::class)->middleware('role.verify:settings.manage');
             Route::get('/tickets', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'index'])->middleware('role.verify:kds.view');
             Route::get('/tickets/{id}', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'show'])->middleware('role.verify:kds.view');
             Route::put('/tickets/{id}/status', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'updateStatus'])->middleware('role.verify:kds.update');
+            Route::put('/inventory/{id}/toggle', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'toggleAvailability'])->middleware('role.verify:kds.update');
+            Route::post('/restock', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'requestRestock'])->middleware('role.verify:kds.update');
             Route::put('/items/{id}/status', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'updateItemStatus'])->middleware('role.verify:kds.update');
+
+            // SLA Dashboard
+            Route::get('/sla/active', [\App\Http\Controllers\Api\V1\SLADashboardController::class, 'activeTickets'])->middleware('role.verify:manager.view');
+            Route::get('/sla/report', [\App\Http\Controllers\Api\V1\SLADashboardController::class, 'performanceReport'])->middleware('role.verify:manager.view');
         });
 
         // Inventory Management
