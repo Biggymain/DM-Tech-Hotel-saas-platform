@@ -24,6 +24,22 @@ export default function GuestLandingPage() {
   const [isLoadingRecs, setIsLoadingRecs] = React.useState(false);
 
   React.useEffect(() => {
+    // Intercept QR Code structural parameters and lock session internally
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tenant = params.get('tenant');
+      const branch = params.get('branch');
+      const room = params.get('room_id');
+      const outlet = params.get('outlet_id');
+      const table = params.get('table');
+
+      if (tenant) localStorage.setItem('tenant_id', tenant);
+      if (branch) localStorage.setItem('branch_id', branch);
+      if (room) localStorage.setItem('room_id', room);
+      if (outlet) localStorage.setItem('outlet_id', outlet);
+      if (table) localStorage.setItem('table_number', table);
+    }
+
     const fetchRecs = async () => {
       try {
         setIsLoadingRecs(true);

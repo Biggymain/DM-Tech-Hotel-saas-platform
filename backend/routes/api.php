@@ -56,6 +56,10 @@ Route::prefix('v1')->group(function () {
     // Public Channel Webhooks — OTA push notifications
     Route::post('/channels/webhook/{channel}', [\App\Http\Controllers\Api\V1\OtaChannelController::class, 'webhook']);
 
+    // Cloud Edge-Node Sync Ingestion Endpoint
+    Route::get('/sync/status', [\App\Http\Controllers\Api\V1\SyncController::class, 'syncStatus']);
+    Route::post('/sync/batch', [\App\Http\Controllers\Api\V1\SyncController::class, 'batchSync']);
+
     // ── PUBLIC BOOKING ENGINE ─────────────────────────────────────────────────
     // No auth required. Tenant is resolved from {hotel_slug} or Host header
     // via DomainTenantMiddleware. Rate-limited to prevent abuse.
@@ -173,7 +177,7 @@ Route::prefix('v1')->group(function () {
         });
 
         // POS Orders
-        Route::prefix('orders')->group(function() {
+        Route::middleware(['module.active:pos'])->prefix('orders')->group(function() {
             Route::get('/', [\App\Http\Controllers\Api\V1\OrderController::class, 'index'])->middleware('role.verify:orders.view');
             Route::post('/', [\App\Http\Controllers\Api\V1\OrderController::class, 'store'])->middleware('role.verify:orders.create');
             Route::get('/{order}', [\App\Http\Controllers\Api\V1\OrderController::class, 'show'])->middleware('role.verify:orders.view');
@@ -211,7 +215,7 @@ Route::prefix('v1')->group(function () {
         });
 
         // Kitchen Display System (KDS)
-        Route::prefix('kds')->group(function() {
+        Route::middleware(['module.active:kitchen'])->prefix('kds')->group(function() {
             Route::get('/tickets', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'index'])->middleware('role.verify:kds.view');
             Route::get('/tickets/{id}', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'show'])->middleware('role.verify:kds.view');
             Route::put('/tickets/{id}/status', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'updateStatus'])->middleware('role.verify:kds.update');

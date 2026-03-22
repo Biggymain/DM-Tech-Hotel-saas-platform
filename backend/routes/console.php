@@ -37,3 +37,7 @@ Artisan::command('pms:night-audit', function () {
     $this->info('Night audit finished.');
 })->purpose('Post daily room charges for all active reservations')
   ->dailyAt('02:00');
+
+\Illuminate\Support\Facades\Schedule::command('sync:cleanup')->daily();
+
+\Illuminate\Support\Facades\Schedule::job(new \App\Jobs\BatchSyncToCloudJob)->everyMinute()->withoutOverlapping();

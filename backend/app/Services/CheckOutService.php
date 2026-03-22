@@ -50,6 +50,14 @@ class CheckOutService
                 ]);
             }
 
+            // Security: Explicitly drop Lodger PIN codes and destroy linked portal sessions upon check-out
+            if ($reservation->guest_id) {
+                \App\Models\Guest::where('id', $reservation->guest_id)->update(['pin_code' => null]);
+                \App\Models\GuestPortalSession::where('reservation_id', $reservation->id)
+                    ->orWhere('guest_id', $reservation->guest_id)
+                    ->delete();
+            }
+
             // Fire Event
             event(new GuestCheckedOut($reservation));
 

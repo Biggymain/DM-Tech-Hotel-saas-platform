@@ -22,7 +22,8 @@ import {
   Loader2,
   TrendingUp,
   HotelIcon,
-  SparklesIcon
+  SparklesIcon,
+  PrinterIcon
 } from 'lucide-react';
 import Link from 'next/link';
 import api from '@/lib/api';
@@ -69,11 +70,39 @@ export default function BranchRoomsPage() {
       queryClient.invalidateQueries({ queryKey: ['branch-rooms-list'] });
       setOpen(false);
       setForm({ room_type_id: '', room_number: '', floor: '' });
-    },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message ?? 'Failed to create room.');
     },
   });
+
+  const printRoomQr = (room: any) => {
+    // Determine branch and tenant IDs from overview
+    const tenantId = overview?.group?.id || '';
+    const branchId = overview?.hotel?.id || '';
+    
+    // Direct link to the Guest Portal (port 3002) with deep context
+    const url = `http://localhost:3002/?tenant=${tenantId}&branch=${branchId}&room_id=${room.id}`;
+    const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
+    
+    const win = window.open('', '_blank');
+    if (win) {
+      win.document.write(`<html><head><title>Print QR - Room ${room.room_number}</title><style>
+          body { font-family: sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; margin:0; }
+          .qr-card { border: 2px solid #000; border-radius: 12px; padding: 24px; text-align: center; }
+          .label { font-weight: bold; font-size: 24px; margin-top: 15px; }
+          .sub-label { font-size: 14px; color: #666; margin-top: 5px; }
+          @media print { .no-print { display: none; } }
+      </style></head><body>`);
+      win.document.write(`<div class="no-print" style="margin-bottom: 20px;"><button onclick="window.print()" style="padding:10px 20px; font-size:16px; cursor:pointer;">Print Now</button></div>`);
+      win.document.write(`<div class="qr-card">
+          <img src="${qrImgUrl}" width="250" height="250" />
+          <div class="label">ROOM ${room.room_number}</div>
+          <div class="sub-label">Guest Portal Access</div>
+      </div>`);
+      win.document.write('</body></html>');
+      win.document.close();
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -253,7 +282,11 @@ export default function BranchRoomsPage() {
                         {Number(room.room_type?.base_price || 15000).toLocaleString()}
                       </div>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right flex items-center justify-end gap-2">
+                      <Button variant="outline" size="sm" onClick={() => printRoomQr(room)}>
+                        <PrinterIcon className="h-4 w-4 sm:mr-2" />
+                        <span className="hidden sm:inline">QR Code</span>
+                      </Button>
                       <Button variant="ghost" size="sm">Modify</Button>
                     </TableCell>
                   </TableRow>
