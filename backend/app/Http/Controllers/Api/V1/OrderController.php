@@ -10,6 +10,7 @@ use App\Events\NewOrderPlaced;
 use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * OrderController (POS / KDS endpoints)
@@ -116,18 +117,20 @@ class OrderController extends Controller
      */
     public function fire(Request $request, Order $order)
     {
-        $this->authorize('update', $order); // Authorization policy
+        $this->authorize('update', $order);
 
-        try {
-            $order = $this->orderService->fireOrder($order);
-            NewOrderPlaced::dispatch($order->fresh(['items.menuItem']));
-        } catch (\LogicException $e) {
-            return response()->json(['message' => $e->getMessage()], 422);
+        if ($order->order_status !== 'draft') {
+            return response()->json(['message' => 'Order already fired'], 422);
         }
 
+        DB::transaction(function () use ($order) {
+            $order->update(['order_status' => 'pending']);
+            \App\Jobs\ProcessKitchenOrderJob::dispatch($order);
+        });
+
         return response()->json([
-            'message' => 'Order fired to kitchen!',
-            'data'    => $order,
+            'message' => 'Order fired to kitchen stations!',
+            'data'    => $order->fresh(),
         ]);
     }
 

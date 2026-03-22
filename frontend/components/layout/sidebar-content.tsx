@@ -18,6 +18,7 @@ import {
   ChevronLeft,
   Store,
   Calendar,
+  ChefHat
 } from 'lucide-react';
 import { useUI } from '@/context/UIContext';
 
@@ -38,7 +39,8 @@ export function SidebarContent({ onItemClick, forcedCollapsed }: { onItemClick?:
     { title: 'Rooms',        href: `/branch/${branchSlug}/rooms`,        icon: Hotel },
     { title: 'Outlets',      href: `/branch/${branchSlug}/outlets`,      icon: Store },
     { title: 'Pricing',      href: `/branch/${branchSlug}/pricing`,      icon: Tags },
-    { title: 'POS / Menus',  href: `/branch/${branchSlug}/pos`,          icon: UtensilsCrossed },
+    { title: 'Menu Blueprint', href: `/branch/${branchSlug}/menu-blueprint`, icon: UtensilsCrossed },
+    { title: 'Outlet Monitor', href: `/branch/${branchSlug}/outlet-monitor`, icon: ChefHat },
     { title: 'Payments',     href: `/branch/${branchSlug}/payments`,     icon: CreditCard },
     { title: 'Guest Portal', href: `/branch/${branchSlug}/guest-portal`, icon: UserCircle },
     { title: 'Staff',        href: `/branch/${branchSlug}/staff`,        icon: Users },

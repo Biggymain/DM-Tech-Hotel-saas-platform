@@ -21,48 +21,32 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 // ── Station KDS channels ──────────────────────────────────────────────────────
-// Only authenticated users in the same hotel can subscribe.
-// Staff with chef/kitchen roles can subscribe to any station in their hotel.
-Broadcast::channel('hotel.{hotelId}.station.{station}', function ($user, $hotelId, $station) {
-    // Must belong to this hotel (or be a super admin)
-    if ((int) $user->hotel_id !== (int) $hotelId && !$user->is_super_admin) {
-        return false;
+// Only authenticated users in the same branch can subscribe.
+Broadcast::channel('hotel.{hotelId}.branch.{branchId}.station.{stationId}', function ($user, $hotelId, $branchId, $stationId) {
+    if (!$user->is_super_admin) {
+        if ((int) $user->hotel_id !== (int) $hotelId) return false;
+        if ((int) ($user->branch_id ?? $user->hotel_id) !== (int) $branchId) return false;
+        
+        // If they have a station assigned, they must match it (unless manager)
+        if ($user->kitchen_station_id && (int) $user->kitchen_station_id !== (int) $stationId && !$user->isBranchManager()) {
+            return false;
+        }
     }
 
-    // Determine which stations this user can listen to based on their role
-    $userRoles = $user->roles->pluck('slug')->map(fn($s) => strtolower($s))->toArray();
-
-    $kitchenRoles  = ['chef', 'kitchen-manager', 'cook', 'bartender', 'barista'];
-    $managerRoles  = ['general-manager', 'hotelowner', 'receptionist'];
-
-    $isKitchenStaff = array_intersect($kitchenRoles, $userRoles);
-    $isManager      = array_intersect($managerRoles, $userRoles);
-
-    // Managers see all stations; kitchen staff see their assigned or all stations
-    if ($isManager || $user->is_super_admin || $isKitchenStaff) {
-        return ['id' => $user->id, 'name' => $user->name, 'station' => $station];
-    }
-
-    return false;
-});
-
-// ── Waiter notification channels ─────────────────────────────────────────────
-// A waiter can only subscribe to their own channel.
-Broadcast::channel('hotel.{hotelId}.waiter.{waiterId}', function ($user, $hotelId, $waiterId) {
-    return (int) $user->hotel_id === (int) $hotelId
-        && (int) $user->id === (int) $waiterId;
-});
-
-// ── Hotel-wide dashboard channel ─────────────────────────────────────────────
-// Managers and super admins only
-Broadcast::channel('hotel.{hotelId}.dashboard', function ($user, $hotelId) {
-    $isAdmin = $user->is_super_admin
-        || ((int) $user->hotel_id === (int) $hotelId && $user->roles->pluck('slug')->contains('general-manager'));
-    return $isAdmin ? ['id' => $user->id, 'name' => $user->name] : false;
+    return ['id' => $user->id, 'name' => $user->name, 'station_id' => $stationId];
 });
 
 // ── Kitchen Display System (KDS) common channel ──────────────────────────────
-// Only staff in the specific hotel can subscribe.
-Broadcast::channel('hotel.{hotelId}.kds', function ($user, $hotelId) {
-    return (int) $user->hotel_id === (int) $hotelId;
+Broadcast::channel('hotel.{hotelId}.branch.{branchId}.kds', function ($user, $hotelId, $branchId) {
+    if (!$user->is_super_admin) {
+        if ((int) $user->hotel_id !== (int) $hotelId) return false;
+        if ((int) ($user->branch_id ?? $user->hotel_id) !== (int) $branchId) return false;
+    }
+    return ['id' => $user->id, 'name' => $user->name];
+});
+
+// ── Waiter notification channels ─────────────────────────────────────────────
+Broadcast::channel('hotel.{hotelId}.waiter.{waiterId}', function ($user, $hotelId, $waiterId) {
+    return (int) $user->hotel_id === (int) $hotelId
+        && (int) $user->id === (int) $waiterId;
 });

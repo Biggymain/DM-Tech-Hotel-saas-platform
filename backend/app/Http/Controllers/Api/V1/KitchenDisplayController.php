@@ -15,13 +15,23 @@ class KitchenDisplayController extends Controller
 {
     public function index(Request $request)
     {
-        $tickets = KitchenTicket::with(['items', 'order', 'department'])
+        $user = $request->user();
+        
+        $query = KitchenTicket::with(['items', 'order', 'department'])
             ->whereNotIn('status', ['served', 'cancelled'])
             ->orderBy('priority', 'desc')
-            ->orderBy('created_at', 'asc')
-            ->get();
+            ->orderBy('created_at', 'asc');
+
+        // Strict Branch + Station Isolation
+        if (!$user->is_super_admin) {
+            $query->where('branch_id', $user->branch_id ?? $user->hotel_id);
             
-        return response()->json($tickets);
+            if ($user->kitchen_station_id) {
+                $query->where('kitchen_station_id', $user->kitchen_station_id);
+            }
+        }
+            
+        return response()->json($query->get());
     }
 
     public function show(Request $request, $id)
@@ -44,6 +54,14 @@ class KitchenDisplayController extends Controller
             $newStatus = $validated['status'];
             
             $ticket->update(['status' => $newStatus]);
+            
+            if ($newStatus === 'preparing' && !$ticket->started_at) {
+                $ticket->update(['started_at' => now()]);
+            }
+            
+            if ($newStatus === 'ready' && !$ticket->completed_at) {
+                $ticket->update(['completed_at' => now()]);
+            }
 
             $ticket->statusHistories()->create([
                 'previous_status' => $previousStatus,
@@ -51,8 +69,39 @@ class KitchenDisplayController extends Controller
                 'changed_by_user_id' => $request->user() ? $request->user()->id : null,
             ]);
 
+            // Broadcast real-time update
+            broadcast(new \App\Events\KitchenTicketStatusUpdated($ticket, $newStatus))->toOthers();
+
             return response()->json($ticket->load('items'));
         });
+    }
+
+    public function toggleAvailability(Request $request, $id)
+    {
+        $item = \App\Models\MenuItem::findOrFail($id);
+        $item->update(['is_available' => !$item->is_available]);
+
+        return response()->json(['success' => true, 'is_available' => $item->is_available]);
+    }
+
+    public function requestRestock(Request $request)
+    {
+        $user = $request->user();
+        $validated = $request->validate([
+            'menu_item_id' => 'required|exists:menu_items,id',
+            'kitchen_station_id' => 'required|exists:kitchen_stations,id',
+            'notes' => 'nullable|string',
+        ]);
+
+        $restock = \App\Models\RestockRequest::create([
+            ...$validated,
+            'hotel_id' => $user->hotel_id,
+            'branch_id' => $user->branch_id ?? $user->hotel_id,
+            'requested_by' => $user->id,
+            'status' => 'pending',
+        ]);
+
+        return response()->json($restock, 201);
     }
 
     public function updateItemStatus(Request $request, $id)

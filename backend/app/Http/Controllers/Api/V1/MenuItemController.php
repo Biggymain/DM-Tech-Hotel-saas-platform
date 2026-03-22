@@ -35,7 +35,8 @@ class MenuItemController extends Controller
             'modifier_ids' => 'nullable|array',
             'modifier_ids.*' => 'exists:modifiers,id',
             'station_id' => 'nullable|exists:stations,id',
-            'station_name' => 'nullable|string'
+            'station_name' => 'nullable|string',
+            'kitchen_station_id' => 'nullable|exists:kitchen_stations,id',
         ]);
 
         $modifierIds = $validated['modifier_ids'] ?? null;
@@ -74,7 +75,8 @@ class MenuItemController extends Controller
             'is_active' => 'boolean',
             'display_order' => 'integer',
             'modifier_ids' => 'nullable|array',
-            'modifier_ids.*' => 'exists:modifiers,id'
+            'modifier_ids.*' => 'exists:modifiers,id',
+            'kitchen_station_id' => 'nullable|exists:kitchen_stations,id',
         ]);
 
         $modifierIds = $validated['modifier_ids'] ?? null;

@@ -43,15 +43,18 @@ class PaymentController extends Controller
         $invoice = Invoice::where('hotel_id', $request->user()->hotel_id)->findOrFail($validated['invoice_id']);
 
         try {
-            $payment = $this->billingService->processPayment(
-                $invoice,
-                $validated['amount'],
-                $validated['payment_method_id'],
-                $request->user()->id,
+            \App\Jobs\ProcessPaymentJob::dispatch(
+                $invoice->id,
+                (float) $validated['amount'],
+                (int) $validated['payment_method_id'],
+                (int) $request->user()->id,
                 $validated['transaction_reference'] ?? null
-            );
+            )->onQueue('high')->afterCommit();
 
-            return response()->json($payment->load('paymentMethod'), 201);
+            return response()->json([
+                'message' => 'Payment processing initiated.',
+                'status' => 'processing'
+            ], 202);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 422);
         }

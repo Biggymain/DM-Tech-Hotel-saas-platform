@@ -21,7 +21,13 @@ class MenuItem extends BaseModel
         'display_order',
         'station_id',
         'station_name',
+        'kitchen_station_id',
     ];
+
+    public function kitchenStation()
+    {
+        return $this->belongsTo(KitchenStation::class);
+    }
 
     protected $casts = [
         'price' => 'decimal:2',
