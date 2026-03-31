@@ -17,6 +17,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'pin_code',
         'hotel_id',
         'hotel_group_id',
         'group_id',

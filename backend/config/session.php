@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Str;
 
+// Antigravity Fix: Resolve the frontend port from the Origin header
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$resolvedPort = parse_url($origin, PHP_URL_PORT) ?? (explode(':', $_SERVER['HTTP_HOST'] ?? '')[1] ?? '8000');
+
 return [
 
     /*
@@ -129,7 +133,7 @@ return [
 
     'cookie' => env(
         'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
+        'laravel_session_port_' . $resolvedPort
     ),
 
     /*

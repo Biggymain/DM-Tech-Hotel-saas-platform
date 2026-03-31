@@ -22,6 +22,7 @@ Route::prefix('v1')->group(function () {
         Route::get('sla/branch-overview', [SLADashboardController::class, 'branchOverview']);
         Route::get('sla/report', [SLADashboardController::class, 'performanceReport']);
         Route::post('login', [AuthController::class, 'login']); // Kept existing route
+        Route::post('staff-pin', [AuthController::class, 'staffPinLogin']);
         Route::post('forgot-password', [AuthController::class, 'forgotPassword']); // Kept existing route
         Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
