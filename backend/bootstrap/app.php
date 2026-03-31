@@ -20,13 +20,19 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role.verify'   => \App\Http\Middleware\RoleVerificationMiddleware::class,
             'tenant'        => \App\Http\Middleware\TenantIsolationMiddleware::class,
-            'tenant.branch' => \App\Http\Middleware\TenantBranchContext::class,
+            'tenant.branch' => \App\Http\Middleware\Tenant\TenantBranchContext::class,
             'module.active' => \App\Http\Middleware\ModuleAccessMiddleware::class,
         ]);
         $middleware->api(prepend: [
+            \App\Http\Middleware\Security\SecureHeadersMiddleware::class, // Execute security headers safely first 
             \App\Http\Middleware\ForceJsonResponse::class,        // 2nd — always JSON
             \App\Http\Middleware\TenantIsolationMiddleware::class, // 3rd — tenant scoping
-            \App\Http\Middleware\TenantBranchContext::class,       // newly added context
+            \App\Http\Middleware\Tenant\TenantBranchContext::class,       // newly added context
+        ]);
+        
+        // Recommended additionally lock down web interfaces
+        $middleware->web(prepend: [
+            \App\Http\Middleware\Security\SecureHeadersMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

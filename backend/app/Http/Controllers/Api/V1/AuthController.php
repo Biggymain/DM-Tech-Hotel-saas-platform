@@ -37,6 +37,26 @@ class AuthController extends Controller
             ]);
         }
 
+        $frontendPort = $request->header('X-Frontend-Port');
+
+        // Strict Port-to-Role validation
+        if ($frontendPort === '3000' && !$user->is_super_admin) {
+            abort(403, 'Forbidden: Super Admin role required for this port.');
+        }
+
+        if ($frontendPort === '3002') {
+            $hasManagerRole = false;
+            foreach ($user->roles as $role) {
+                if (strtolower(str_replace(' ', '-', $role->name)) === 'manager') {
+                    $hasManagerRole = true;
+                    break;
+                }
+            }
+            if (!$hasManagerRole) {
+                abort(403, 'Forbidden: Manager role required for this port.');
+            }
+        }
+
         $token = $user->createToken('admin-token')->plainTextToken;
 
         event(new \Illuminate\Auth\Events\Login('sanctum', $user, false));
@@ -45,6 +65,41 @@ class AuthController extends Controller
             'user'    => $this->formatUser($user),
             'token'   => $token,
             'message' => 'Login successful',
+        ]);
+    }
+
+    /**
+     * Authenticate Staff via 4-6 Digit PIN
+     */
+    public function staffPinLogin(Request $request)
+    {
+        $request->validate([
+            'staff_id' => 'required',
+            'pin'      => 'required|string|min:4|max:6',
+        ]);
+
+        $user = User::with(['roles', 'hotel', 'hotelGroup'])->find($request->staff_id);
+
+        if (!$user || !Hash::check($request->pin, $user->pin_code)) {
+            throw ValidationException::withMessages([
+                'pin' => ['Invalid PIN code.'],
+            ]);
+        }
+
+        $frontendPort = $request->header('X-Frontend-Port');
+
+        if ($frontendPort !== '3003') {
+            abort(403, 'Forbidden: Staff operations must be performed on the designated port (3003).');
+        }
+
+        $token = $user->createToken('staff-pin-token')->plainTextToken;
+
+        event(new \Illuminate\Auth\Events\Login('sanctum', $user, false));
+
+        return response()->json([
+            'user'    => $this->formatUser($user),
+            'token'   => $token,
+            'message' => 'Staff PIN login successful',
         ]);
     }
 

@@ -36,7 +36,11 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     ".next-website/types/**/*.ts",
-    ".next-website/dev/types/**/*.ts"
+    ".next-website/dev/types/**/*.ts",
+    ".next-3000/types/**/*.ts",
+    ".next-3000/dev/types/**/*.ts",
+    ".next-3001/types/**/*.ts",
+    ".next-3001/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
