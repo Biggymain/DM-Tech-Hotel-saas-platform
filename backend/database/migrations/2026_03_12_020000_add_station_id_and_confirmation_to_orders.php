@@ -39,7 +39,7 @@ return new class extends Migration
         Schema::table('order_items', function (Blueprint $table) {
             if (!Schema::hasColumn('order_items', 'item_status')) {
                 $table->string('item_status')->default('pending')
-                      ->after('subtotal');
+                      ->after('price');
             }
         });
 
