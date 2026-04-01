@@ -62,7 +62,7 @@ class AuthController extends Controller
         event(new \Illuminate\Auth\Events\Login('sanctum', $user, false));
 
         return response()->json([
-            'user'    => $this->formatUser($user),
+            'user'    => $this->formatUser($user, $request),
             'token'   => $token,
             'message' => 'Login successful',
         ]);
@@ -97,7 +97,7 @@ class AuthController extends Controller
         event(new \Illuminate\Auth\Events\Login('sanctum', $user, false));
 
         return response()->json([
-            'user'    => $this->formatUser($user),
+            'user'    => $this->formatUser($user, $request),
             'token'   => $token,
             'message' => 'Staff PIN login successful',
         ]);
@@ -121,7 +121,7 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
-        return response()->json($this->formatUser($request->user()->load(['roles', 'hotel', 'hotelGroup'])));
+        return response()->json($this->formatUser($request->user()->load(['roles', 'hotel', 'hotelGroup']), $request));
     }
 
     public function me(Request $request)
@@ -130,10 +130,46 @@ class AuthController extends Controller
     }
 
     /**
+     * Setup Staff PIN and Password (Initial Onboarding)
+     */
+    public function setupStaff(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+            'pin' => 'required|string|size:4|regex:/^[0-9]+$/',
+        ]);
+
+        $user = $request->user();
+        
+        $user->update([
+            'password' => bcrypt($request->password),
+            'pin_code' => Hash::make($request->pin), // Hash the pin for security
+            'password_changed_at' => now(),
+            'must_change_password' => false,
+        ]);
+
+        // Audit Log
+        AuditLog::create([
+            'hotel_id' => $user->hotel_id,
+            'user_id' => $user->id,
+            'entity_type' => 'user',
+            'entity_id' => $user->id,
+            'change_type' => 'staff_setup',
+            'reason' => 'Staff completed initial security onboarding (Password & PIN)',
+            'source' => 'api'
+        ]);
+
+        return response()->json([
+            'message' => 'Security setup complete. You now have full access.',
+            'user' => $this->formatUser($user, $request),
+        ]);
+    }
+
+    /**
      * Return a consistent user payload to the frontend, including slugs needed
      * for role-based redirect routing in AuthProvider.tsx.
      */
-    private function formatUser(User $user): array
+    private function formatUser(User $user, Request $request = null): array
     {
         $active_modules = [];
         $permissions = [];
@@ -178,6 +214,7 @@ class AuthController extends Controller
             ])->values(),
             'active_modules'  => $active_modules,
             'permissions'     => $permissions,
+            'requires_onboarding' => (bool) ($request?->header('X-Frontend-Port') === '3003' && ($user->password_changed_at === null || $user->pin_code === null)),
         ];
     }
 

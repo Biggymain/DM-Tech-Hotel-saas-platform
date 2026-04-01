@@ -11,16 +11,16 @@ export function middleware(request: NextRequest) {
   if (pathname === '/') {
     switch (port) {
       case '3000':
-        // Super Admin - NEVER see the landing page
-        return NextResponse.redirect(new URL('/admin/login', request.url));
+        // Super Admin - Redirect to the unified login
+        return NextResponse.redirect(new URL('/login', request.url));
       
       case '3001':
         // Main Hub - ONLY port allowed to show the Landing Page
         return NextResponse.next();
       
       case '3002':
-        // Branch Manager - Redirect to /manager/login
-        return NextResponse.redirect(new URL('/manager/login', request.url));
+        // Branch Manager - Redirect to the unified login
+        return NextResponse.redirect(new URL('/login', request.url));
       
       case '3003':
         // Staff Ops - Redirect to /staff/pin

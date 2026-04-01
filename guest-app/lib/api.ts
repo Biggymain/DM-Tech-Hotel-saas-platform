@@ -19,6 +19,8 @@ api.interceptors.request.use((config) => {
     // Inject multi-tenant context from port-isolated local storage
     const tenantId = localStorage.getItem('tenant_id');
     const branchId = localStorage.getItem('branch_id');
+    const groupId  = localStorage.getItem('group_id');
+    const hotelContext = localStorage.getItem('hotel_id');
     
     // Only fetch room metadata if on the in-hotel port (3004)
     if (port === '3004') {
@@ -32,6 +34,8 @@ api.interceptors.request.use((config) => {
 
     if (tenantId) config.headers['X-Tenant-ID'] = tenantId;
     if (branchId) config.headers['X-Branch-ID'] = branchId;
+    if (groupId) config.headers['X-Group-ID'] = groupId;
+    if (hotelContext) config.headers['X-Hotel-Context'] = hotelContext;
 
     // Attach guest token (often given upon room QR scan or booking completion)
     const token = localStorage.getItem(`guest_token_${port}`);

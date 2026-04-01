@@ -59,13 +59,15 @@ class StaffController extends Controller
             'email' => 'required|email|unique:users,email',
             'role_id' => 'required|exists:roles,id',
             'outlet_id' => 'nullable|exists:outlets,id',
-            'password' => 'required|string|min:8',
         ]);
+
+        // Generate a 12-character random temporary password
+        $tempPassword = \Illuminate\Support\Str::random(12);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
+            'password' => bcrypt($tempPassword),
             'hotel_id' => $hotelId,
             'hotel_group_id' => $request->user()->hotel_group_id,
             'outlet_id' => $validated['outlet_id'] ?? null,
@@ -77,8 +79,11 @@ class StaffController extends Controller
             'hotel_id' => $hotelId
         ]);
 
+        // Send Onboarding Notification (Email with Temp Password)
+        $user->notify(new \App\Notifications\StaffOnboardedNotification($user->name, $tempPassword));
+
         return response()->json([
-            'message' => 'Staff member onboarded successfully.',
+            'message' => 'Staff member onboarded successfully. Credentials sent to their email.',
             'data' => $user->load(['roles', 'outlet'])
         ], 201);
     }

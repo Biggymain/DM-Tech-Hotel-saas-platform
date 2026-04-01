@@ -35,7 +35,7 @@ import { toast } from 'sonner';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthProvider';
 
-export default function BranchPOSPage() {
+function POSContent() {
   const params = useParams();
   const branchSlug = params.slug;
   const { user } = useAuth();
@@ -304,7 +304,7 @@ export default function BranchPOSPage() {
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-right">Station</Label>
-                   <Select onValueChange={val => setCategoryForm({...categoryForm, station: val})} value={String(categoryForm.station ?? "none")}>
+                   <Select onValueChange={(val: string | null) => setCategoryForm({...categoryForm, station: val || ''})} value={String(categoryForm.station ?? "none")}>
                     <SelectTrigger className="col-span-3">
                       <SelectValue placeholder="Select station (e.g. Grill)" />
                     </SelectTrigger>
@@ -318,7 +318,7 @@ export default function BranchPOSPage() {
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-right">Outlet</Label>
-                   <Select onValueChange={val => setCategoryForm({...categoryForm, outlet_id: val})} value={String(categoryForm.outlet_id ?? "none")}>
+                   <Select onValueChange={(val: string | null) => setCategoryForm({...categoryForm, outlet_id: val || ''})} value={String(categoryForm.outlet_id ?? "none")}>
                     <SelectTrigger className="col-span-3">
                       <SelectValue placeholder="General / All" />
                     </SelectTrigger>
@@ -380,7 +380,7 @@ export default function BranchPOSPage() {
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right">Category (Optional)</Label>
                 <div className="col-span-3">
-                   <Select onValueChange={val => setItemForm({...itemForm, menu_category_id: val})} value={itemForm.menu_category_id || "none"}>
+                   <Select onValueChange={(val: string | null) => setItemForm({...itemForm, menu_category_id: val || ''})} value={itemForm.menu_category_id || "none"}>
                      <SelectTrigger>
                        <SelectValue placeholder="Select category (Optional)" />
                      </SelectTrigger>
@@ -397,7 +397,7 @@ export default function BranchPOSPage() {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right">Assign to Outlet</Label>
-                <Select onValueChange={val => setItemForm({...itemForm, outlet_id: val})} value={itemForm.outlet_id || "none"}>
+                <Select onValueChange={(val: string | null) => setItemForm({...itemForm, outlet_id: val || ''})} value={itemForm.outlet_id || "none"}>
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="General / All" />
                   </SelectTrigger>
@@ -606,5 +606,13 @@ export default function BranchPOSPage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+export default function BranchPOSPage() {
+  return (
+    <React.Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="animate-spin text-muted-foreground" /></div>}>
+      <POSContent />
+    </React.Suspense>
   );
 }

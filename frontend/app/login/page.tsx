@@ -34,6 +34,16 @@ export default function LoginPage() {
     defaultValues: { email: '', password: '' },
   });
 
+  // Native Port-Aware Branding Detection
+  const host = typeof window !== 'undefined' ? window.location.host : '';
+  const port = host.split(':')[1] || '3000'; // Default to 3000 for server-side render safety
+
+  const branding = {
+    '3000': { title: 'Super Admin Portal', desc: 'Enterprise-level oversight and platform configuration' },
+    '3002': { title: 'Branch Manager Portal', desc: 'Manage your hotel branch operations and staff' },
+    'default': { title: 'Admin Portal', desc: 'Secure authentication for DM-Tech systems' }
+  }[port] || { title: 'Admin Portal', desc: 'Secure authentication for DM-Tech systems' };
+
   const onSubmit = async (data: LoginFormValues) => {
     setLoading(true);
     try {
@@ -62,9 +72,9 @@ export default function LoginPage() {
 
         <Card className="border-white/10 shadow-2xl bg-white/[0.03] backdrop-blur-xl text-white">
           <CardHeader className="space-y-2 text-center">
-            <CardTitle className="text-3xl font-bold tracking-tight text-white">Admin Portal</CardTitle>
+            <CardTitle className="text-3xl font-bold tracking-tight text-white">{branding.title}</CardTitle>
             <CardDescription className="text-white/40">
-              Enter your credentials to manage hotel operations
+              {branding.desc}
             </CardDescription>
           </CardHeader>
 

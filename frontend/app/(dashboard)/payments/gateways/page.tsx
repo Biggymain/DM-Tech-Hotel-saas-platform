@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -192,7 +194,7 @@ export default function PaymentGatewaysPage() {
                   <Label>Payment Mode</Label>
                   <Select 
                     value={form.payment_mode} 
-                    onValueChange={v => setForm({...form, payment_mode: v})}
+                    onValueChange={(v: string | null) => setForm({...form, payment_mode: v || ''})}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select mode" />

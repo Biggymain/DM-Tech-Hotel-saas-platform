@@ -2,8 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useTicketTimer } from '@/hooks/useTicketTimer';
-import { useKitchenNotifications } from '@/hooks/useKitchenNotifications';
+import { useTicketTimer } from '@/src/hooks/useTicketTimer';
+import { useKitchenNotifications } from '@/src/hooks/useKitchenNotifications';
 import { ShieldAlert, BarChart3, Clock, Map as MapIcon } from 'lucide-react';
 import { toast } from 'sonner';
 

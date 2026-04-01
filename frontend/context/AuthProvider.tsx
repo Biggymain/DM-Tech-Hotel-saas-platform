@@ -19,6 +19,8 @@ export interface User {
   is_on_duty: boolean;
   last_duty_toggle_at: string | null;
   must_change_password: boolean;
+  password_changed_at: string | null;
+  requires_onboarding?: boolean;
 }
 
 interface AuthContextType {
@@ -51,8 +53,16 @@ const ROLE_ROUTES: Array<{ slugs: string[]; path: string }> = [
 ];
 
 function resolveRedirectPath(user: User): string {
+  const isPort3003 = typeof window !== 'undefined' && window.location.port === '3003';
+
   // Force password change if required
-  if (user.must_change_password) return '/profile?force_password_change=true';
+  if (user.must_change_password) {
+    // Port 3003 uses a specialized security setup flow (PIN + Password)
+    if (isPort3003) {
+      return '/staff/security-setup';
+    }
+    return '/profile?force_password_change=true';
+  }
 
   // Super Admins go to Platform Management
   if (user.is_super_admin) return '/organization';

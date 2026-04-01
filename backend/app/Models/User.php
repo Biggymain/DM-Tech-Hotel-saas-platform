@@ -27,6 +27,7 @@ class User extends Authenticatable
         'last_duty_toggle_at',
         'is_super_admin',
         'must_change_password',
+        'password_changed_at',
         'kitchen_station_id',
     ];
 
@@ -49,6 +50,7 @@ class User extends Authenticatable
             'is_on_duty' => 'boolean',
             'last_duty_toggle_at' => 'datetime',
             'must_change_password' => 'boolean',
+            'password_changed_at' => 'datetime',
         ];
     }
 

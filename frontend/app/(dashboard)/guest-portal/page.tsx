@@ -173,7 +173,7 @@ export default function GuestPortalPage() {
                       </TableCell>
                       <TableCell className="text-right space-x-2">
                         {req.status === 'pending' && (
-                          <Select onValueChange={(userId) => assignRequest.mutate({ requestId: req.id, userId })}>
+                          <Select onValueChange={(userId: string | null) => userId && assignRequest.mutate({ requestId: req.id, userId })}>
                             <SelectTrigger className="h-8 w-[120px] inline-flex">
                               <SelectValue placeholder="Assign Staff" />
                             </SelectTrigger>

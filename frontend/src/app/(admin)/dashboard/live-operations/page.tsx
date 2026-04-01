@@ -4,10 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Clock, Utensils, AlertTriangle } from "lucide-react";
-import { useTicketTimer } from "@/hooks/useTicketTimer";
+import { useTicketTimer } from "@/src/hooks/useTicketTimer";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import echo from "@/lib/echo";
+import { initEcho } from "@/src/lib/echo";
 
 interface OutletSLA {
     id: number;
@@ -29,11 +29,16 @@ export default function LiveOperationsPage() {
     });
 
     useEffect(() => {
+        const port = typeof window !== 'undefined' ? window.location.port : '3000';
+        const token = localStorage.getItem(`auth_token_${port}`);
+        if (!token) return;
+
+        const echo = initEcho(token);
         const channel = echo.private(`hotel.branch.sla`);
         channel.listen("SlaThresholdExceeded", () => refetch());
         channel.listen("KitchenTicketStatusUpdated", () => refetch());
         
-        return () => channel.unsubscribe();
+        return () => echo.disconnect();
     }, [refetch]);
 
     return (

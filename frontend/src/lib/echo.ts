@@ -4,7 +4,7 @@ import Pusher from 'pusher-js';
 declare global {
     interface Window {
         Pusher: any;
-        Echo: Echo;
+        Echo: any;
     }
 }
 
@@ -17,8 +17,8 @@ export const initEcho = (token: string) => {
         broadcaster: 'reverb',
         key: process.env.NEXT_PUBLIC_REVERB_APP_KEY,
         wsHost: process.env.NEXT_PUBLIC_REVERB_HOST,
-        wsPort: process.env.NEXT_PUBLIC_REVERB_PORT ?? 80,
-        wssPort: process.env.NEXT_PUBLIC_REVERB_PORT ?? 443,
+        wsPort: Number(process.env.NEXT_PUBLIC_REVERB_PORT) || 80,
+        wssPort: Number(process.env.NEXT_PUBLIC_REVERB_PORT) || 443,
         forceTLS: (process.env.NEXT_PUBLIC_REVERB_SCHEME ?? 'https') === 'https',
         enabledTransports: ['ws', 'wss'],
         authEndpoint: `${process.env.NEXT_PUBLIC_API_URL}/broadcasting/auth`,
