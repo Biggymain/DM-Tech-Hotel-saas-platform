@@ -23,6 +23,7 @@ class AdminAuthTest extends TestCase
             'hotel_id' => $this->hotel->id,
             'email' => 'admin@hotel.com',
             'password' => Hash::make('password123'),
+            'password_changed_at' => now(),
         ]);
     }
 
