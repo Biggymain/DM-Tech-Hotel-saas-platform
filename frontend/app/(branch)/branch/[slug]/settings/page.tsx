@@ -328,7 +328,7 @@ function GatewayConfigRow({ name, slug, description, color, letter }: any) {
             </div>
             <div className="space-y-2">
               <Label>Environment Mode</Label>
-              <Select value={form.payment_mode || "test"} onValueChange={v => setForm({...form, payment_mode: v})}>
+              <Select value={form.payment_mode || "test"} onValueChange={(v: string | null) => setForm({...form, payment_mode: v || ''})}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

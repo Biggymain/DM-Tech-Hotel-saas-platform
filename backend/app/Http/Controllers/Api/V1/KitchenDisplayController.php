@@ -31,7 +31,30 @@ class KitchenDisplayController extends Controller
             }
         }
             
-        return response()->json($query->get());
+        $threshold = config('hotel.checkout_alert_threshold', 2);
+
+        $tickets = $query->get()->map(function ($ticket) use ($threshold) {
+            $ticket->checkout_alert = false;
+            
+            if ($ticket->order && $ticket->order->room_id) {
+                $reservation = \App\Models\Reservation::where('room_id', $ticket->order->room_id)
+                    ->where('status', 'checked_in')
+                    ->orderBy('check_out_date', 'asc')
+                    ->first();
+                    
+                if ($reservation && $reservation->check_out_date) {
+                    // Assuming standard 12:00 PM checkout time for the date
+                    $checkoutTime = \Carbon\Carbon::parse($reservation->check_out_date)->setHour(12)->setMinute(0);
+                    
+                    if (now()->diffInHours($checkoutTime, false) <= $threshold && now()->diffInHours($checkoutTime, false) >= -24) {
+                        $ticket->checkout_alert = true;
+                    }
+                }
+            }
+            return $ticket;
+        });
+
+        return response()->json($tickets);
     }
 
     public function show(Request $request, $id)

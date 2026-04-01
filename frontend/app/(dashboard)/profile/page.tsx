@@ -11,7 +11,7 @@ import { ShieldCheck, Loader2, Key, AlertCircle } from 'lucide-react';
 import api from '@/lib/api';
 import { toast } from 'sonner';
 
-export default function ProfilePage() {
+function ProfileContent() {
   const { user, checkAuth } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -121,5 +121,13 @@ export default function ProfilePage() {
         Signed in as <span className="font-semibold text-foreground">{user?.email}</span>
       </div>
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <React.Suspense fallback={<div className="flex justify-center py-20"><Loader2 className="animate-spin h-8 w-8 text-primary" /></div>}>
+      <ProfileContent />
+    </React.Suspense>
   );
 }

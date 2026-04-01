@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { useKitchenNotifications } from '@/hooks/useKitchenNotifications';
+import { useKitchenNotifications } from '@/src/hooks/useKitchenNotifications';
 import { Loader2, CheckCircle2, Utensils, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 

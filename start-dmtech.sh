@@ -3,6 +3,9 @@ ROOT_DIR="/home/micky/DM-Tech-Hotel-saas-platform"
 
 echo "🚀 Launching DM-Tech Digital Fortress (Native Environment Isolation Mode)..."
 
+echo "Which Port are you actively coding on? (3000-3005 or NONE)"
+read -r ACTIVE_PORT
+
 # 1. Start Backend
 cd "$ROOT_DIR/backend" && php artisan serve --port=8000 --no-reload & 
 
@@ -15,26 +18,38 @@ launch_port() {
     local ISOLATION_DIR="/tmp/dmtech-isolation/$PORT"
     mkdir -p "$ISOLATION_DIR"
     
-    echo "▶️ Booting $APP_DIR on Port $PORT (Isolated Socket & Cache)..."
-    
     # We pass NEXT_DIST_DIR which successfully binds because we updated next.config.ts!
-    cd "$ROOT_DIR/$APP_DIR" && \
-    TMPDIR="$ISOLATION_DIR" \
-    NEXT_DIST_DIR=".next-$PORT" \
-    PORT=$PORT \
-    __NEXT_PRIVATE_PREBUNDLED_REACT=1 \
-    NEXT_PRIVATE_WORKER=1 \
-    NODE_OPTIONS="--title=dm-tech-port-$PORT" \
-    npx next dev -p $PORT &
+    if [ "$PORT" = "$ACTIVE_PORT" ]; then
+        echo "▶️ 🔥 Booting $APP_DIR on Port $PORT (ACTIVE DEV MODE - Isolated Socket & Cache)..."
+        cd "$ROOT_DIR/$APP_DIR" && \
+        TMPDIR="$ISOLATION_DIR" \
+        NEXT_DIST_DIR=".next-$PORT" \
+        PORT=$PORT \
+        __NEXT_PRIVATE_PREBUNDLED_REACT=1 \
+        NEXT_PRIVATE_WORKER=1 \
+        NODE_OPTIONS="--title=dm-tech-port-$PORT --max-old-space-size=1024" \
+        npx next dev -p $PORT &
+    else
+        echo "▶️ 🧊 Booting $APP_DIR on Port $PORT (PRODUCTION MODE - Isolated Socket & Cache)..."
+        cd "$ROOT_DIR/$APP_DIR" && \
+        TMPDIR="$ISOLATION_DIR" \
+        NEXT_DIST_DIR=".next-$PORT" \
+        PORT=$PORT \
+        __NEXT_PRIVATE_PREBUNDLED_REACT=1 \
+        NEXT_PRIVATE_WORKER=1 \
+        NEXT_TELEMETRY_DISABLED=1 \
+        NODE_OPTIONS="--title=dm-tech-port-$PORT --max-old-space-size=1024" \
+        npx next start -p $PORT &
+    fi
 }
 
-# 2. Launch Frontends
+# 2. Launch Frontends (3000-3003)
 launch_port "frontend" 3000
 launch_port "frontend" 3001
+launch_port "frontend" 3002
+launch_port "frontend" 3003
 
-# 3. Launch Guest-Apps
-launch_port "guest-app" 3002
-launch_port "guest-app" 3003
+# 3. Launch Guest-Apps (3004-3005)
 launch_port "guest-app" 3004
 launch_port "guest-app" 3005
 

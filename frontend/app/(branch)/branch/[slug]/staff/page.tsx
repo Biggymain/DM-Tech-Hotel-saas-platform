@@ -38,7 +38,7 @@ interface StaffUser {
   roles: { name: string; slug: string }[];
 }
 
-export default function BranchStaffPage() {
+function StaffContent() {
   const params = useParams();
   const branchSlug = params.slug as string;
   const queryClient = useQueryClient();
@@ -330,6 +330,14 @@ export default function BranchStaffPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function BranchStaffPage() {
+  return (
+    <React.Suspense fallback={<div className="flex justify-center py-20"><Loader2 className="animate-spin h-8 w-8 text-primary" /></div>}>
+      <StaffContent />
+    </React.Suspense>
   );
 }
 

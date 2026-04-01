@@ -26,11 +26,19 @@ Route::prefix('v1')->group(function () {
         Route::post('forgot-password', [AuthController::class, 'forgotPassword']); // Kept existing route
         Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
+        // Staff Setup (PIN & Password Activation)
+        Route::middleware('auth:sanctum')->post('staff/setup', [\App\Http\Controllers\Api\V1\AuthController::class, 'setupStaff']);
+
         Route::middleware('auth:sanctum')->group(function () {
             Route::get('me', [\App\Http\Controllers\Api\V1\AuthController::class, 'user']);
             Route::post('logout', [\App\Http\Controllers\Api\V1\AuthController::class, 'logout']);
         });
     });
+
+    // Alignment Routes
+    Route::get('theme', [\App\Http\Controllers\Api\V1\ThemeController::class, 'getTheme']);
+    Route::post('guest/claim-room', [\App\Http\Controllers\Api\V1\GuestSessionController::class, 'claimRoom']);
+    Route::post('guest/verify-pin', [\App\Http\Controllers\Api\V1\GuestSessionController::class, 'verifyPin']);
 
     // Organization Management (GROUP_ADMIN + SUPER_ADMIN only — no single-hotel tenant scope needed)
     Route::prefix('organization')->middleware('auth:sanctum')->group(function () {

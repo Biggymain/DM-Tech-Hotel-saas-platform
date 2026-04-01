@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 
-export default function GuestPortalPage() {
+function GuestPortalContent() {
   const queryClient = useQueryClient();
   const [sessionsOpen, setSessionsOpen] = React.useState(false);
   const searchParams = useSearchParams();
@@ -488,7 +488,7 @@ export default function GuestPortalPage() {
                       </TableCell>
                       <TableCell className="text-right space-x-2">
                         {req.status === 'pending' && (
-                          <Select onValueChange={(userId) => assignRequest.mutate({ requestId: req.id, userId })}>
+                          <Select onValueChange={(userId: string | null) => userId && assignRequest.mutate({ requestId: req.id, userId })}>
                             <SelectTrigger className="h-8 w-[120px] inline-flex">
                               <SelectValue placeholder="Assign Staff" />
                             </SelectTrigger>
@@ -527,5 +527,13 @@ export default function GuestPortalPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function GuestPortalPage() {
+  return (
+    <React.Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="animate-spin text-muted-foreground" /></div>}>
+      <GuestPortalContent />
+    </React.Suspense>
   );
 }

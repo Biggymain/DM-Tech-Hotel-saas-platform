@@ -70,6 +70,7 @@ export default function BranchRoomsPage() {
       queryClient.invalidateQueries({ queryKey: ['branch-rooms-list'] });
       setOpen(false);
       setForm({ room_type_id: '', room_number: '', floor: '' });
+    },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message ?? 'Failed to create room.');
     },
