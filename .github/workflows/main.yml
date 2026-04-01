@@ -39,7 +39,7 @@ jobs:
     - name: Prepare Backend
       working-directory: ./backend
       run: |
-        cp .env.example .env
+        touch .env
         php artisan key:generate
 
     - name: Run Backend Tests
