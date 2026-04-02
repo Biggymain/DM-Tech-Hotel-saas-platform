@@ -26,12 +26,18 @@ class Reservation extends Model
         'source',
         'payment_reference',
         'parent_id',
+        'deposit_amount',
+        'deposit_paid',
+        'modification_deadline',
     ];
 
     protected $casts = [
-        'check_in_date'  => 'date',
-        'check_out_date' => 'date',
-        'total_amount'   => 'decimal:2',
+        'check_in_date'         => 'date',
+        'check_out_date'        => 'date',
+        'modification_deadline' => 'datetime',
+        'total_amount'          => 'decimal:2',
+        'deposit_amount'        => 'decimal:2',
+        'deposit_paid'          => 'boolean',
     ];
 
     // ─── Relationships ────────────────────────────────────────────────────────

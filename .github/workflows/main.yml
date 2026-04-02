@@ -40,7 +40,7 @@ jobs:
       working-directory: ./backend
       run: |
         touch .env
-        php artisan key:generate
+        php artisan key:generate --env=testing --force
 
     - name: Run Backend Tests
       working-directory: ./backend

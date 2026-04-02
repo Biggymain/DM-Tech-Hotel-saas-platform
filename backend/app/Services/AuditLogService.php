@@ -17,18 +17,24 @@ class AuditLogService
         ?array $oldValues = null,
         ?array $newValues = null,
         ?string $reason = null,
-        string $source = 'api'
+        string $source = 'api',
+        ?int $hotelId = null,
+        ?int $userId = null
     ) {
-        $tenantId = null;
-        if (app()->bound('tenant_id')) {
-            $tenantId = app('tenant_id');
-        } elseif (Auth::check()) {
-            $tenantId = Auth::user()->hotel_id;
+        $tenantId = $hotelId;
+        if (!$tenantId) {
+            if (app()->bound('tenant_id')) {
+                $tenantId = app('tenant_id');
+            } elseif (Auth::check()) {
+                $tenantId = Auth::user()->hotel_id;
+            }
         }
+
+        $logUserId = $userId ?? Auth::id();
 
         return AuditLog::create([
             'hotel_id' => $tenantId,
-            'user_id' => Auth::id(),
+            'user_id' => $logUserId,
             'entity_type' => $entityType,
             'entity_id' => $entityId,
             'change_type' => $changeType,

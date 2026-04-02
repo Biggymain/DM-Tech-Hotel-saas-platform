@@ -20,10 +20,10 @@ class FolioService
      * Add a charge to a Folio.
      * Atomic: rolls back if inventory deduction fails.
      */
-    public function addCharge(Folio $folio, string $description, float $amount, ?string $attachableType = null, ?int $attachableId = null, string $source = 'ROOM', ?int $inventoryItemId = null)
+    public function addCharge(Folio $folio, string $description, float $amount, ?string $attachableType = null, ?int $attachableId = null, string $source = 'ROOM', ?int $inventoryItemId = null, bool $isPenalty = false)
     {
         // Validate active reservation
-        if ($folio->reservation->status !== 'checked_in') {
+        if (!$isPenalty && $folio->reservation->status !== 'checked_in') {
             throw new \Exception("Cannot post charge: Reservation is not in 'checked_in' status.");
         }
 
