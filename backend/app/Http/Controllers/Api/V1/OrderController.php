@@ -18,8 +18,11 @@ use Illuminate\Support\Facades\DB;
  * "Fire Order" — waiter transitions draft → pending and triggers station routing
  * "Update Status" — chef transitions pending→cooking, cooking→ready, ready→served
  */
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 class OrderController extends Controller
 {
+    use AuthorizesRequests;
     public function __construct(private OrderService $orderService) {}
 
     /**
@@ -160,11 +163,14 @@ class OrderController extends Controller
             
             // Log history for tests
             $order->statusHistory()->create([
+                'order_id' => $order->id,
                 'previous_status' => $previousStatus ?: 'pending',
                 'new_status' => 'confirmed',
-                'changed_by' => $request->user()->id,
-                'hotel_id' => $order->hotel_id
+                'changed_by' => $request->user()?->id,
+                'hotel_id' => $order->hotel_id ?? $request->user()?->hotel_id
             ]);
+
+            event(new \App\Events\OrderConfirmed($order));
 
             return response()->json(['message' => 'Order confirmed', 'data' => $order]);
         }

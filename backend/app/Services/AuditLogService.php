@@ -21,6 +21,9 @@ class AuditLogService
         ?int $hotelId = null,
         ?int $userId = null
     ) {
+        $allowedSources = ['system', 'api', 'manual', 'job'];
+        $source = in_array($source, $allowedSources) ? $source : 'system';
+
         $tenantId = $hotelId;
         if (!$tenantId) {
             if (app()->bound('tenant_id')) {
@@ -45,5 +48,13 @@ class AuditLogService
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ]);
+    }
+
+    /**
+     * Instance method alias for backward compatibility with existing services.
+     */
+    public function recordChange(...$args)
+    {
+         return self::log(...$args);
     }
 }

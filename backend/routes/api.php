@@ -158,12 +158,15 @@ Route::prefix('v1')->group(function () {
         
         // Menu & Recommendations
         Route::get('/menus/{outlet}', [GuestOutletController::class, 'menu']);
+        Route::get('/menu/{outlet}', [GuestOutletController::class, 'menu']); // Alias
         Route::get('/menus/{outlet}/recommendations', [GuestOutletController::class, 'recommendations']);
+        Route::get('/menu/{outlet}/recommendations', [GuestOutletController::class, 'recommendations']); // Alias
         
         // Service Requests
         Route::get('/requests', [GuestRequestController::class, 'index']);
         Route::post('/requests', [GuestRequestController::class, 'store']);
         Route::post('/service-requests', [GuestRequestController::class, 'store']); // Alias for the enhancement requirement
+        Route::post('/service-request', [GuestRequestController::class, 'store']); // Alias
         
         Route::post('/reservations/availability', [GuestReservationController::class, 'searchAvailability']);
         Route::post('/reservations', [GuestReservationController::class, 'store']);

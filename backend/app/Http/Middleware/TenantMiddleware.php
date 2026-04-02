@@ -53,6 +53,7 @@ class TenantMiddleware
         // 2. Check Guest Portal Session (via Token in Header, Query or Body)
         if (!$hotelId) {
             $token = $request->header('X-Guest-Session-Token') 
+                  ?? $request->header('X-Guest-Session')
                   ?? $request->query('session_token') 
                   ?? $request->input('session_token');
 

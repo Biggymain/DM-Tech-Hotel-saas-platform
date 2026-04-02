@@ -42,6 +42,22 @@ class TenantIsolationStressTest extends TestCase
         if ($roleB) {
             $this->userB->roles()->attach($roleB->id);
         }
+
+        // Ensure modules are enabled for the test hotels (Required by ModuleAccessMiddleware)
+        $modules = ['pos', 'inventory-management', 'pms', 'billing', 'analytics'];
+        foreach ($modules as $slug) {
+            $m = \Illuminate\Support\Facades\DB::table('modules')->updateOrInsert(
+                ['slug' => $slug],
+                ['name' => ucfirst(str_replace('-', ' ', $slug)), 'created_at' => now(), 'updated_at' => now()]
+            );
+            
+            $moduleId = \Illuminate\Support\Facades\DB::table('modules')->where('slug', $slug)->value('id');
+
+            \Illuminate\Support\Facades\DB::table('hotel_modules')->insert([
+                ['hotel_id' => $this->hotelA->id, 'module_id' => $moduleId, 'is_enabled' => true, 'created_at' => now(), 'updated_at' => now()],
+                ['hotel_id' => $this->hotelB->id, 'module_id' => $moduleId, 'is_enabled' => true, 'created_at' => now(), 'updated_at' => now()],
+            ]);
+        }
     }
 
     public function test_tenant_cannot_access_other_tenant_orders()

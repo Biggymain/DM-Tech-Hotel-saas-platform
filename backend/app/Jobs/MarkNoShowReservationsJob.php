@@ -30,6 +30,7 @@ class MarkNoShowReservationsJob implements ShouldQueue
             ->whereDate('check_in_date', '<=', today())
             ->get();
 
+        /** @var Reservation $reservation */
         foreach ($reservations as $reservation) {
             $hotel = $reservation->hotel;
             $graceHours = $hotel->reservation_grace_hours ?? 0;
