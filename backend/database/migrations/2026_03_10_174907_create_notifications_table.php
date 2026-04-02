@@ -12,15 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notifications', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('hotel_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
+
+            // Project Custom Columns
+            $table->foreignId('hotel_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('outlet_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('type');
             $table->enum('priority', ['low', 'medium', 'high', 'critical'])->default('medium');
-            $table->string('title');
-            $table->text('message');
-            $table->json('data')->nullable();
+            $table->string('title')->nullable();
+            $table->text('message')->nullable();
             $table->boolean('is_read')->default(false);
             $table->timestamp('expires_at')->nullable();
             $table->timestamp('broadcasted_at')->nullable();

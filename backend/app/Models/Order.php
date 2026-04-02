@@ -55,6 +55,8 @@ class Order extends BaseModel
         'payment_status',
         'payment_method',
         'created_by',
+        'order_status',
+        'routed_stations',
     ];
 
     public function hotel()

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('kitchen_ticket_status_histories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('hotel_id')->constrained()->cascadeOnDelete();
             $table->foreignId('kitchen_ticket_id')->constrained('kitchen_tickets', 'id', 'fk_ktsh_ktid')->onDelete('cascade');
             $table->string('previous_status')->nullable();
             $table->string('new_status');

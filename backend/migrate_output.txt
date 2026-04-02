@@ -1,0 +1,165 @@
+
+  Dropping all tables ............................................ 3.62ms DONE
+
+   INFO  Preparing database.  
+
+  Creating migration table ....................................... 4.52ms DONE
+
+   INFO  Running migrations.  
+
+  0001_01_01_000000_create_subscription_plans_table .............. 5.32ms DONE
+  0001_01_01_000001_create_hotels_table .......................... 5.75ms DONE
+  0001_01_01_000002_create_roles_table ........................... 4.47ms DONE
+  0001_01_01_000003_create_permissions_table ..................... 6.93ms DONE
+  0001_01_01_000004_create_users_table .......................... 16.07ms DONE
+  0001_01_01_000005_create_cache_table ........................... 5.06ms DONE
+  0001_01_01_000006_create_jobs_table ........................... 11.65ms DONE
+  0001_01_01_000007_create_hotel_settings_table .................. 4.70ms DONE
+  2026_03_10_114204_create_personal_access_tokens_table .......... 9.23ms DONE
+  2026_03_10_115000_create_room_types_table ...................... 4.77ms DONE
+  2026_03_10_115001_create_rooms_table ........................... 7.52ms DONE
+  2026_03_10_115347_create_restaurant_orders_table ............... 2.33ms DONE
+  2026_03_10_115348_create_outlets_table ......................... 4.55ms DONE
+  2026_03_10_115349_create_inventory_items_table ................ 11.40ms DONE
+  2026_03_10_115350_create_financial_records_table ............... 2.45ms DONE
+  2026_03_10_122848_update_roles_permissions_tables_for_multi_tenancy  55.44ms DONE
+  2026_03_10_125325_create_departments_table ..................... 4.43ms DONE
+  2026_03_10_125629_create_department_permissions_table .......... 4.41ms DONE
+  2026_03_10_130402_create_orders_table .......................... 4.40ms DONE
+  2026_03_10_130403_create_order_items_table ..................... 2.40ms DONE
+  2026_03_10_130411_create_order_status_histories_table .......... 2.21ms DONE
+  2026_03_10_133336_create_menu_categories_table ................. 2.39ms DONE
+  2026_03_10_133336_create_menu_items_table ...................... 2.67ms DONE
+  2026_03_10_133336_create_modifiers_table ....................... 2.71ms DONE
+  2026_03_10_133337_create_menu_item_modifiers_table ............. 4.84ms DONE
+  2026_03_10_133338_create_modifier_options_table ................ 2.43ms DONE
+  2026_03_10_144238_create_kitchen_tickets_table ................. 4.54ms DONE
+  2026_03_10_144239_create_kitchen_ticket_items_table ............ 2.49ms DONE
+  2026_03_10_144239_create_kitchen_ticket_status_histories_table . 2.42ms DONE
+  2026_03_10_152920_create_inventory_transactions_table ......... 11.13ms DONE
+  2026_03_10_152920_create_suppliers_table ....................... 3.17ms DONE
+  2026_03_10_152921_create_menu_item_ingredients_table ........... 7.17ms DONE
+  2026_03_10_152922_create_purchase_orders_table ................. 2.75ms DONE
+  2026_03_10_152923_create_purchase_order_items_table ............ 2.59ms DONE
+  2026_03_10_161240_create_currencies_table ...................... 5.86ms DONE
+  2026_03_10_161244_add_currency_id_to_hotels_table ............. 15.38ms DONE
+  2026_03_10_161245_create_payment_methods_table ................. 2.03ms DONE
+  2026_03_10_161246_create_invoices_table ....................... 14.75ms DONE
+  2026_03_10_161249_create_invoice_items_table ................... 2.67ms DONE
+  2026_03_10_161250_create_payments_table ....................... 23.07ms DONE
+  2026_03_10_171728_create_sales_reports_table ................... 7.32ms DONE
+  2026_03_10_171733_create_sales_report_items_table .............. 8.24ms DONE
+  2026_03_10_171734_create_inventory_usage_reports_table ......... 9.85ms DONE
+  2026_03_10_174907_create_notifications_table .................. 16.47ms DONE
+  2026_03_10_191332_create_audit_logs_table ..................... 10.65ms DONE
+  2026_03_10_194445_create_setup_p_m_s_table ..................... 3.08ms DONE
+  2026_03_10_200002_create_guests_table .......................... 4.53ms DONE
+  2026_03_10_200003_create_reservations_table .................... 7.33ms DONE
+  2026_03_10_200004_create_reservation_rooms_table ............... 6.11ms DONE
+  2026_03_10_200005_create_folios_table .......................... 5.64ms DONE
+  2026_03_10_200006_create_folio_items_table ..................... 5.54ms DONE
+  2026_03_10_200007_create_activity_logs_table .................. 12.62ms DONE
+  2026_03_10_232041_add_no_show_policies_to_hotels_table ........ 10.87ms DONE
+  2026_03_10_232042_add_modification_deadline_and_deposit_to_reservations_table  12.66ms DONE
+  2026_03_10_234018_add_housekeeping_fields_to_rooms_table ...... 30.86ms DONE
+  2026_03_10_234019_create_housekeeping_tasks_table .............. 8.81ms DONE
+  2026_03_10_234021_create_maintenance_requests_table ............ 5.01ms DONE
+  2026_03_10_234023_seed_housekeeping_maintenance_permissions ... 22.07ms DONE
+  2026_03_11_000001_add_tracking_to_audit_logs ................... 6.95ms DONE
+  2026_03_11_000002_create_payment_splits_table .................. 3.28ms DONE
+  2026_03_11_000027_create_rate_plans_table ...................... 7.04ms DONE
+  2026_03_11_000028_create_occupancy_rate_rules_table ............ 3.11ms DONE
+  2026_03_11_000028_create_room_type_rate_plan_table ............. 5.97ms DONE
+  2026_03_11_000028_create_seasonal_rates_table .................. 3.29ms DONE
+  2026_03_11_000029_add_rate_plan_id_and_locked_price_to_reservations_table  29.48ms DONE
+  2026_03_11_000030_seed_pricing_permissions .................... 12.82ms DONE
+  2026_03_11_001933_create_channel_integrations_table ............ 5.88ms DONE
+  2026_03_11_001934_create_channel_rate_mappings_table ........... 3.37ms DONE
+  2026_03_11_001934_create_channel_reservations_table ............ 6.77ms DONE
+  2026_03_11_001934_create_channel_room_mappings_table ........... 3.12ms DONE
+  2026_03_11_001935_seed_channel_permissions ..................... 9.64ms DONE
+  2026_03_11_003632_create_guest_portal_sessions_table ........... 7.15ms DONE
+  2026_03_11_003633_create_guest_service_requests_table .......... 4.08ms DONE
+  2026_03_11_003633_seed_guest_portal_permissions ................ 6.71ms DONE
+  2026_03_11_063103_create_payment_gateways_table ................ 6.61ms DONE
+  2026_03_11_063104_create_payment_transactions_table ............ 9.84ms DONE
+  2026_03_11_074750_update_guest_portal_sessions_table .......... 31.00ms DONE
+  2026_03_11_100001_update_subscription_plans_table ............. 20.66ms DONE
+  2026_03_11_100002_create_hotel_subscriptions_table ............. 3.16ms DONE
+  2026_03_11_100003_create_subscription_invoices_table ........... 4.07ms DONE
+  2026_03_11_165558_create_ota_tables ........................... 17.32ms DONE
+  2026_03_11_181051_create_ota_mapping_tables ................... 15.32ms DONE
+  2026_03_11_183029_create_revenue_insights_table ............... 10.72ms DONE
+  2026_03_11_185148_create_hotel_events_table .................... 7.96ms DONE
+  2026_03_11_185245_create_revenue_configs_table ................. 6.39ms DONE
+  2026_03_11_210000_add_outlet_id_to_users_table ................ 33.29ms DONE
+  2026_03_11_220000_enhance_folio_items_table ................... 55.43ms DONE
+  2026_03_11_230000_create_hotel_groups_and_add_group_id ........ 48.75ms DONE
+  2026_03_11_235900_add_booking_engine_columns .................. 44.40ms DONE
+  2026_03_12_000000_create_channel_sync_logs_table ............... 6.65ms DONE
+  2026_03_12_000001_create_hardware_integration_tables .......... 15.40ms DONE
+  2026_03_12_010000_add_station_routing_to_orders ............... 39.20ms DONE
+  2026_03_12_020000_add_station_id_and_confirmation_to_orders ... 38.29ms DONE
+  2026_03_12_200000_add_duty_tracking_to_users_table ............. 8.35ms DONE
+  2026_03_13_081146_add_station_to_menu_categories_table ......... 4.36ms DONE
+  2026_03_13_100255_add_slug_to_hotels_table ..................... 7.56ms DONE
+  2026_03_16_163018_add_must_change_password_to_users_table ...... 4.37ms DONE
+  2026_03_16_170458_add_context_data_to_guest_portal_sessions_table  5.08ms DONE
+  2026_03_16_173405_add_tables_count_to_outlets_table ............ 3.57ms DONE
+  2026_03_18_224621_create_hotel_group_websites_table ........... 10.25ms DONE
+  2026_03_18_224621_create_hotel_website_overrides_table ......... 7.43ms DONE
+  2026_03_19_085250_add_contact_info_to_hotel_group_websites_table  13.08ms DONE
+  2026_03_19_085427_add_amenities_to_room_types_table ............ 5.00ms DONE
+  2026_03_19_103010_add_extended_status_to_reservations_table ... 21.24ms DONE
+  2026_03_19_103204_add_parent_id_to_reservations_table ......... 23.73ms DONE
+  2026_03_19_201625_add_missing_website_fields ................... 4.45ms DONE
+  2026_03_19_201835_add_design_settings_to_overrides ............. 4.41ms DONE
+  2026_03_21_190408_create_tenants_table ......................... 5.11ms DONE
+  2026_03_21_190410_create_branches_table ........................ 3.56ms DONE
+  2026_03_21_190412_add_tenant_and_branch_to_users_table ........ 43.22ms DONE
+  2026_03_21_201300_add_credit_limits_to_rooms_and_reservations . 11.26ms DONE
+  2026_03_21_201300_add_pin_to_guests_table ...................... 3.53ms DONE
+  2026_03_21_201301_create_table_sessions_table .................. 2.88ms DONE
+  2026_03_21_201302_create_table_session_guests_table ............ 3.03ms DONE
+  2026_03_22_123235_create_kitchen_types_table ................... 3.46ms DONE
+  2026_03_22_123236_create_modules_table ........................ 10.07ms DONE
+  2026_03_22_123237_create_hotel_modules_table ................... 6.07ms DONE
+  2026_03_22_123238_create_kds_screens_table ..................... 6.09ms DONE
+  2026_03_22_123238_create_pricing_tiers_table ................... 6.08ms DONE
+  2026_03_22_123238_create_product_prices_table .................. 6.18ms DONE
+  2026_03_22_130000_add_branch_id_and_version_to_hotel_modules_table  32.94ms DONE
+  2026_03_22_130001_add_pricing_tier_id_to_orders_table ......... 29.63ms DONE
+  2026_03_22_133906_add_offline_sync_fields_to_orders_table ..... 12.86ms DONE
+  2026_03_22_133906_create_sync_queue_table ..................... 10.64ms DONE
+  2026_03_22_134406_create_sync_logs_table ...................... 13.40ms DONE
+  2026_03_22_183534_create_kitchen_stations_table ................ 6.64ms DONE
+  2026_03_22_184000_add_kitchen_station_to_menu_items_and_users . 85.30ms DONE
+  2026_03_22_185827_add_sla_and_availability_to_kitchen_system ... 0.14ms DONE
+  2026_03_22_185902_create_restock_requests_table ................ 3.43ms DONE
+  2026_03_22_190000_add_sla_and_availability_to_kitchen_system ... 7.08ms DONE
+  2026_03_30_000000_add_pin_code_to_users_table .................. 5.34ms DONE
+  2026_04_01_000001_add_alignment_fields ........................ 12.48ms DONE
+
+
+   INFO  Seeding database.  
+
+  Database\Seeders\SetupSeeder ....................................... RUNNING  
+🏨  Starting first-run platform setup...
+  Database\Seeders\RoleAndPermissionSeeder ........................... RUNNING  
+  Database\Seeders\RoleAndPermissionSeeder ....................... 158 ms DONE  
+
+✅  Setup complete!
++-------------+-----------------------+------------------+
+| Role        | Email                 | Password         |
++-------------+-----------------------+------------------+
+| Super Admin | superadmin@dmtech.com | SuperAdmin@2026! |
+| Hotel Admin | admin@royalspring.com | HotelAdmin@2026! |
++-------------+-----------------------+------------------+
+  Database\Seeders\SetupSeeder ................................... 616 ms DONE  
+
+  Database\Seeders\SubscriptionPlanSeeder ............................ RUNNING  
+  Database\Seeders\SubscriptionPlanSeeder .......................... 7 ms DONE  
+
+  Database\Seeders\OtaChannelSeeder .................................. RUNNING  
+  Database\Seeders\OtaChannelSeeder ................................ 6 ms DONE  
+

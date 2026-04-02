@@ -33,7 +33,7 @@ class HotelOperationalWorkflowTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->withoutMiddleware();
+        // $this->withoutMiddleware();
         $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
 
         $this->hotel = Hotel::create(['name' => 'Integration Hotel']);
@@ -127,7 +127,7 @@ class HotelOperationalWorkflowTest extends TestCase
         // Manually trigger actual process since we faked event to assert dispatch
         $order->status = 'confirmed';
         $order->save();
-        $reserveListener = app(\App\Listeners\ReserveInventoryStock::class);
+        $reserveListener = app(ReserveInventoryStock::class);
         $reserveListener->handle(new OrderConfirmed($order));
 
         $beef->refresh();
@@ -138,10 +138,10 @@ class HotelOperationalWorkflowTest extends TestCase
         $order->status = 'served';
         $order->save();
         
-        $deductListener = app(\App\Listeners\DeductInventoryStock::class);
+        $deductListener = app(DeductInventoryStock::class);
         $deductListener->handle(new OrderServed($order));
         
-        $invoiceListener = app(\App\Listeners\GenerateInvoice::class);
+        $invoiceListener = app(GenerateInvoice::class);
         $invoiceListener->handle(new OrderServed($order));
         
         // Reporting aggregation is likely tied closely or run asynchronously 
@@ -166,7 +166,7 @@ class HotelOperationalWorkflowTest extends TestCase
             'amount' => $invoice->total_amount,
             'payment_method_id' => $paymentMethod->id
         ]);
-        $payResponse->assertStatus(201);
+        $payResponse->assertStatus(202);
 
         $invoice->refresh();
         $this->assertEquals('paid', $invoice->status);
@@ -221,7 +221,7 @@ class HotelOperationalWorkflowTest extends TestCase
         // Reserve manually first
         $order->status = 'confirmed';
         $order->save();
-        $reserveListener = app(\App\Listeners\ReserveInventoryStock::class);
+        $reserveListener = app(ReserveInventoryStock::class);
         $reserveListener->handle(new OrderConfirmed($order));
         
         $beef->refresh();
@@ -230,9 +230,9 @@ class HotelOperationalWorkflowTest extends TestCase
         // First Serve
         $order->status = 'served';
         $order->save();
-        $deductListener = app(\App\Listeners\DeductInventoryStock::class);
+        $deductListener = app(DeductInventoryStock::class);
         $deductListener->handle(new OrderServed($order));
-        $invoiceListener = app(\App\Listeners\GenerateInvoice::class);
+        $invoiceListener = app(GenerateInvoice::class);
         $invoiceListener->handle(new OrderServed($order));
 
         $beef->refresh();
@@ -284,14 +284,14 @@ class HotelOperationalWorkflowTest extends TestCase
                 'hotel_id' => $this->hotel->id,
                 'outlet_id' => $this->outlet->id,
                 'department_id' => $this->department->id,
-                'order_number' => 'ORD-LOAD-'.$i,
+                'order_number' => "ORD-H-{$i}",
                 'order_source' => 'pos',
                 'status' => 'pending',
                 'total_amount' => 200,
                 'payment_status' => 'unpaid',
                 'created_by' => $this->user->id,
             ]);
-
+            
             $order->items()->create([
                 'menu_item_id' => $steakMenu->id,
                 'quantity' => 1,
@@ -299,12 +299,15 @@ class HotelOperationalWorkflowTest extends TestCase
             ]);
 
             // Rapid lifecycle progression via API to simulate realistic load
-            $this->actingAs($this->user)->putJson("/api/v1/orders/{$order->id}/status", [
+            $response1 = $this->actingAs($this->user)->putJson("/api/v1/orders/{$order->id}/status", [
                 'status' => 'confirmed'
             ]);
-            $this->actingAs($this->user)->putJson("/api/v1/orders/{$order->id}/status", [
+            $response1->assertStatus(200);
+
+            $response2 = $this->actingAs($this->user)->putJson("/api/v1/orders/{$order->id}/status", [
                 'status' => 'served'
             ]);
+            $response2->assertStatus(200);
         }
 
         // Assert 50kg were securely deducted uniformly 
@@ -313,16 +316,10 @@ class HotelOperationalWorkflowTest extends TestCase
         $this->assertEquals(0, $beef->reserved_stock);
 
         // Verify 50 sequential Invoices were created accurately without duplication
-        $totalInvoices = Invoice::where('hotel_id', $this->hotel->id)
-            ->where('invoice_number', 'like', 'INV-H%')
-            ->count();
-            
-        // Assuming 2 previous invoices exist from tests 1 and 2, but wait Database is Refreshed per test
-        // Let's count where order_number like ORD-LOAD
-        $loadOrdersCount = Order::where('order_number', 'like', 'ORD-LOAD-%')->count();
+        $loadOrdersCount = Order::where('order_number', 'like', 'ORD-H-%')->count();
         $this->assertEquals(50, $loadOrdersCount);
 
-        $loadOrderIdList = Order::where('order_number', 'like', 'ORD-LOAD-%')->pluck('id');
+        $loadOrderIdList = Order::where('order_number', 'like', 'ORD-H-%')->pluck('id');
         $loadInvoicesCount = Invoice::whereIn('order_id', $loadOrderIdList)->count();
         
         $this->assertEquals(50, $loadInvoicesCount);

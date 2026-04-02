@@ -4,9 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Traits\Tenantable;
+
 class KitchenTicketStatusHistory extends Model
 {
+    use Tenantable;
+
     protected $fillable = [
+        'hotel_id',
         'kitchen_ticket_id',
         'previous_status',
         'new_status',

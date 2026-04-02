@@ -75,12 +75,13 @@ class OrderService
     public function updateStatus(Order $order, string $newStatus, string $station): Order
     {
         $validTransitions = [
-            'pending' => ['cooking'],
-            'cooking' => ['ready'],
-            'ready'   => ['served'],
+            'pending'   => ['cooking', 'confirmed', 'served'],
+            'confirmed' => ['cooking', 'served'],
+            'cooking'   => ['ready'],
+            'ready'     => ['served'],
         ];
 
-        $currentStatus = $order->order_status;
+        $currentStatus = $order->order_status ?: 'pending';
 
         if (!in_array($newStatus, $validTransitions[$currentStatus] ?? [])) {
             throw new \LogicException(
@@ -91,14 +92,22 @@ class OrderService
         $order->update(['order_status' => $newStatus]);
 
         $order->statusHistory()->create([
+            'order_id' => $order->id,
             'previous_status' => $currentStatus,
             'new_status' => $newStatus,
-            'changed_by' => auth()->id(),
+            'changed_by' => auth()->id() ?? $order->created_by,
             'hotel_id' => $order->hotel_id
         ]);
 
         // Broadcast to station (chef's KDS update) + possibly waiter (on 'ready')
         broadcast(new OrderStatusUpdated($order, $newStatus, $station))->toOthers();
+
+        // Dispatch integration events for inventory/billing
+        if ($newStatus === 'confirmed') {
+            event(new \App\Events\OrderConfirmed($order));
+        } elseif ($newStatus === 'served') {
+            event(new \App\Events\OrderServed($order));
+        }
 
         Log::info("[OrderService] Order #{$order->id} status: {$currentStatus} → {$newStatus} (station: {$station})");
 
