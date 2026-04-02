@@ -107,15 +107,16 @@ class OTAInventorySyncService
 
     private function logSync(ChannelIntegration $integration, string $type, bool $success, array $request, ?array $response, ?string $error)
     {
+        $otaChannel = \App\Models\OtaChannel::where('provider', str_replace('.', '_', $integration->channel_name))->first();
+
         ChannelSyncLog::create([
             'hotel_id' => $integration->hotel_id,
-            'channel_integration_id' => $integration->id,
-            'sync_type' => $type,
+            'ota_channel_id' => $otaChannel?->id,
+            'operation' => $type,
             'status' => $success ? 'success' : 'failed',
             'request_payload' => $request,
             'response_payload' => $response,
             'error_message' => $error,
-            'synced_at' => now()
         ]);
         
         // Also log broadly internally

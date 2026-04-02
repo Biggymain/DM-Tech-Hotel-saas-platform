@@ -44,7 +44,7 @@ class FixStaffAndRoomTest extends TestCase
             'name' => 'New Staff',
             'email' => 'staff@test.com',
             'password' => 'password123',
-            'role_id' => Role::where('slug', 'receptionist')->first()->id,
+            'role_id' => Role::where('slug', 'reception')->first()->id,
         ]);
 
         $response->assertStatus(201);

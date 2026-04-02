@@ -14,7 +14,6 @@ class ProcessPaymentJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $queue = 'high';
     public $tries = 3;
 
     public function __construct(
@@ -23,7 +22,9 @@ class ProcessPaymentJob implements ShouldQueue
         public int $paymentMethodId,
         public int $userId,
         public ?string $reference = null
-    ) {}
+    ) {
+        $this->onQueue('high');
+    }
 
     public function handle(\App\Services\BillingService $billingService): void
     {

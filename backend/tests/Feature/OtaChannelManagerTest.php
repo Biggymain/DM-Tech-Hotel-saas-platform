@@ -154,7 +154,7 @@ class OtaChannelManagerTest extends TestCase
             'adults' => 2,
         ];
 
-        $response = $this->postJson('/api/v1/channels/webhook/booking_com', $webhookPayload);
+        $response = $this->postJson('/api/v1/channels/booking_com/webhook', $webhookPayload);
 
         $response->assertOk();
         $this->assertDatabaseHas('ota_reservations', [
@@ -236,7 +236,7 @@ class OtaChannelManagerTest extends TestCase
         ]);
 
         // No rooms exist — expect overbooking to be blocked
-        $response = $this->postJson('/api/v1/channels/webhook/booking_com', [
+        $response = $this->postJson('/api/v1/channels/booking_com/webhook', [
             'hotel_id' => $this->hotel->id,
             'event_type' => 'reservation_created',
             'external_reservation_id' => 'BKG-OVERBOOK-999',

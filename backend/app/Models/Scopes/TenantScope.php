@@ -22,6 +22,10 @@ class TenantScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
+        if ($model instanceof \App\Models\Hotel) {
+            return;
+        }
+
         if (self::$isApplying) {
             return;
         }
@@ -130,10 +134,16 @@ class TenantScope implements Scope
         }
 
         if (app()->bound('tenant_id')) {
-            // Bound by middleware (e.g. Guest Portal QR sessions)
-            $builder->where(function($q) use ($model) {
-                $q->where($model->getTable() . '.hotel_id', app('tenant_id'));
-            });
+            if ($model->getTable() === 'hotels') {
+                $builder->where(function($q) use ($model) {
+                    $q->where($model->getTable() . '.id', app('tenant_id'));
+                });
+            } else {
+                // Bound by middleware (e.g. Guest Portal QR sessions)
+                $builder->where(function($q) use ($model) {
+                    $q->where($model->getTable() . '.hotel_id', app('tenant_id'));
+                });
+            }
             return;
         }
 

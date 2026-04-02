@@ -14,10 +14,12 @@ use Illuminate\Support\Facades\Log;
 class SyncToCloudJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public $queue = 'low';
     public $tries = 5;
     public $backoff = [300, 600, 1800]; // More aggressive backoff for sync
+
+    public function __construct() {
+        $this->onQueue('low');
+    }
 
     public function handle(OfflineSyncService $syncService): void
     {
@@ -27,10 +29,10 @@ class SyncToCloudJob implements ShouldQueue
             return;
         }
 
-        // 2. Batch Sync (50 records as per Module 4)
-        $syncedCount = $syncService->synchronize(50);
+        // 2. Batch Sync
+        $syncService->syncToCloud();
         
-        Log::info("SyncToCloudJob: Processed {$syncedCount} records.");
+        Log::info("SyncToCloudJob: Processed batch sync logic.");
     }
 
     private function hasInternet(): bool
