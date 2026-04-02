@@ -22,10 +22,6 @@ class TenantScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        if ($model instanceof \App\Models\Hotel) {
-            return;
-        }
-
         if (self::$isApplying) {
             return;
         }
@@ -47,7 +43,7 @@ class TenantScope implements Scope
             // ── 0. Hotels Table Isolation ─────────────────────────────────────────
             // Even if the model IS a Hotel, we must scope it so Group Admins see
             // only their group's branches and Branch staff see only their hotel.
-            if ($model->getTable() === 'hotels') {
+            if ($model instanceof \App\Models\Hotel || $model->getTable() === 'hotels') {
                 if ($user->is_super_admin) {
                      return; // Super Admin sees all hotels
                 }
@@ -134,7 +130,7 @@ class TenantScope implements Scope
         }
 
         if (app()->bound('tenant_id')) {
-            if ($model->getTable() === 'hotels') {
+            if ($model instanceof \App\Models\Hotel || $model->getTable() === 'hotels') {
                 $builder->where(function($q) use ($model) {
                     $q->where($model->getTable() . '.id', app('tenant_id'));
                 });

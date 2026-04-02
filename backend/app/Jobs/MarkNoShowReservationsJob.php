@@ -53,7 +53,14 @@ class MarkNoShowReservationsJob implements ShouldQueue
                 'hotel_id' => $hotel->id,
             ], ['status' => 'open']); // set status open if creating
 
-            $folioService->addCharge($folio, "No-Show Penalty", $penaltyAmount, Reservation::class, $reservation->id);
+            $folioService->addCharge(
+                folio: $folio,
+                description: "No-Show Penalty",
+                amount: $penaltyAmount,
+                attachableType: Reservation::class,
+                attachableId: $reservation->id,
+                isPenalty: true
+            );
         }
 
         // Invalidate active room_qr_sessions linked to reservation
@@ -80,16 +87,16 @@ class MarkNoShowReservationsJob implements ShouldQueue
 
         event(new ReservationMarkedNoShow($reservation));
 
-        $auditLogService->recordChange(
-            hotelId: $hotel->id,
+        $auditLogService::log(
             entityType: 'Reservation',
             entityId: $reservation->id,
             changeType: 'Status Update',
             oldValues: ['status' => 'confirmed'],
             newValues: ['status' => 'no_show'],
-            userId: null,
             reason: 'Automated No-Show policy enforcement',
-            source: 'job'
+            source: 'job',
+            hotelId: $hotel->id,
+            userId: null
         );
     }
 

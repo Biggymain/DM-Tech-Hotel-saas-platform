@@ -14,10 +14,7 @@ class ReservationMarkedNoShow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct()
+    public function __construct(public \App\Models\Reservation $reservation)
     {
         //
     }
