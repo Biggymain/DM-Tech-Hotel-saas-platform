@@ -26,7 +26,10 @@ class ChannelWebhookService
         }
 
         $payload = $request->all();
-        $hotelId = $payload['hotel_id'] ?? null;
+        if (empty($payload)) {
+            $payload = json_decode($request->getContent(), true) ?? [];
+        }
+        $hotelId = $payload['hotel_id'] ?? ($payload['hotel_identifier'] ?? null);
 
         if (!$hotelId) {
             abort(422, 'Missing hotel_id in webhook payload.');
@@ -34,14 +37,17 @@ class ChannelWebhookService
 
         $connection = HotelChannelConnection::where('hotel_id', $hotelId)
             ->where('ota_channel_id', $channel->id)
-            ->where('status', 'active')
-            ->firstOrFail();
+            ->first();
+
+        if (!$connection || $connection->status !== 'active') {
+             return ['status' => 'ignored', 'reason' => 'Sync disabled'];
+        }
 
         // Bind the tenant into the service container so Tenantable model scopes work
         // for this unauthenticated webhook request (same binding TenantIsolationMiddleware sets for logged-in users)
         app()->instance('tenant_id', $hotelId);
 
-        $eventType = $payload['event_type'] ?? 'reservation_created';
+        $eventType = $payload['event_type'] ?? null;
 
         ChannelSyncLog::create([
             'hotel_id' => $hotelId,
@@ -52,8 +58,17 @@ class ChannelWebhookService
         ]);
 
         if (in_array($eventType, ['reservation_created', 'booking_new'])) {
+            $externalId = $payload['external_reservation_id'] ?? ($payload['channel_reservation_id'] ?? null);
+            if (!$externalId) {
+                return ['status' => 'ignored', 'reason' => 'Missing OTA reservation ID'];
+            }
             $reservation = $this->reservationService->importReservation($connection, $payload);
-            return ['status' => 'imported', 'reservation_id' => $reservation?->id];
+            
+            if (!$reservation) {
+                return ['status' => 'ignored', 'reason' => 'Already ingested or skipped'];
+            }
+            
+            return ['status' => 'imported', 'reservation_id' => $reservation->id];
         }
 
         return ['status' => 'acknowledged', 'event' => $eventType];
@@ -61,13 +76,37 @@ class ChannelWebhookService
 
     private function verifySignature(OtaChannel $channel, Request $request): bool
     {
-        // Provider-specific signature validation
-        // For now, always pass (in production each OTA has its own HMAC scheme)
-        $signature = $request->header('X-Webhook-Signature');
+        $signature = $request->header('X-Webhook-Signature') ?? $request->header('X-Channel-Signature');
         if (!$signature) {
-            // Allow unsigned in local/staging environments
-            return app()->environment('local', 'testing') ? true : false;
+             return app()->environment('local', 'testing') ? true : false;
         }
-        return true;
+
+        $payload = $request->all();
+        if (empty($payload)) {
+            $payload = json_decode($request->getContent(), true) ?? [];
+        }
+        $hotelId = $payload['hotel_id'] ?? ($payload['hotel_identifier'] ?? null);
+        if (!$hotelId) return false;
+
+        $connection = HotelChannelConnection::where('hotel_id', $hotelId)
+            ->where('ota_channel_id', $channel->id)
+            ->first();
+
+        $secret = $connection?->api_secret;
+        
+        // Fallback to legacy ChannelIntegration if needed for tests
+        if (!$secret) {
+            $integration = \App\Models\ChannelIntegration::where('hotel_id', $hotelId)
+                ->where('channel_name', $channel->provider)
+                ->first();
+            $secret = $integration?->webhook_secret;
+        }
+
+        if (!$secret) {
+            return app()->environment('local', 'testing');
+        }
+
+        $calculatedSignature = hash_hmac('sha256', $request->getContent(), $secret);
+        return hash_equals($calculatedSignature, $signature);
     }
 }

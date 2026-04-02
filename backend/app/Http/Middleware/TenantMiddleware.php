@@ -49,16 +49,23 @@ class TenantMiddleware
                 }
             }
         } 
-        // 2. Check Guest Portal Session (via Token in Header)
-        elseif ($request->header('X-Guest-Session-Token')) {
-            $session = GuestPortalSession::where('session_token', $request->header('X-Guest-Session-Token'))
-                ->where('expires_at', '>', now())
-                ->first();
-            
-            if ($session) {
-                $hotelId = $session->hotel_id;
-                // Store session for later use in controllers
-                $request->attributes->add(['guest_session' => $session]);
+        
+        // 2. Check Guest Portal Session (via Token in Header, Query or Body)
+        if (!$hotelId) {
+            $token = $request->header('X-Guest-Session-Token') 
+                  ?? $request->query('session_token') 
+                  ?? $request->input('session_token');
+
+            if ($token) {
+                $session = GuestPortalSession::where('session_token', $token)
+                    ->where('expires_at', '>', now())
+                    ->first();
+                
+                if ($session) {
+                    $hotelId = $session->hotel_id;
+                    // Store session for later use in controllers
+                    $request->attributes->add(['guest_session' => $session]);
+                }
             }
         }
 
@@ -87,6 +94,7 @@ class TenantMiddleware
     {
         return $request->is('api/v1/auth/register-hotel') || 
                $request->is('api/v1/guest/session/start') ||
+               $request->is('api/v1/guest/session/authenticate') ||
                $request->is('api/v1/payments/webhook/*');
     }
 }

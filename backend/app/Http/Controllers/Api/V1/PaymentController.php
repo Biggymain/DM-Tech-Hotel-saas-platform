@@ -49,7 +49,7 @@ class PaymentController extends Controller
                 (int) $validated['payment_method_id'],
                 (int) $request->user()->id,
                 $validated['transaction_reference'] ?? null
-            )->onQueue('high')->afterCommit();
+            )->onQueue('high');
 
             return response()->json([
                 'message' => 'Payment processing initiated.',

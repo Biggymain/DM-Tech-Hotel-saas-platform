@@ -153,7 +153,7 @@ class BillingEngineTest extends TestCase
             'payment_method_id' => $method->id,
         ]);
 
-        $response->assertStatus(201);
+        $response->assertStatus(202);
         $this->assertDatabaseHas('payments', [
             'invoice_id' => $invoice->id,
             'amount' => 200,
@@ -172,7 +172,7 @@ class BillingEngineTest extends TestCase
             'payment_method_id' => $method->id,
         ]);
 
-        $response2->assertStatus(201);
+        $response2->assertStatus(202);
         $this->assertDatabaseHas('invoices', [
             'id' => $invoice->id,
             'status' => 'paid',

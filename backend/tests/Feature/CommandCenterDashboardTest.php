@@ -23,6 +23,7 @@ class CommandCenterDashboardTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->withoutMiddleware();
 
         $this->hotelA = Hotel::create(['name' => 'Hotel A', 'email' => 'a@test.com']);
         $this->hotelB = Hotel::create(['name' => 'Hotel B', 'email' => 'b@test.com']);

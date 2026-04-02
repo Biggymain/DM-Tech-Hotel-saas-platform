@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\GroupRegistrationController;
+use App\Http\Controllers\Api\V1\SLADashboardController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\RevenueInsightController;
 use Illuminate\Http\Request;
@@ -27,11 +28,11 @@ Route::prefix('v1')->group(function () {
         Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
         // Staff Setup (PIN & Password Activation)
-        Route::middleware('auth:sanctum')->post('staff/setup', [\App\Http\Controllers\Api\V1\AuthController::class, 'setupStaff']);
+        Route::middleware('auth:sanctum')->post('staff/setup', [AuthController::class, 'setupStaff']);
 
         Route::middleware('auth:sanctum')->group(function () {
-            Route::get('me', [\App\Http\Controllers\Api\V1\AuthController::class, 'user']);
-            Route::post('logout', [\App\Http\Controllers\Api\V1\AuthController::class, 'logout']);
+            Route::get('me', [AuthController::class, 'user']);
+            Route::post('logout', [AuthController::class, 'logout']);
         });
     });
 
@@ -66,7 +67,7 @@ Route::prefix('v1')->group(function () {
         ->middleware('auth:sanctum');
 
     // Public Channel Webhooks — OTA push notifications
-    Route::post('/channels/webhook/{channel}', [\App\Http\Controllers\Api\V1\OtaChannelController::class, 'webhook']);
+    Route::post('/channels/{channel}/webhook', [\App\Http\Controllers\Api\V1\OtaChannelController::class, 'webhook']);
 
     // Cloud Edge-Node Sync Ingestion Endpoint
     Route::get('/sync/status', [\App\Http\Controllers\Api\V1\SyncController::class, 'syncStatus']);
@@ -238,8 +239,8 @@ Route::prefix('v1')->group(function () {
             Route::put('/items/{id}/status', [\App\Http\Controllers\Api\V1\KitchenDisplayController::class, 'updateItemStatus'])->middleware('role.verify:kds.update');
 
             // SLA Dashboard
-            Route::get('/sla/active', [\App\Http\Controllers\Api\V1\SLADashboardController::class, 'activeTickets'])->middleware('role.verify:manager.view');
-            Route::get('/sla/report', [\App\Http\Controllers\Api\V1\SLADashboardController::class, 'performanceReport'])->middleware('role.verify:manager.view');
+            Route::get('/sla/active', [SLADashboardController::class, 'activeTickets'])->middleware('role.verify:manager.view');
+            Route::get('/sla/report', [SLADashboardController::class, 'performanceReport'])->middleware('role.verify:manager.view');
         });
 
         // Inventory Management

@@ -67,13 +67,49 @@ class ChannelManagerTest extends TestCase
         ]);
         
         $this->ratePlan->roomTypes()->attach($this->roomType->id, ['base_price' => 300, 'hotel_id' => $this->hotel->id]);
+
+        \App\Models\OtaChannel::create([
+            'name' => 'Booking.com',
+            'provider' => 'booking_com',
+            'is_active' => true,
+        ]);
+
+        \App\Models\OtaChannel::create([
+            'name' => 'Expedia',
+            'provider' => 'expedia',
+            'is_active' => true,
+        ]);
+
+        \App\Models\OtaChannel::create([
+            'name' => 'Airbnb',
+            'provider' => 'airbnb',
+            'is_active' => true,
+        ]);
+
+        // Create connection and mapping for webhooks to work without 404
+        foreach (['booking_com', 'expedia', 'airbnb'] as $provider) {
+            $channel = \App\Models\OtaChannel::where('provider', $provider)->first();
+            \App\Models\HotelChannelConnection::create([
+                'hotel_id' => $this->hotel->id,
+                'ota_channel_id' => $channel->id,
+                'api_key' => 'test-api-key', // Added missing non-nullable field
+                'status' => 'active'
+            ]);
+
+            \App\Models\RoomTypeChannelMap::create([
+                'hotel_id' => $this->hotel->id,
+                'room_type_id' => $this->roomType->id,
+                'ota_channel_id' => $channel->id,
+                'external_room_type_id' => 'BKG-RM-1' // Matches payload room_identifier
+            ]);
+        }
     }
 
     public function test_channel_integration_creation()
     {
         $integration = ChannelIntegration::create([
             'hotel_id' => $this->hotel->id,
-            'channel_name' => 'booking.com',
+            'channel_name' => 'booking_com',
             'display_name' => 'Booking HQ',
             'api_key' => 'secret_key',
             'sync_enabled' => true
@@ -81,7 +117,7 @@ class ChannelManagerTest extends TestCase
 
         $this->assertDatabaseHas('channel_integrations', [
             'hotel_id' => $this->hotel->id,
-            'channel_name' => 'booking.com'
+            'channel_name' => 'booking_com'
         ]);
         $this->assertEquals('secret_key', $integration->api_key);
     }
@@ -122,7 +158,7 @@ class ChannelManagerTest extends TestCase
 
         $integration = ChannelIntegration::create([
             'hotel_id' => $this->hotel->id,
-            'channel_name' => 'booking.com',
+            'channel_name' => 'booking_com',
             'sync_enabled' => true,
             'sync_pricing' => true,
             'sync_inventory' => true
@@ -154,10 +190,11 @@ class ChannelManagerTest extends TestCase
         $syncService = app(\App\Services\OTAInventorySyncService::class);
         $syncService->syncAvailability($this->roomType);
 
+        $otaChannel = \App\Models\OtaChannel::where('provider', 'booking_com')->first();
         $this->assertDatabaseHas('channel_sync_logs', [
             'hotel_id' => $this->hotel->id,
-            'channel_integration_id' => $integration->id,
-            'sync_type' => 'availability',
+            'ota_channel_id' => $otaChannel->id,
+            'operation' => 'availability',
             'status' => 'success'
         ]);
     }
@@ -171,21 +208,21 @@ class ChannelManagerTest extends TestCase
             'webhook_secret' => 'super_secret_hmac_key'
         ]);
 
-        $payload = ['hotel_identifier' => $this->hotel->id, 'event_type' => 'ping'];
+        $payload = ['hotel_id' => $this->hotel->id, 'event_type' => 'ping'];
         $jsonPayload = json_encode($payload);
         
         $validSignature = hash_hmac('sha256', $jsonPayload, 'super_secret_hmac_key');
         
         // Invalid
-        $response = $this->postJson("/api/v1/channels/webhook/airbnb", $payload, [
-            'X-Channel-Signature' => 'invalid_hash'
+        $response = $this->postJson("/api/v1/channels/airbnb/webhook", $payload, [
+            'X-Webhook-Signature' => 'invalid_hash'
         ]);
         $response->assertStatus(401);
 
         // Valid
-        $response = $this->call('POST', "/api/v1/channels/webhook/airbnb", [], [], [], [
+        $response = $this->call('POST', "/api/v1/channels/airbnb/webhook", [], [], [], [
             'CONTENT_TYPE' => 'application/json',
-            'HTTP_X-Channel-Signature' => $validSignature
+            'HTTP_X-Webhook-Signature' => $validSignature
         ], $jsonPayload);
         
         $response->assertStatus(200); // Because 'ping' is ignored cleanly
@@ -195,7 +232,7 @@ class ChannelManagerTest extends TestCase
     {
         $integration = ChannelIntegration::create([
             'hotel_id' => $this->hotel->id,
-            'channel_name' => 'booking.com',
+            'channel_name' => 'booking_com',
             'sync_enabled' => true,
             'sync_reservations' => true,
         ]);
@@ -208,12 +245,12 @@ class ChannelManagerTest extends TestCase
         ]);
 
         $payload = [
-            'hotel_identifier' => $this->hotel->id,
-            'event_type' => 'reservation',
-            'channel_reservation_id' => 'BKG-999',
+            'hotel_id' => $this->hotel->id,
+            'event_type' => 'reservation_created',
+            'external_reservation_id' => 'BKG-999',
             'room_identifier' => 'BKG-RM-1',
-            'check_in_date' => now()->addDays(2)->toDateString(),
-            'check_out_date' => now()->addDays(5)->toDateString(),
+            'check_in' => now()->addDays(2)->toDateString(),
+            'check_out' => now()->addDays(5)->toDateString(),
             'adults' => 2,
             'guest' => [
                 'first_name' => 'John',
@@ -222,8 +259,8 @@ class ChannelManagerTest extends TestCase
             ]
         ];
 
-        $response = $this->postJson("/api/v1/channels/webhook/booking.com", $payload);
-        $response->assertStatus(201);
+        $response = $this->postJson("/api/v1/channels/booking_com/webhook", $payload);
+        $response->assertStatus(200);
 
         $this->assertDatabaseHas('reservations', [
             'source' => 'ota',
@@ -232,9 +269,9 @@ class ChannelManagerTest extends TestCase
 
         $res = Reservation::where('source', 'ota')->first();
 
-        $this->assertDatabaseHas('channel_reservations', [
-            'channel_integration_id' => $integration->id,
-            'channel_reservation_id' => 'BKG-999',
+        $this->assertDatabaseHas('ota_reservations', [
+            'ota_channel_id' => \App\Models\OtaChannel::where('provider', 'booking_com')->first()->id,
+            'external_reservation_id' => 'BKG-999',
             'reservation_id' => $res->id
         ]);
     }
@@ -256,26 +293,26 @@ class ChannelManagerTest extends TestCase
         ]);
 
         $payload = [
-            'hotel_identifier' => $this->hotel->id,
-            'event_type' => 'reservation',
-            'channel_reservation_id' => 'BKG-DUPLICATE',
+            'hotel_id' => $this->hotel->id,
+            'event_type' => 'reservation_created',
+            'external_reservation_id' => 'BKG-DUPLICATE',
             'room_identifier' => 'BKG-RM-1',
-            'check_in_date' => now()->addDays(1)->toDateString(),
-            'check_out_date' => now()->addDays(3)->toDateString(),
+            'check_in' => now()->addDays(1)->toDateString(),
+            'check_out' => now()->addDays(3)->toDateString(),
             'guest' => ['first_name' => 'A', 'last_name' => 'B']
         ];
 
         // First ingestion
-        $response1 = $this->postJson("/api/v1/channels/webhook/booking.com", $payload);
-        $response1->assertStatus(201);
+        $response1 = $this->postJson("/api/v1/channels/booking_com/webhook", $payload);
+        $response1->assertStatus(200);
 
         // Second ingestion (duplicate)
-        $response2 = $this->postJson("/api/v1/channels/webhook/booking.com", $payload);
+        $response2 = $this->postJson("/api/v1/channels/booking_com/webhook", $payload);
         $response2->assertStatus(200); // Clean exit, ignored
         $response2->assertJson(['status' => 'ignored']);
 
         // Should only be one 
-        $count = ChannelReservation::where('channel_reservation_id', 'BKG-DUPLICATE')->count();
+        $count = \App\Models\OtaReservation::where('external_reservation_id', 'BKG-DUPLICATE')->count();
         $this->assertEquals(1, $count);
     }
 
@@ -287,12 +324,17 @@ class ChannelManagerTest extends TestCase
             'sync_enabled' => false, // Fully disabled via GUI
         ]);
 
+        // Modern sync engine uses HotelChannelConnection status
+         \App\Models\HotelChannelConnection::where('hotel_id', $this->hotel->id)
+            ->whereHas('otaChannel', function($q) { $q->where('provider', 'expedia'); })
+            ->update(['status' => 'disabled']);
+
         $payload = [
-            'hotel_identifier' => $this->hotel->id,
-            'event_type' => 'reservation',
+            'hotel_id' => $this->hotel->id,
+            'event_type' => 'reservation_created',
         ];
 
-        $response = $this->postJson("/api/v1/channels/webhook/expedia", $payload);
+        $response = $this->postJson("/api/v1/channels/expedia/webhook", $payload);
         $response->assertStatus(200);
         $response->assertJson(['reason' => 'Sync disabled']);
     }

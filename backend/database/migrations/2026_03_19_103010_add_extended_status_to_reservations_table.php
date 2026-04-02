@@ -13,13 +13,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (DB::getDriverName() !== 'sqlite') {
-            // Drop the existing check constraint
-            DB::statement('ALTER TABLE reservations DROP CONSTRAINT IF EXISTS reservations_status_check');
-
-            // Add the updated check constraint including 'extended'
-            DB::statement("ALTER TABLE reservations ADD CONSTRAINT reservations_status_check CHECK (status::text = ANY (ARRAY['pending'::text, 'confirmed'::text, 'checked_in'::text, 'checked_out'::text, 'cancelled'::text, 'no_show'::text, 'extended'::text]))");
-        }
+        Schema::table('reservations', function (Blueprint $table) {
+            $table->string('status')->comment('Extended statuses: pending, confirmed, checked_in, checked_out, cancelled, no_show, extended')->change();
+        });
     }
 
     /**
@@ -27,9 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (DB::getDriverName() !== 'sqlite') {
-            DB::statement('ALTER TABLE reservations DROP CONSTRAINT IF EXISTS reservations_status_check');
-            DB::statement("ALTER TABLE reservations ADD CONSTRAINT reservations_status_check CHECK (status::text = ANY (ARRAY['pending'::text, 'confirmed'::text, 'checked_in'::text, 'checked_out'::text, 'cancelled'::text, 'no_show'::text]))");
-        }
+        Schema::table('reservations', function (Blueprint $table) {
+            $table->string('status')->comment('Statuses: pending, confirmed, checked_in, checked_out, cancelled, no_show')->change();
+        });
     }
 };
