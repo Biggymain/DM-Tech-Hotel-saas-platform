@@ -19,11 +19,7 @@ class Outlet extends Model
 
     protected static function booted()
     {
-        static::creating(function ($outlet) {
-            if (!$outlet->slug) {
-                $outlet->slug = \Illuminate\Support\Str::slug($outlet->name);
-            }
-        });
+        static::creating(fn ($model) => $model->slug = $model->slug ?? \Illuminate\Support\Str::slug($model->name));
     }
 
     protected $casts = [
