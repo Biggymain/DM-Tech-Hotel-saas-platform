@@ -23,11 +23,7 @@ class RoomType extends Model
 
     protected static function booted()
     {
-        static::creating(function ($roomType) {
-            if (empty($roomType->slug)) {
-                $roomType->slug = \Illuminate\Support\Str::slug($roomType->name);
-            }
-        });
+        static::creating(fn ($model) => $model->slug = $model->slug ?? \Illuminate\Support\Str::slug($model->name));
     }
 
     protected $casts = [

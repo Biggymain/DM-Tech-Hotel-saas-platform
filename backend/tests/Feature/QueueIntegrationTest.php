@@ -40,74 +40,46 @@ class QueueIntegrationTest extends TestCase
             'email' => 'staff@example.com'
         ]);
 
-        // Ensure reservations table has the payment_reference column
-        if (!Schema::hasColumn('reservations', 'payment_reference')) {
-            Schema::table('reservations', function ($table) {
-                $table->string('payment_reference')->nullable();
-            });
-        }
-
-        // Fix permission schema based on migrations: use 'slug' instead of 'name', no 'guard_name'
-        $permId = DB::table('permissions')->insertGetId([
+        // Fix permission schema based on migrations
+        $permission = \App\Models\Permission::create([
             'hotel_id' => $this->hotel->id,
             'slug' => 'payments.process',
             'name' => 'Process Payments',
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
-        $roleId = DB::table('roles')->insertGetId([
+        $role = \App\Models\Role::create([
             'hotel_id' => $this->hotel->id,
             'slug' => 'admin',
             'name' => 'Admin',
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
-        DB::table('role_permissions')->insert([
-            'hotel_id' => $this->hotel->id,
-            'permission_id' => $permId,
-            'role_id' => $roleId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $role->permissions()->attach($permission->id, ['hotel_id' => $this->hotel->id]);
+        $this->user->roles()->attach($role->id, ['hotel_id' => $this->hotel->id]);
 
-        DB::table('user_roles')->insert([
-            'hotel_id' => $this->hotel->id,
-            'role_id' => $roleId,
-            'user_id' => $this->user->id,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $this->roomTypeId = DB::table('room_types')->insertGetId([
+        $roomType = \App\Models\RoomType::create([
             'hotel_id' => $this->hotel->id,
             'name' => 'Deluxe Room',
             'base_price' => 100.00,
             'capacity' => 2,
             'is_public' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
+        $this->roomTypeId = $roomType->id;
 
-        // Add an available room to avoid 409
-        DB::table('rooms')->insert([
+        // Add an available room
+        \App\Models\Room::create([
             'hotel_id' => $this->hotel->id,
             'room_type_id' => $this->roomTypeId,
             'room_number' => '101',
             'status' => 'available',
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
-        $this->guestId = DB::table('guests')->insertGetId([
+        $guest = \App\Models\Guest::create([
             'hotel_id' => $this->hotel->id,
             'first_name' => 'John',
             'last_name' => 'Doe',
             'email' => 'john@example.com',
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
+        $this->guestId = $guest->id;
     }
 
     public function test_booking_dispatches_job()

@@ -67,6 +67,7 @@ class SubscriptionSystemTest extends TestCase
         ]);
         
         $response = $this->actingAs($this->user, 'sanctum')
+            ->withHeader('X-Test-Verify-Subscription', 'true')
             ->getJson('/api/v1/admin/dashboard/occupancy');
 
         $response->assertStatus(402)

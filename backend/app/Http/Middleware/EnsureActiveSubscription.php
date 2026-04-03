@@ -13,10 +13,12 @@ class EnsureActiveSubscription
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (app()->runningUnitTests()) {
+        // Default bypass for background tests to prevent breaking 181/182 tests.
+        // Explicitly check for 'X-Test-Verify-Subscription' flag to trigger real enforcement in specific test cases.
+        if (app()->runningUnitTests() && !$request->hasHeader('X-Test-Verify-Subscription')) {
             return $next($request);
         }
-
+        
         $user = $request->user();
         
         if (!$user) {
