@@ -47,7 +47,7 @@ class NotificationService
     /**
      * Mark an individual notification read
      */
-    public function markAsRead(int $notificationId, int $userId): bool
+    public function markAsRead(string $notificationId, int $userId): bool
     {
         $notification = Notification::where('id', $notificationId)
             ->where(function($q) use ($userId) {

@@ -1,0 +1,754 @@
+PHPUnit 11.5.55 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.16
+Configuration: /home/micky/DM-Tech-Hotel-saas-platform/backend/phpunit.xml
+
+...............................................................  63 / 182 ( 34%)
+......FF.E.............EEEE.FE...F...................FF....F... 126 / 182 ( 69%)
+..........EEEE..................F............E..........        182 / 182 (100%)
+
+Time: 04:24.429, Memory: 88.50 MB
+
+There were 11 errors:
+
+1) Tests\Feature\LiveOrdersFeedTest::test_admin_can_see_live_guest_orders
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1 table outlets has no column named slug (Connection: sqlite, Database: :memory:, SQL: insert into "outlets" ("hotel_id", "name", "type", "slug", "updated_at", "created_at") values (1, Cafe, restaurant, cafe, 2026-04-02 18:25:52, 2026-04-02 18:25:52))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2235
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php:388
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/LiveOrdersFeedTest.php:35
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1 table outlets has no column named slug
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:578
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2235
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php:388
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/LiveOrdersFeedTest.php:35
+
+2) Tests\Feature\NotificationSystemTest::test_user_can_fetch_own_tenant_notifications
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: notifications.notifiable_type (Connection: sqlite, Database: :memory:, SQL: insert into "notifications" ("hotel_id", "user_id", "type", "title", "message", "id", "updated_at", "created_at") values (1, 1, alert, Personal Alert, This is for you, 019d4f71-e9ed-7140-9ce4-87974134aaf0, 2026-04-02 18:25:58, 2026-04-02 18:25:58))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2235
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1412
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php:388
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/NotificationSystemTest.php:30
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: notifications.notifiable_type
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2235
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1412
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php:388
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/NotificationSystemTest.php:30
+
+3) Tests\Feature\NotificationSystemTest::test_user_can_mark_notification_as_read
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: notifications.notifiable_type (Connection: sqlite, Database: :memory:, SQL: insert into "notifications" ("hotel_id", "user_id", "type", "title", "message", "id", "updated_at", "created_at") values (1, 1, alert, Test, Test message, 019d4f71-ea2c-7151-8f83-f66b40632261, 2026-04-02 18:25:58, 2026-04-02 18:25:58))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2235
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1412
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php:388
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/NotificationSystemTest.php:69
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: notifications.notifiable_type
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2235
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1412
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php:388
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/NotificationSystemTest.php:69
+
+4) Tests\Feature\NotificationSystemTest::test_user_can_bulk_read_notifications
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: notifications.notifiable_type (Connection: sqlite, Database: :memory:, SQL: insert into "notifications" ("hotel_id", "user_id", "type", "title", "message", "id", "updated_at", "created_at") values (1, 1, alert, A, A, 019d4f71-ea65-7032-8d51-666b93d1fe88, 2026-04-02 18:25:58, 2026-04-02 18:25:58))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2235
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1412
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php:388
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/NotificationSystemTest.php:88
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: notifications.notifiable_type
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2235
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1412
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php:388
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/NotificationSystemTest.php:88
+
+5) Tests\Feature\NotificationSystemTest::test_clean_expired_notifications_job_removes_old_data
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: notifications.notifiable_type (Connection: sqlite, Database: :memory:, SQL: insert into "notifications" ("hotel_id", "type", "title", "message", "expires_at", "id", "updated_at", "created_at") values (1, alert, Expired, Should delete, 2026-04-01 18:25:58, 019d4f71-ea9b-7323-972b-fc5d4bbceb04, 2026-04-02 18:25:58, 2026-04-02 18:25:58))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2235
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1412
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php:388
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/NotificationSystemTest.php:102
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: notifications.notifiable_type
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2235
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1412
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php:388
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/NotificationSystemTest.php:102
+
+6) Tests\Feature\OfflineSyncEngineTest::test_deletion_captures_payload_and_multi_tenancy
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: room_types.slug (Connection: sqlite, Database: :memory:, SQL: insert into "room_types" ("hotel_id", "name", "base_price", "capacity", "created_at", "updated_at") values (1, Standard, 100, 2, 2026-04-02 18:25:59, 2026-04-02 18:25:59))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OfflineSyncEngineTest.php:47
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: room_types.slug
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OfflineSyncEngineTest.php:47
+
+7) Tests\Feature\QueueIntegrationTest::test_booking_dispatches_job
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: room_types.slug (Connection: sqlite, Database: :memory:, SQL: insert into "room_types" ("hotel_id", "name", "base_price", "capacity", "is_public", "created_at", "updated_at") values (1, Deluxe Room, 100, 2, 1, 2026-04-02 18:26:51, 2026-04-02 18:26:51))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/QueueIntegrationTest.php:83
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: room_types.slug
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/QueueIntegrationTest.php:83
+
+8) Tests\Feature\QueueIntegrationTest::test_confirm_payment_chains_jobs
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: room_types.slug (Connection: sqlite, Database: :memory:, SQL: insert into "room_types" ("hotel_id", "name", "base_price", "capacity", "is_public", "created_at", "updated_at") values (1, Deluxe Room, 100, 2, 1, 2026-04-02 18:26:51, 2026-04-02 18:26:51))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/QueueIntegrationTest.php:83
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: room_types.slug
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/QueueIntegrationTest.php:83
+
+9) Tests\Feature\QueueIntegrationTest::test_payment_dispatches_high_priority_job
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: room_types.slug (Connection: sqlite, Database: :memory:, SQL: insert into "room_types" ("hotel_id", "name", "base_price", "capacity", "is_public", "created_at", "updated_at") values (1, Deluxe Room, 100, 2, 1, 2026-04-02 18:26:51, 2026-04-02 18:26:51))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/QueueIntegrationTest.php:83
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: room_types.slug
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/QueueIntegrationTest.php:83
+
+10) Tests\Feature\QueueIntegrationTest::test_model_change_dispatches_sync_job
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: room_types.slug (Connection: sqlite, Database: :memory:, SQL: insert into "room_types" ("hotel_id", "name", "base_price", "capacity", "is_public", "created_at", "updated_at") values (1, Deluxe Room, 100, 2, 1, 2026-04-02 18:26:51, 2026-04-02 18:26:51))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/QueueIntegrationTest.php:83
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: room_types.slug
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/QueueIntegrationTest.php:83
+
+11) Tests\Feature\SystemHealthTest::test_redis_connection_is_healthy
+Error: Class "Redis" not found
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Redis/Connectors/PhpRedisConnector.php:80
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Redis/Connectors/PhpRedisConnector.php:34
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Redis/Connectors/PhpRedisConnector.php:39
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Redis/RedisManager.php:111
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Redis/RedisManager.php:92
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Redis/RedisManager.php:280
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:363
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SystemHealthTest.php:43
+
+--
+
+There were 8 failures:
+
+1) Tests\Feature\KitchenDisplayTest::test_kitchen_ticket_automatically_created_when_order_placed
+Expected response status code [201] but received 500.
+Failed asserting that 500 is identical to 201.
+
+The following exception occurred during the last request:
+
+PDOException: SQLSTATE[HY000]: General error: 1 table order_items has no column named subtotal in /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:578
+Stack trace:
+#0 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(578): PDO->prepare()
+#1 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(827): Illuminate\Database\Connection->{closure:Illuminate\Database\Connection::statement():573}()
+#2 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(794): Illuminate\Database\Connection->runQueryCallback()
+#3 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(573): Illuminate\Database\Connection->run()
+#4 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(537): Illuminate\Database\Connection->statement()
+#5 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php(32): Illuminate\Database\Connection->insert()
+#6 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(4140): Illuminate\Database\Query\Processors\Processor->processInsertGetId()
+#7 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(2235): Illuminate\Database\Query\Builder->insertGetId()
+#8 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(1436): Illuminate\Database\Eloquent\Builder->__call()
+#9 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(1401): Illuminate\Database\Eloquent\Model->insertAndSetId()
+#10 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(1240): Illuminate\Database\Eloquent\Model->performInsert()
+#11 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php(387): Illuminate\Database\Eloquent\Model->save()
+#12 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php(388): Illuminate\Database\Eloquent\Relations\HasOneOrMany->{closure:Illuminate\Database\Eloquent\Relations\HasOneOrMany::create():384}()
+#13 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php(384): tap()
+#14 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Controllers/Api/V1/OrderController.php(99): Illuminate\Database\Eloquent\Relations\HasOneOrMany->create()
+#15 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(46): App\Http\Controllers\Api\V1\OrderController->store()
+#16 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Route.php(265): Illuminate\Routing\ControllerDispatcher->dispatch()
+#17 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Route.php(211): Illuminate\Routing\Route->runController()
+#18 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(822): Illuminate\Routing\Route->run()
+#19 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\Routing\Router->{closure:Illuminate\Routing\Router::runRouteWithinStack():821}()
+#20 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/RoleVerificationMiddleware.php(32): Illuminate\Pipeline\Pipeline->{closure:Illuminate\Pipeline\Pipeline::prepareDestination():178}()
+#21 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\RoleVerificationMiddleware->handle()
+#22 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/ModuleAccessMiddleware.php(23): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#23 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\ModuleAccessMiddleware->handle()
+#24 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/TenantMiddleware.php(88): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#25 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\TenantMiddleware->handle()
+#26 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#27 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Routing\Middleware\SubstituteBindings->handle()
+#28 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(63): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#29 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Auth\Middleware\Authenticate->handle()
+#30 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/Tenant/TenantBranchContext.php(24): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#31 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\Tenant\TenantBranchContext->handle()
+#32 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/TenantIsolationMiddleware.php(37): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#33 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\TenantIsolationMiddleware->handle()
+#34 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/ForceJsonResponse.php(19): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#35 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\ForceJsonResponse->handle()
+#36 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/Security/SecureHeadersMiddleware.php(21): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#37 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\Security\SecureHeadersMiddleware->handle()
+#38 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#39 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(821): Illuminate\Pipeline\Pipeline->then()
+#40 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(800): Illuminate\Routing\Router->runRouteWithinStack()
+#41 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(764): Illuminate\Routing\Router->runRoute()
+#42 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(753): Illuminate\Routing\Router->dispatchToRoute()
+#43 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\Routing\Router->dispatch()
+#44 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\Foundation\Http\Kernel->{closure:Illuminate\Foundation\Http\Kernel::dispatchToRouter():197}()
+#45 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:Illuminate\Pipeline\Pipeline::prepareDestination():178}()
+#46 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
+#47 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle()
+#48 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#49 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
+#50 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\TrimStrings->handle()
+#51 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#52 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\ValidatePostSize->handle()
+#53 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(109): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#54 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle()
+#55 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(74): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#56 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\HandleCors->handle()
+#57 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#58 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\TrustProxies->handle()
+#59 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#60 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks->handle()
+#61 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php(26): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#62 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\ValidatePathEncoding->handle()
+#63 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#64 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\Pipeline\Pipeline->then()
+#65 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter()
+#66 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(607): Illuminate\Foundation\Http\Kernel->handle()
+#67 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(573): Illuminate\Foundation\Testing\TestCase->call()
+#68 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(411): Illuminate\Foundation\Testing\TestCase->json()
+#69 /home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/KitchenDisplayTest.php(124): Illuminate\Foundation\Testing\TestCase->postJson()
+#70 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php(1667): Tests\Feature\KitchenDisplayTest->test_kitchen_ticket_automatically_created_when_order_placed()
+#71 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php(519): PHPUnit\Framework\TestCase->runTest()
+#72 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestRunner/TestRunner.php(87): PHPUnit\Framework\TestCase->runBare()
+#73 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php(365): PHPUnit\Framework\TestRunner->run()
+#74 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestCase->run()
+#75 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#76 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#77 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/TestRunner.php(64): PHPUnit\Framework\TestSuite->run()
+#78 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/Application.php(211): PHPUnit\TextUI\TestRunner->run()
+#79 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/phpunit(104): PHPUnit\TextUI\Application->run()
+#80 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/bin/phpunit(122): include('...')
+#81 {main}
+
+Next Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1 table order_items has no column named subtotal (Connection: sqlite, Database: :memory:, SQL: insert into "order_items" ("menu_item_id", "quantity", "price", "subtotal", "notes", "kitchen_section", "order_id", "updated_at", "created_at") values (1, 2, 15, 30, ?, Grill, 1, 2026-04-02 18:25:50, 2026-04-02 18:25:50)) in /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+Stack trace:
+#0 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(794): Illuminate\Database\Connection->runQueryCallback()
+#1 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(573): Illuminate\Database\Connection->run()
+#2 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(537): Illuminate\Database\Connection->statement()
+#3 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php(32): Illuminate\Database\Connection->insert()
+#4 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(4140): Illuminate\Database\Query\Processors\Processor->processInsertGetId()
+#5 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(2235): Illuminate\Database\Query\Builder->insertGetId()
+#6 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(1436): Illuminate\Database\Eloquent\Builder->__call()
+#7 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(1401): Illuminate\Database\Eloquent\Model->insertAndSetId()
+#8 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(1240): Illuminate\Database\Eloquent\Model->performInsert()
+#9 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php(387): Illuminate\Database\Eloquent\Model->save()
+#10 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php(388): Illuminate\Database\Eloquent\Relations\HasOneOrMany->{closure:Illuminate\Database\Eloquent\Relations\HasOneOrMany::create():384}()
+#11 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php(384): tap()
+#12 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Controllers/Api/V1/OrderController.php(99): Illuminate\Database\Eloquent\Relations\HasOneOrMany->create()
+#13 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(46): App\Http\Controllers\Api\V1\OrderController->store()
+#14 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Route.php(265): Illuminate\Routing\ControllerDispatcher->dispatch()
+#15 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Route.php(211): Illuminate\Routing\Route->runController()
+#16 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(822): Illuminate\Routing\Route->run()
+#17 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\Routing\Router->{closure:Illuminate\Routing\Router::runRouteWithinStack():821}()
+#18 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/RoleVerificationMiddleware.php(32): Illuminate\Pipeline\Pipeline->{closure:Illuminate\Pipeline\Pipeline::prepareDestination():178}()
+#19 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\RoleVerificationMiddleware->handle()
+#20 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/ModuleAccessMiddleware.php(23): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#21 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\ModuleAccessMiddleware->handle()
+#22 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/TenantMiddleware.php(88): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#23 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\TenantMiddleware->handle()
+#24 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#25 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Routing\Middleware\SubstituteBindings->handle()
+#26 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(63): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#27 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Auth\Middleware\Authenticate->handle()
+#28 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/Tenant/TenantBranchContext.php(24): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#29 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\Tenant\TenantBranchContext->handle()
+#30 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/TenantIsolationMiddleware.php(37): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#31 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\TenantIsolationMiddleware->handle()
+#32 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/ForceJsonResponse.php(19): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#33 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\ForceJsonResponse->handle()
+#34 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/Security/SecureHeadersMiddleware.php(21): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#35 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\Security\SecureHeadersMiddleware->handle()
+#36 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#37 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(821): Illuminate\Pipeline\Pipeline->then()
+#38 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(800): Illuminate\Routing\Router->runRouteWithinStack()
+#39 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(764): Illuminate\Routing\Router->runRoute()
+#40 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(753): Illuminate\Routing\Router->dispatchToRoute()
+#41 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\Routing\Router->dispatch()
+#42 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\Foundation\Http\Kernel->{closure:Illuminate\Foundation\Http\Kernel::dispatchToRouter():197}()
+#43 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:Illuminate\Pipeline\Pipeline::prepareDestination():178}()
+#44 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
+#45 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle()
+#46 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#47 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
+#48 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\TrimStrings->handle()
+#49 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#50 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\ValidatePostSize->handle()
+#51 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(109): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#52 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle()
+#53 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(74): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#54 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\HandleCors->handle()
+#55 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#56 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\TrustProxies->handle()
+#57 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#58 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks->handle()
+#59 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php(26): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#60 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\ValidatePathEncoding->handle()
+#61 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#62 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\Pipeline\Pipeline->then()
+#63 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter()
+#64 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(607): Illuminate\Foundation\Http\Kernel->handle()
+#65 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(573): Illuminate\Foundation\Testing\TestCase->call()
+#66 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(411): Illuminate\Foundation\Testing\TestCase->json()
+#67 /home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/KitchenDisplayTest.php(124): Illuminate\Foundation\Testing\TestCase->postJson()
+#68 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php(1667): Tests\Feature\KitchenDisplayTest->test_kitchen_ticket_automatically_created_when_order_placed()
+#69 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php(519): PHPUnit\Framework\TestCase->runTest()
+#70 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestRunner/TestRunner.php(87): PHPUnit\Framework\TestCase->runBare()
+#71 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php(365): PHPUnit\Framework\TestRunner->run()
+#72 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestCase->run()
+#73 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#74 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#75 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/TestRunner.php(64): PHPUnit\Framework\TestSuite->run()
+#76 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/Application.php(211): PHPUnit\TextUI\TestRunner->run()
+#77 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/phpunit(104): PHPUnit\TextUI\Application->run()
+#78 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/bin/phpunit(122): include('...')
+#79 {main}
+
+----------------------------------------------------------------------------------
+
+SQLSTATE[HY000]: General error: 1 table order_items has no column named subtotal (Connection: sqlite, Database: :memory:, SQL: insert into "order_items" ("menu_item_id", "quantity", "price", "subtotal", "notes", "kitchen_section", "order_id", "updated_at", "created_at") values (1, 2, 15, 30, ?, Grill, 1, 2026-04-02 18:25:50, 2026-04-02 18:25:50))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/KitchenDisplayTest.php:125
+
+2) Tests\Feature\KitchenDisplayTest::test_kds_status_transitions_and_history_logging
+Failed asserting that null is not null.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/KitchenDisplayTest.php:182
+
+3) Tests\Feature\OfflineModuleTest::test_disabled_module_blocks_endpoint_with_safe_403
+Expected response status code [403] but received 200.
+Failed asserting that 200 is identical to 403.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OfflineModuleTest.php:55
+
+4) Tests\Feature\OrderEngineTest::test_can_create_pos_order_with_items
+Expected response status code [201] but received 500.
+Failed asserting that 500 is identical to 201.
+
+The following exception occurred during the last request:
+
+PDOException: SQLSTATE[HY000]: General error: 1 table order_items has no column named subtotal in /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:578
+Stack trace:
+#0 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(578): PDO->prepare()
+#1 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(827): Illuminate\Database\Connection->{closure:Illuminate\Database\Connection::statement():573}()
+#2 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(794): Illuminate\Database\Connection->runQueryCallback()
+#3 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(573): Illuminate\Database\Connection->run()
+#4 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(537): Illuminate\Database\Connection->statement()
+#5 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php(32): Illuminate\Database\Connection->insert()
+#6 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(4140): Illuminate\Database\Query\Processors\Processor->processInsertGetId()
+#7 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(2235): Illuminate\Database\Query\Builder->insertGetId()
+#8 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(1436): Illuminate\Database\Eloquent\Builder->__call()
+#9 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(1401): Illuminate\Database\Eloquent\Model->insertAndSetId()
+#10 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(1240): Illuminate\Database\Eloquent\Model->performInsert()
+#11 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php(387): Illuminate\Database\Eloquent\Model->save()
+#12 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php(388): Illuminate\Database\Eloquent\Relations\HasOneOrMany->{closure:Illuminate\Database\Eloquent\Relations\HasOneOrMany::create():384}()
+#13 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php(384): tap()
+#14 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Controllers/Api/V1/OrderController.php(99): Illuminate\Database\Eloquent\Relations\HasOneOrMany->create()
+#15 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(46): App\Http\Controllers\Api\V1\OrderController->store()
+#16 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Route.php(265): Illuminate\Routing\ControllerDispatcher->dispatch()
+#17 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Route.php(211): Illuminate\Routing\Route->runController()
+#18 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(822): Illuminate\Routing\Route->run()
+#19 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\Routing\Router->{closure:Illuminate\Routing\Router::runRouteWithinStack():821}()
+#20 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/RoleVerificationMiddleware.php(32): Illuminate\Pipeline\Pipeline->{closure:Illuminate\Pipeline\Pipeline::prepareDestination():178}()
+#21 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\RoleVerificationMiddleware->handle()
+#22 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/ModuleAccessMiddleware.php(23): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#23 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\ModuleAccessMiddleware->handle()
+#24 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/TenantMiddleware.php(88): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#25 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\TenantMiddleware->handle()
+#26 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#27 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Routing\Middleware\SubstituteBindings->handle()
+#28 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(63): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#29 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Auth\Middleware\Authenticate->handle()
+#30 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/Tenant/TenantBranchContext.php(24): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#31 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\Tenant\TenantBranchContext->handle()
+#32 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/TenantIsolationMiddleware.php(37): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#33 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\TenantIsolationMiddleware->handle()
+#34 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/ForceJsonResponse.php(19): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#35 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\ForceJsonResponse->handle()
+#36 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/Security/SecureHeadersMiddleware.php(21): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#37 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\Security\SecureHeadersMiddleware->handle()
+#38 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#39 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(821): Illuminate\Pipeline\Pipeline->then()
+#40 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(800): Illuminate\Routing\Router->runRouteWithinStack()
+#41 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(764): Illuminate\Routing\Router->runRoute()
+#42 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(753): Illuminate\Routing\Router->dispatchToRoute()
+#43 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\Routing\Router->dispatch()
+#44 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\Foundation\Http\Kernel->{closure:Illuminate\Foundation\Http\Kernel::dispatchToRouter():197}()
+#45 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:Illuminate\Pipeline\Pipeline::prepareDestination():178}()
+#46 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
+#47 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle()
+#48 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#49 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
+#50 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\TrimStrings->handle()
+#51 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#52 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\ValidatePostSize->handle()
+#53 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(109): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#54 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle()
+#55 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(74): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#56 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\HandleCors->handle()
+#57 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#58 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\TrustProxies->handle()
+#59 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#60 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks->handle()
+#61 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php(26): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#62 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\ValidatePathEncoding->handle()
+#63 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#64 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\Pipeline\Pipeline->then()
+#65 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter()
+#66 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(607): Illuminate\Foundation\Http\Kernel->handle()
+#67 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(573): Illuminate\Foundation\Testing\TestCase->call()
+#68 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(411): Illuminate\Foundation\Testing\TestCase->json()
+#69 /home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OrderEngineTest.php(84): Illuminate\Foundation\Testing\TestCase->postJson()
+#70 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php(1667): Tests\Feature\OrderEngineTest->test_can_create_pos_order_with_items()
+#71 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php(519): PHPUnit\Framework\TestCase->runTest()
+#72 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestRunner/TestRunner.php(87): PHPUnit\Framework\TestCase->runBare()
+#73 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php(365): PHPUnit\Framework\TestRunner->run()
+#74 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestCase->run()
+#75 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#76 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#77 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/TestRunner.php(64): PHPUnit\Framework\TestSuite->run()
+#78 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/Application.php(211): PHPUnit\TextUI\TestRunner->run()
+#79 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/phpunit(104): PHPUnit\TextUI\Application->run()
+#80 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/bin/phpunit(122): include('...')
+#81 {main}
+
+Next Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1 table order_items has no column named subtotal (Connection: sqlite, Database: :memory:, SQL: insert into "order_items" ("menu_item_id", "quantity", "price", "subtotal", "notes", "kitchen_section", "order_id", "updated_at", "created_at") values (?, 2, 15.5, 31, No onions, Grill, 1, 2026-04-02 18:25:59, 2026-04-02 18:25:59)) in /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+Stack trace:
+#0 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(794): Illuminate\Database\Connection->runQueryCallback()
+#1 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(573): Illuminate\Database\Connection->run()
+#2 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(537): Illuminate\Database\Connection->statement()
+#3 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php(32): Illuminate\Database\Connection->insert()
+#4 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(4140): Illuminate\Database\Query\Processors\Processor->processInsertGetId()
+#5 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(2235): Illuminate\Database\Query\Builder->insertGetId()
+#6 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(1436): Illuminate\Database\Eloquent\Builder->__call()
+#7 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(1401): Illuminate\Database\Eloquent\Model->insertAndSetId()
+#8 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(1240): Illuminate\Database\Eloquent\Model->performInsert()
+#9 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php(387): Illuminate\Database\Eloquent\Model->save()
+#10 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php(388): Illuminate\Database\Eloquent\Relations\HasOneOrMany->{closure:Illuminate\Database\Eloquent\Relations\HasOneOrMany::create():384}()
+#11 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php(384): tap()
+#12 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Controllers/Api/V1/OrderController.php(99): Illuminate\Database\Eloquent\Relations\HasOneOrMany->create()
+#13 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(46): App\Http\Controllers\Api\V1\OrderController->store()
+#14 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Route.php(265): Illuminate\Routing\ControllerDispatcher->dispatch()
+#15 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Route.php(211): Illuminate\Routing\Route->runController()
+#16 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(822): Illuminate\Routing\Route->run()
+#17 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\Routing\Router->{closure:Illuminate\Routing\Router::runRouteWithinStack():821}()
+#18 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/RoleVerificationMiddleware.php(32): Illuminate\Pipeline\Pipeline->{closure:Illuminate\Pipeline\Pipeline::prepareDestination():178}()
+#19 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\RoleVerificationMiddleware->handle()
+#20 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/ModuleAccessMiddleware.php(23): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#21 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\ModuleAccessMiddleware->handle()
+#22 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/TenantMiddleware.php(88): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#23 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\TenantMiddleware->handle()
+#24 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#25 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Routing\Middleware\SubstituteBindings->handle()
+#26 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(63): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#27 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Auth\Middleware\Authenticate->handle()
+#28 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/Tenant/TenantBranchContext.php(24): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#29 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\Tenant\TenantBranchContext->handle()
+#30 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/TenantIsolationMiddleware.php(37): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#31 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\TenantIsolationMiddleware->handle()
+#32 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/ForceJsonResponse.php(19): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#33 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\ForceJsonResponse->handle()
+#34 /home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/Security/SecureHeadersMiddleware.php(21): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#35 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): App\Http\Middleware\Security\SecureHeadersMiddleware->handle()
+#36 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#37 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(821): Illuminate\Pipeline\Pipeline->then()
+#38 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(800): Illuminate\Routing\Router->runRouteWithinStack()
+#39 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(764): Illuminate\Routing\Router->runRoute()
+#40 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(753): Illuminate\Routing\Router->dispatchToRoute()
+#41 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\Routing\Router->dispatch()
+#42 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\Foundation\Http\Kernel->{closure:Illuminate\Foundation\Http\Kernel::dispatchToRouter():197}()
+#43 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:Illuminate\Pipeline\Pipeline::prepareDestination():178}()
+#44 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
+#45 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle()
+#46 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#47 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle()
+#48 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\TrimStrings->handle()
+#49 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#50 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\ValidatePostSize->handle()
+#51 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(109): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#52 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle()
+#53 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(74): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#54 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\HandleCors->handle()
+#55 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#56 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\TrustProxies->handle()
+#57 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#58 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks->handle()
+#59 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php(26): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#60 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate\Http\Middleware\ValidatePathEncoding->handle()
+#61 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():194}:195}()
+#62 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\Pipeline\Pipeline->then()
+#63 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter()
+#64 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(607): Illuminate\Foundation\Http\Kernel->handle()
+#65 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(573): Illuminate\Foundation\Testing\TestCase->call()
+#66 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php(411): Illuminate\Foundation\Testing\TestCase->json()
+#67 /home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OrderEngineTest.php(84): Illuminate\Foundation\Testing\TestCase->postJson()
+#68 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php(1667): Tests\Feature\OrderEngineTest->test_can_create_pos_order_with_items()
+#69 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php(519): PHPUnit\Framework\TestCase->runTest()
+#70 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestRunner/TestRunner.php(87): PHPUnit\Framework\TestCase->runBare()
+#71 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php(365): PHPUnit\Framework\TestRunner->run()
+#72 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestCase->run()
+#73 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#74 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#75 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/TestRunner.php(64): PHPUnit\Framework\TestSuite->run()
+#76 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/Application.php(211): PHPUnit\TextUI\TestRunner->run()
+#77 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/phpunit(104): PHPUnit\TextUI\Application->run()
+#78 /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/bin/phpunit(122): include('...')
+#79 {main}
+
+----------------------------------------------------------------------------------
+
+SQLSTATE[HY000]: General error: 1 table order_items has no column named subtotal (Connection: sqlite, Database: :memory:, SQL: insert into "order_items" ("menu_item_id", "quantity", "price", "subtotal", "notes", "kitchen_section", "order_id", "updated_at", "created_at") values (?, 2, 15.5, 31, No onions, Grill, 1, 2026-04-02 18:25:59, 2026-04-02 18:25:59))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OrderEngineTest.php:86
+
+5) Tests\Feature\PaymentSystemTest::test_payment_webhook_processing
+Expected response status code [200] but received 400.
+Failed asserting that 400 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:222
+
+6) Tests\Feature\PaymentSystemTest::test_tenant_isolation_between_hotels
+Expected response status code [500] but received 201.
+Failed asserting that 201 is identical to 500.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:242
+
+7) Tests\Feature\PaymentSystemTest::test_duplicate_webhook_transaction_rejected
+Expected response status code [200] but received 400.
+Failed asserting that 400 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:362
+
+8) Tests\Feature\RolePermissionTest::test_tenant_module_toggle_blocks_access
+Expected response status code [403] but received 200.
+Failed asserting that 200 is identical to 403.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/RolePermissionTest.php:78
+
+ERRORS!
+Tests: 182, Assertions: 582, Errors: 11, Failures: 8.

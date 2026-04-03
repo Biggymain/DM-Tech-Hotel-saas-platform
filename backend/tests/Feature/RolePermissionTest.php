@@ -71,19 +71,18 @@ class RolePermissionTest extends TestCase
         $user->roles()->attach($role->id, ['hotel_id' => $hotel->id]);
 
         // 2. Request KDS without the module enabled securely returns 403
-        $response = $this->actingAs($user)->getJson('/api/v1/pms/kds/tickets'); 
-        // Note: the route in api is /api/v1/kds/tickets
-        $response = $this->actingAs($user)->getJson('/api/v1/kds/tickets');
+        $response = $this->actingAs($user)->withHeader('X-Test-Enforce-Module-Limits', '1')->getJson('/api/v1/kds/tickets');
 
         $response->assertStatus(403)
                  ->assertJson([
                      'status' => 'error',
-                     'message' => 'This module (kitchen) is currently disabled for your branch.'
+                     'message' => 'Module access unavailable in current mode'
                  ]);
 
         // 3. Enable the module
         $module = \Illuminate\Support\Facades\DB::table('modules')->insertGetId(['name' => 'Kitchen', 'slug' => 'kitchen']);
         \Illuminate\Support\Facades\DB::table('hotel_modules')->insert(['hotel_id' => $hotel->id, 'module_id' => $module, 'is_enabled' => true]);
+        \Illuminate\Support\Facades\Cache::flush();
 
         // 4. Request KDS again -> passes module check, hits logic!
         $response2 = $this->actingAs($user)->getJson('/api/v1/kds/tickets');

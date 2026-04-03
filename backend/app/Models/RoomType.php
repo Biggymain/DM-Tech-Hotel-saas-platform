@@ -13,12 +13,22 @@ class RoomType extends Model
     protected $fillable = [
         'hotel_id',
         'name',
+        'slug',
         'description',
         'base_price',
         'capacity',
         'amenities',
         'is_public',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($roomType) {
+            if (!$roomType->slug) {
+                $roomType->slug = \Illuminate\Support\Str::slug($roomType->name) . '-' . uniqid();
+            }
+        });
+    }
 
     protected $casts = [
         'base_price' => 'decimal:2',

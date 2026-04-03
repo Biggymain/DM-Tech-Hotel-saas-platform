@@ -39,6 +39,9 @@ class SystemHealthTest extends TestCase
         // Skip actual redis ping if not configured locally to prevent build failures on minimal runners
         if (config('database.redis.default.host') === '127.0.0.1') {
             try {
+                if (!class_exists('Redis')) {
+                    $this->markTestSkipped('Redis class not found (phpredis extension missing).');
+                }
                 // If using phpredis or predis
                 Redis::ping();
                 $this->assertTrue(true, 'Redis connection is healthy.');

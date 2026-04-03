@@ -120,6 +120,7 @@ class GuestOutletController extends Controller
                     'menu_item_id' => $menuItem->id,
                     'quantity' => $itemData['quantity'],
                     'price' => $price,
+                    'subtotal' => $price * $itemData['quantity'],
                     'notes' => $itemData['notes'] ?? null,
                     'kitchen_section' => $menuItem->department_id ?? null,
                 ];
@@ -158,7 +159,9 @@ class GuestOutletController extends Controller
                 $order->items()->create($itemData);
             }
 
-            $order->statusHistory()->create([
+            \App\Models\OrderStatusHistory::create([
+                'order_id' => $order->id,
+                'hotel_id' => $order->hotel_id,
                 'previous_status' => null,
                 'new_status' => 'pending',
                 'changed_by' => null,

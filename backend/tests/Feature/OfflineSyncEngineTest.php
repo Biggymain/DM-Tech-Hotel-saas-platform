@@ -44,14 +44,13 @@ class OfflineSyncEngineTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        $roomTypeId = DB::table('room_types')->insertGetId([
+        $roomType = RoomType::create([
             'hotel_id' => $hotelId,
             'name' => 'Standard',
             'base_price' => 100.00,
             'capacity' => 2,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
+        $roomTypeId = $roomType->id;
         
         // We set session or config to fake the tenant context if necessary, 
         // but since we assign hotel_id directly, the Tenantable trait should skip assignment.
