@@ -60,6 +60,11 @@ class PaymentGatewayController extends Controller
             'payment_source' => 'nullable|string|in:guest_portal,restaurant_pos,frontdesk,room_service,manual'
         ]);
 
+        // Logic Leak protection: Ensure the input matches the auth context exactly
+        if ((int) $request->input('hotel_id') !== (int) $request->user()->hotel_id) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
         $reservation = null;
         if (!empty($validated['reservation_id'])) {
             $reservation = Reservation::find($validated['reservation_id']);

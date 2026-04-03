@@ -40,7 +40,15 @@ class PaymentController extends Controller
             'transaction_reference' => 'nullable|string'
         ]);
 
+        if ($request->has('hotel_id') && (int) $request->input('hotel_id') !== (int) $request->user()->hotel_id) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
         $invoice = Invoice::where('hotel_id', $request->user()->hotel_id)->findOrFail($validated['invoice_id']);
+        
+        if ($invoice->hotel_id !== $request->user()->hotel_id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
 
         try {
             \App\Jobs\ProcessPaymentJob::dispatch(

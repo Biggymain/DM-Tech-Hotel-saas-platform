@@ -18,6 +18,8 @@ class TenantMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $hotelId = null;
+        $isGroupAdmin = Auth::check() && Auth::user()->hotel_group_id && !Auth::user()->hotel_id;
+        $isSuperAdmin = Auth::check() && Auth::user()->is_super_admin;
 
         // 1. Check Authenticated Admin User
         if (Auth::check()) {
@@ -48,6 +50,15 @@ class TenantMiddleware
                     }
                 }
             }
+            
+            // Security Hardening: If a hotelId is provided in the request but doesn't match the user's hotelId
+            // and the user is NOT a global admin, reject the request with Forbidden.
+            if ($contextId && (int)$contextId !== (int)$hotelId && !$isSuperAdmin && !$isGroupAdmin) {
+                 return response()->json([
+                     'error' => 'Forbidden',
+                     'message' => 'You do not have permission to access another tenant\'s data.'
+                 ], 403);
+            }
         } 
         
         // 2. Check Guest Portal Session (via Token in Header, Query or Body)
@@ -69,9 +80,6 @@ class TenantMiddleware
                 }
             }
         }
-
-        $isGroupAdmin = Auth::check() && Auth::user()->hotel_group_id && !Auth::user()->hotel_id;
-        $isSuperAdmin = Auth::check() && Auth::user()->is_super_admin;
 
         if (!$hotelId && !$isGroupAdmin && !$isSuperAdmin && !$this->isPublicRoute($request)) {
             return response()->json([

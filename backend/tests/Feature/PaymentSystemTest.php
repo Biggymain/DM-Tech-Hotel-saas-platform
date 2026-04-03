@@ -27,6 +27,7 @@ class PaymentSystemTest extends TestCase
     protected $guest;
     protected $reservation;
     protected $paymentGateway;
+    protected $room;
 
     protected function setUp(): void
     {
@@ -39,7 +40,7 @@ class PaymentSystemTest extends TestCase
         $this->guest = Guest::create(['hotel_id' => $this->hotel->id, 'first_name' => 'Jane', 'last_name' => 'Smith']);
         
         $roomType = RoomType::create(['hotel_id' => $this->hotel->id, 'name' => 'Suite', 'base_price' => 200]);
-        $room = Room::create(['hotel_id' => $this->hotel->id, 'room_type_id' => $roomType->id, 'room_number' => '102', 'status' => 'available']);
+        $this->room = Room::create(['hotel_id' => $this->hotel->id, 'room_type_id' => $roomType->id, 'room_number' => '102', 'status' => 'available']);
         
         $this->reservation = Reservation::create([
             'hotel_id' => $this->hotel->id,
@@ -175,7 +176,7 @@ class PaymentSystemTest extends TestCase
     {
         $session = GuestPortalSession::create([
             'hotel_id' => $this->hotel->id,
-            'room_id' => 1,
+            'room_id' => $this->room->id,
             'reservation_id' => $this->reservation->id,
             'guest_id' => $this->guest->id,
             'session_token' => 'portal_token_999',
@@ -239,7 +240,7 @@ class PaymentSystemTest extends TestCase
             'hotel_id' => $otherHotel->id
         ]);
 
-        $response->assertStatus(500); // InvalidArgumentException because gateway not found for that hotel
+        $response->assertStatus(403); // Forbidden because hotel_id doesn't match auth user
     }
 
     public function test_monnify_gateway_payment_intent()

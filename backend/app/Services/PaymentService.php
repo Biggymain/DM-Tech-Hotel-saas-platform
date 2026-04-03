@@ -61,12 +61,14 @@ class PaymentService
         array $posMetadata = [],
         string $paymentSource = 'guest_portal'
     ): array {
+        \Illuminate\Support\Facades\Log::info("createPaymentIntent: hotelId: {$hotelId}, gatewayName: {$gatewayName}");
         $gatewayConfig = PaymentGateway::where('hotel_id', $hotelId)
             ->where('gateway_name', $gatewayName)
             ->where('is_active', true)
             ->first();
 
         if (!$gatewayConfig) {
+            \Illuminate\Support\Facades\Log::info("createPaymentIntent: gatewayConfig is null for hotelId: {$hotelId}");
             throw new InvalidArgumentException("Payment gateway '{$gatewayName}' is not configured or active for this hotel.");
         }
 
