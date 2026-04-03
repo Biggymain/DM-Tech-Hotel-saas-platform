@@ -15,6 +15,11 @@ class SubscriptionSystemTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $plan;
+    protected $hotel;
+    protected $user;
+    protected $subscriptionService;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -56,7 +61,10 @@ class SubscriptionSystemTest extends TestCase
         $subscription = $this->subscriptionService->createSubscription($this->hotel, $this->plan);
         
         // Manually expire and suspend
-        $subscription->update(['status' => 'suspended']);
+        $subscription->update([
+            'status' => 'suspended',
+            'ends_at' => now()->subDays(1)
+        ]);
         
         $response = $this->actingAs($this->user, 'sanctum')
             ->getJson('/api/v1/admin/dashboard/occupancy');
