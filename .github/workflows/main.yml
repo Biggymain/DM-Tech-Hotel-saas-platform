@@ -29,12 +29,21 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.4'
-        extensions: mbstring, xml, bcmath, mysql, intl, gd
+        extensions: mbstring, xml, bcmath, mysql, intl, gd, redis
         coverage: xdebug
 
     - name: Install Dependencies
       working-directory: ./backend
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Initialize Laravel Environment
+      run: |
+        cd backend
+        mkdir -p storage/framework/{sessions,views,cache,testing}
+        mkdir -p storage/logs
+        mkdir -p bootstrap/cache
+        chmod -R 777 storage bootstrap/cache
+        touch storage/logs/laravel.log
 
     - name: Prepare Backend
       working-directory: ./backend
@@ -52,6 +61,7 @@ jobs:
         DB_USERNAME: root
         REDIS_HOST: 127.0.0.1
       run: |
+        php artisan optimize:clear
         php artisan migrate --force
         php artisan test
 
