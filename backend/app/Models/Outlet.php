@@ -12,10 +12,19 @@ class Outlet extends Model
     protected $fillable = [
         'hotel_id',
         'name',
+        'slug',
         'type',
-        'tables_count',
         'is_active',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($outlet) {
+            if (!$outlet->slug) {
+                $outlet->slug = \Illuminate\Support\Str::slug($outlet->name);
+            }
+        });
+    }
 
     protected $casts = [
         'is_active' => 'boolean',

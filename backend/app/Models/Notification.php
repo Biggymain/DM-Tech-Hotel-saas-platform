@@ -3,16 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use App\Traits\Tenantable;
 
 class Notification extends Model
 {
-    use Tenantable;
+    use HasUuids, Tenantable;
 
     protected $fillable = [
         'hotel_id',
         'outlet_id',
         'user_id',
+        'notifiable_id',
+        'notifiable_type',
         'type',
         'priority',
         'title',
@@ -29,6 +32,11 @@ class Notification extends Model
         'expires_at' => 'datetime',
         'broadcasted_at' => 'datetime'
     ];
+
+    public function notifiable()
+    {
+        return $this->morphTo();
+    }
 
     public function user()
     {

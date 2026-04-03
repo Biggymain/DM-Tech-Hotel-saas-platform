@@ -91,12 +91,12 @@ class OrderService
 
         $order->update(['order_status' => $newStatus]);
 
-        $order->statusHistory()->create([
+        \App\Models\OrderStatusHistory::create([
             'order_id' => $order->id,
+            'hotel_id' => $order->hotel_id,
             'previous_status' => $currentStatus,
             'new_status' => $newStatus,
             'changed_by' => auth()->id() ?? $order->created_by,
-            'hotel_id' => $order->hotel_id
         ]);
 
         // Broadcast to station (chef's KDS update) + possibly waiter (on 'ready')

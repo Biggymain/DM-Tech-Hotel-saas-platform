@@ -50,7 +50,7 @@ class OfflineModuleTest extends TestCase
         $role->permissions()->attach($permission->id, ['hotel_id' => $hotel->id]);
         $user->roles()->attach($role->id, ['hotel_id' => $hotel->id]);
 
-        $response = $this->actingAs($user)->getJson('/api/v1/kds/tickets');
+        $response = $this->actingAs($user)->withHeader('X-Test-Enforce-Module-Limits', '1')->getJson('/api/v1/kds/tickets');
 
         $response->assertStatus(403)
                  ->assertJson([

@@ -30,6 +30,8 @@ class NotificationSystemTest extends TestCase
         Notification::create([
             'hotel_id' => $hotel->id,
             'user_id' => $user->id,
+            'notifiable_id' => $user->id,
+            'notifiable_type' => User::class,
             'type' => 'alert',
             'title' => 'Personal Alert',
             'message' => 'This is for you'
@@ -38,6 +40,8 @@ class NotificationSystemTest extends TestCase
         // Global tenant notification
         Notification::create([
             'hotel_id' => $hotel->id,
+            'notifiable_id' => $hotel->id,
+            'notifiable_type' => Hotel::class,
             'type' => 'broadcast',
             'title' => 'Global Alert',
             'message' => 'This is for everyone in hotel'
@@ -47,6 +51,8 @@ class NotificationSystemTest extends TestCase
         $foreignHotel = Hotel::create(['name' => 'Foreign', 'domain' => 'foreign', 'is_active' => true]);
         Notification::create([
             'hotel_id' => $foreignHotel->id,
+            'notifiable_id' => $foreignHotel->id,
+            'notifiable_type' => Hotel::class,
             'type' => 'broadcast',
             'title' => 'Foreign Alert',
             'message' => 'Should not see this'
@@ -69,6 +75,8 @@ class NotificationSystemTest extends TestCase
         $notification = Notification::create([
             'hotel_id' => $hotel->id,
             'user_id' => $user->id,
+            'notifiable_id' => $user->id,
+            'notifiable_type' => User::class,
             'type' => 'alert',
             'title' => 'Test',
             'message' => 'Test message'
@@ -85,8 +93,8 @@ class NotificationSystemTest extends TestCase
         $hotel = Hotel::create(['name' => 'Test Hotel', 'domain' => 'test', 'is_active' => true]);
         $user = User::factory()->create(['hotel_id' => $hotel->id, 'is_super_admin' => true]);
 
-        Notification::create(['hotel_id' => $hotel->id, 'user_id' => $user->id, 'type' => 'alert', 'title' => 'A', 'message' => 'A']);
-        Notification::create(['hotel_id' => $hotel->id, 'user_id' => $user->id, 'type' => 'alert', 'title' => 'B', 'message' => 'B']);
+        Notification::create(['hotel_id' => $hotel->id, 'user_id' => $user->id, 'notifiable_id' => $user->id, 'notifiable_type' => User::class, 'type' => 'alert', 'title' => 'A', 'message' => 'A']);
+        Notification::create(['hotel_id' => $hotel->id, 'user_id' => $user->id, 'notifiable_id' => $user->id, 'notifiable_type' => User::class, 'type' => 'alert', 'title' => 'B', 'message' => 'B']);
 
         $response = $this->actingAs($user)->putJson("/api/v1/notifications/read-all");
 
@@ -101,6 +109,8 @@ class NotificationSystemTest extends TestCase
         // Expired notification
         Notification::create([
             'hotel_id' => $hotel->id,
+            'notifiable_id' => $hotel->id,
+            'notifiable_type' => Hotel::class,
             'type' => 'alert',
             'title' => 'Expired',
             'message' => 'Should delete',
@@ -110,6 +120,8 @@ class NotificationSystemTest extends TestCase
         // Old Read Notification (>30 days)
         $oldRead = Notification::create([
             'hotel_id' => $hotel->id,
+            'notifiable_id' => $hotel->id,
+            'notifiable_type' => Hotel::class,
             'type' => 'alert',
             'title' => 'Old Read',
             'message' => 'Should delete',
@@ -121,6 +133,8 @@ class NotificationSystemTest extends TestCase
         // Valid unread notification
         Notification::create([
             'hotel_id' => $hotel->id,
+            'notifiable_id' => $hotel->id,
+            'notifiable_type' => Hotel::class,
             'type' => 'alert',
             'title' => 'Valid',
             'message' => 'Keep me',
