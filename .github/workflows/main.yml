@@ -61,8 +61,8 @@ jobs:
         DB_USERNAME: root
         REDIS_HOST: 127.0.0.1
       run: |
-        php artisan optimize:clear
         php artisan migrate --force
+        php artisan optimize:clear
         php artisan test
 
   nextjs-build:
