@@ -17,12 +17,13 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
+# 1. Copy the standalone build (the executable)
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+
+# 2. Copy static assets INTO the standalone folder structure
+# These two lines are the "secret sauce" for images and CSS to work
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 USER nextjs
 
