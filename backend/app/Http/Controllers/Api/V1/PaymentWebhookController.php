@@ -48,7 +48,7 @@ class PaymentWebhookController extends Controller
         }
 
         // Extract basic ID just for lookup, the actual parsing is done by driver later
-        $gatewayTransactionId = $payload['data']['reference'] ?? $payload['data']['id'] ?? $payload['id'] ?? $payload['txRef'] ?? $payload['resource']['id'] ?? null;
+        $gatewayTransactionId = $payload['data']['object']['id'] ?? $payload['data']['reference'] ?? $payload['data']['id'] ?? $payload['id'] ?? $payload['txRef'] ?? $payload['resource']['id'] ?? null;
 
         if (!$gatewayTransactionId) {
             return response()->json(['message' => 'Invalid payload format'], 400);

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('check_out_date');
             
             $table->enum('status', ['pending', 'confirmed', 'checked_in', 'checked_out', 'cancelled', 'no_show'])->default('pending');
-            $table->enum('source', ['walk_in', 'phone', 'website', 'booking_com', 'expedia', 'agent', 'api'])->default('walk_in');
+            $table->enum('source', ['walk_in', 'phone', 'website', 'booking_com', 'expedia', 'agent', 'api', 'ota'])->default('walk_in');
             
             $table->decimal('total_amount', 10, 2)->default(0);
             $table->integer('adults')->default(1);
