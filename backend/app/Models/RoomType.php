@@ -24,8 +24,8 @@ class RoomType extends Model
     protected static function booted()
     {
         static::creating(function ($roomType) {
-            if (!$roomType->slug) {
-                $roomType->slug = \Illuminate\Support\Str::slug($roomType->name) . '-' . uniqid();
+            if (empty($roomType->slug)) {
+                $roomType->slug = \Illuminate\Support\Str::slug($roomType->name);
             }
         });
     }
