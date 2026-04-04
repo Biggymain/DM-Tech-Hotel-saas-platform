@@ -21,7 +21,14 @@ export default function OutletsPage() {
   const params = useParams();
   const queryClient = useQueryClient();
   const [open, setOpen] = React.useState(false);
-  const [form, setForm] = React.useState({ name: '', type: 'restaurant', is_active: true });
+  const [form, setForm] = React.useState({ 
+    name: '', 
+    type: 'restaurant', 
+    is_active: true,
+    bank_name: '',
+    account_number: '',
+    account_name: '' 
+  });
 
   const { data: outlets, isLoading } = useQuery({
     queryKey: ['outlets'],
@@ -81,7 +88,14 @@ export default function OutletsPage() {
       toast.success('Outlet created successfully!');
       queryClient.invalidateQueries({ queryKey: ['outlets'] });
       setOpen(false);
-      setForm({ name: '', type: 'restaurant', is_active: true });
+      setForm({ 
+        name: '', 
+        type: 'restaurant', 
+        is_active: true,
+        bank_name: '',
+        account_number: '',
+        account_name: ''
+      });
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message ?? 'Failed to create outlet.');
@@ -142,6 +156,36 @@ export default function OutletsPage() {
                     <SelectItem value="store">Store (Supply Hub)</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="pt-2 border-t mt-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Finance Overrides (Optional)</p>
+                <div className="grid gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium">Bank Name</label>
+                    <Input
+                      placeholder="Outlet-specific bank"
+                      value={form.bank_name}
+                      onChange={(e) => setForm(f => ({ ...f, bank_name: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium">Account Name</label>
+                    <Input
+                      placeholder="Beneficiary name"
+                      value={form.account_name}
+                      onChange={(e) => setForm(f => ({ ...f, account_name: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium">Account Number</label>
+                    <Input
+                      placeholder="10-digit number"
+                      value={form.account_number}
+                      onChange={(e) => setForm(f => ({ ...f, account_number: e.target.value }))}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             <DialogFooter>

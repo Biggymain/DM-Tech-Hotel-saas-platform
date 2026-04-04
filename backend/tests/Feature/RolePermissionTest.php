@@ -12,7 +12,7 @@ class RolePermissionTest extends TestCase
 
     public function test_unauthenticated_users_are_rejected(): void
     {
-        $response = $this->getJson('/api/v1/hotels');
+        $response = $this->getJson('/api/v1/departments');
         $response->assertStatus(401);
     }
 

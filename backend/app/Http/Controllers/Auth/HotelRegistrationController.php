@@ -24,6 +24,9 @@ class HotelRegistrationController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
+        $validatedData['hotel_name'] = strip_tags($validatedData['hotel_name']);
+        $validatedData['owner_name'] = strip_tags($validatedData['owner_name']);
+
         $result = $this->registrationService->registerHotel($validatedData);
 
         return response()->json([

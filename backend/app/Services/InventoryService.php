@@ -28,7 +28,7 @@ class InventoryService
             'hotel_id' => $item->hotel_id,
             'outlet_id' => $item->outlet_id,
             'inventory_item_id' => $item->id,
-            'type' => 'deduction',
+            'type' => 'out',
             'quantity' => $quantity,
             'reference_type' => $sourceType,
             'reference_id' => $sourceId,

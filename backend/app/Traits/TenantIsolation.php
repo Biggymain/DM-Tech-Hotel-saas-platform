@@ -26,8 +26,10 @@ trait TenantIsolation
 
             // Super admin mapping
             if ($user->is_super_admin) {
-                if (session()->has('active_hotel_id')) {
-                    $builder->where($tableName . '.hotel_id', '=', session('active_hotel_id'));
+                $tenantId = session('active_hotel_id') ?? (app()->bound('active_hotel_id') ? app('active_hotel_id') : (app()->bound('tenant_id') ? app('tenant_id') : null));
+                
+                if ($tenantId) {
+                    $builder->where($tableName . '.hotel_id', '=', $tenantId);
                 }
                 return;
             }

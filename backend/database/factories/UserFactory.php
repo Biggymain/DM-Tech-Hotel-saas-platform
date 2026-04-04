@@ -30,6 +30,7 @@ class UserFactory extends Factory
             'password_changed_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'is_on_duty' => true,
         ];
     }
 

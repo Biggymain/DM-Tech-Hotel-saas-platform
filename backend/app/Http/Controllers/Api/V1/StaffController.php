@@ -40,6 +40,10 @@ class StaffController extends Controller
              }
         }
 
+        if ($request->has('on_duty')) {
+            $query->where('is_on_duty', $request->boolean('on_duty'));
+        }
+
         $users = $query->where(function($q) {
             $q->where('is_super_admin', false);
         })->get();
@@ -65,7 +69,7 @@ class StaffController extends Controller
         $tempPassword = \Illuminate\Support\Str::random(12);
 
         $user = User::create([
-            'name' => $validated['name'],
+            'name' => strip_tags($validated['name']),
             'email' => $validated['email'],
             'password' => bcrypt($tempPassword),
             'hotel_id' => $hotelId,

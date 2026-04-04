@@ -51,11 +51,14 @@ use App\Http\Controllers\Api\V1\RoleController;
 use App\Http\Controllers\Api\V1\SeasonalRateController;
 use App\Http\Controllers\Api\V1\SLADashboardController;
 use App\Http\Controllers\Api\V1\StaffController;
+use App\Http\Controllers\Api\V1\StockTransferController;
 use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\SyncController;
 use App\Http\Controllers\Api\V1\SystemLogController;
 use App\Http\Controllers\Api\V1\ThemeController;
 use App\Http\Controllers\Auth\HotelRegistrationController;
+use App\Http\Controllers\Api\V1\HardwareController;
+use App\Http\Controllers\Api\V1\LeisureController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -126,6 +129,10 @@ Route::prefix('v1')->group(function () {
     Route::get('/sync/status', [SyncController::class, 'syncStatus']);
     Route::post('/sync/batch', [SyncController::class, 'batchSync']);
     Route::post('/sync/ingest', [CloudSyncController::class, 'ingest']);
+
+    // ── LEISURE HUB HARDWARE BRIDGE ──────────────────────────────────────────
+    // GET /api/v1/hardware/verify/{code}
+    Route::get('/hardware/verify/{code}', [HardwareController::class, 'verify']);
 
     // ── PUBLIC BOOKING ENGINE ─────────────────────────────────────────────────
     // No auth required. Tenant is resolved from {hotel_slug} or Host header
@@ -249,7 +256,8 @@ Route::prefix('v1')->group(function () {
         // POS Orders
         Route::middleware(['module.active:pos'])->prefix('orders')->group(function() {
             Route::get('/', [OrderController::class, 'index'])->middleware('role.verify:orders.view');
-            Route::post('/', [OrderController::class, 'store'])->middleware('role.verify:orders.create');
+            Route::get('/velocity', [OrderController::class, 'velocityMetrics'])->middleware('role.verify:orders.view');
+            Route::post('/', [OrderController::class, 'store'])->middleware('role.verify:pos.manage');
             Route::get('/{order}', [OrderController::class, 'show'])->middleware('role.verify:orders.view');
             Route::put('/{order}/status', [OrderController::class, 'updateStatus'])->middleware('role.verify:orders.update');
             Route::delete('/{order}', [OrderController::class, 'destroy'])->middleware('role.verify:orders.delete');
@@ -320,6 +328,12 @@ Route::prefix('v1')->group(function () {
             // Purchase Orders
             Route::apiResource('purchase-orders', PurchaseOrderController::class)->except(['update', 'destroy'])->middleware('role.verify:inventory.manage');
             Route::post('purchase-orders/{id}/receive', [PurchaseOrderController::class, 'receive'])->middleware('role.verify:inventory.manage');
+
+            // Stock Transfers (Chain of Custody)
+            Route::get('transfers', [StockTransferController::class, 'index'])->middleware('role.verify:inventory.view');
+            Route::post('transfers/request', [StockTransferController::class, 'request'])->middleware('role.verify:inventory.manage');
+            Route::post('transfers/{transfer}/dispatch', [StockTransferController::class, 'dispatch'])->middleware('role.verify:inventory.manage');
+            Route::post('transfers/{transfer}/receive', [StockTransferController::class, 'receive'])->middleware('role.verify:inventory.manage');
         });
 
         // Billing & Payments
@@ -441,6 +455,16 @@ Route::prefix('v1')->group(function () {
                 Route::get('/plans', [PlatformSubscriptionController::class, 'plans']);
                 Route::post('/checkout', [PlatformSubscriptionController::class, 'checkout']);
                 Route::get('/invoices', [PlatformSubscriptionController::class, 'invoices']);
+            });
+
+            // Leisure Hub (Port 3003)
+            Route::prefix('leisure')->group(function() {
+                Route::get('/metrics', [DashboardController::class, 'leisureMetrics'])->middleware('role.verify:manager.view');
+                Route::get('/audit', [LeisureController::class, 'audit'])->middleware('role.verify:manager.view');
+                Route::post('/provision', [LeisureController::class, 'provision'])->middleware('role.verify:hotel.manage');
+                Route::post('/reset-credential', [LeisureController::class, 'resetCredential'])->middleware('role.verify:pos.manage');
+                Route::post('/daily-pin', [LeisureController::class, 'generatePin']);
+                Route::apiResource('memberships', LeisureController::class)->only(['index', 'store', 'show']);
             });
 
             // Platform owner analytics (Usually restricted to super-admin)

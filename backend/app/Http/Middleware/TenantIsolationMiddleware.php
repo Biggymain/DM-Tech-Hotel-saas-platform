@@ -44,15 +44,39 @@ class TenantIsolationMiddleware
         }
 
         $user = Auth::user();
+        $targetHotelId = $request->header('X-Tenant-ID') 
+                      ?? $request->header('X-Hotel-Context')
+                      ?? $request->query('hotel_id')
+                      ?? $request->input('hotel_id');
 
-        // ── 3. SUPER_ADMIN passes without any tenant context ───────────────────
+        \Illuminate\Support\Facades\Log::info("TenantIsolationMiddleware: targetHotelId=" . ($targetHotelId ?? 'NULL') . " Headers: " . json_encode($request->headers->all()));
+
+        // ── 3. SUPER_ADMIN passes without any tenant context (unless specified) ──
         if ($user->is_super_admin) {
+            $effectiveId = $targetHotelId ?? $user->hotel_id;
+            if ($effectiveId) {
+                \Illuminate\Support\Facades\Log::info("Binding tenant_id for SuperAdmin: " . $effectiveId);
+                app()->instance('tenant_id', (int)$effectiveId);
+                app()->instance('active_hotel_id', (int)$effectiveId);
+            }
             return $next($request);
         }
 
         // ── 4. GROUP_ADMIN: has a hotel_group_id but hotel_id may be null ─────
         //    They manage multiple branches, not scoped to one hotel.
-        if (!empty($user->hotel_group_id)) {
+        if (!empty($user->hotel_group_id) && empty($user->hotel_id)) {
+            $effectiveId = $targetHotelId ?? $user->hotel_id;
+            if ($effectiveId) {
+                // Verify this hotel belongs to the group
+                $ownsHotel = \App\Models\Hotel::where('id', $effectiveId)
+                    ->where('hotel_group_id', $user->hotel_group_id)
+                    ->exists();
+                
+                if ($ownsHotel) {
+                    app()->instance('tenant_id', (int)$effectiveId);
+                    app()->instance('active_hotel_id', (int)$effectiveId);
+                }
+            }
             return $next($request);
         }
 

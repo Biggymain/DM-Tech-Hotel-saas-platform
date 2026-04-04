@@ -21,6 +21,11 @@ export interface User {
   must_change_password: boolean;
   password_changed_at: string | null;
   requires_onboarding?: boolean;
+  hotel?: {
+    id: number;
+    name: string;
+    departments?: { id: number; name: string }[];
+  } | null;
 }
 
 interface AuthContextType {

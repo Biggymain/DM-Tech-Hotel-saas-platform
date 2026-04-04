@@ -22,7 +22,7 @@ class HousekeepingTaskController extends Controller
 
     public function index(Request $request)
     {
-        $tenantId = app('tenant_id');
+        $tenantId = app()->bound('tenant_id') ? app('tenant_id') : $request->user()?->hotel_id;
         $tasks = HousekeepingTask::with(['room', 'assignee'])->where('hotel_id', '=', $tenantId)->get();
         
         return response()->json(['data' => $tasks]);
@@ -32,7 +32,7 @@ class HousekeepingTaskController extends Controller
     {
         $request->validate(['user_id' => 'required|exists:users,id']);
         $user = User::findOrFail($request->user_id);
-        $tenantId = app('tenant_id');
+        $tenantId = app()->bound('tenant_id') ? app('tenant_id') : $request->user()?->hotel_id;
 
         $this->housekeepingService->assignCleaningTask($task, $user, $tenantId);
 
@@ -41,7 +41,7 @@ class HousekeepingTaskController extends Controller
 
     public function start(Request $request, HousekeepingTask $task)
     {
-        $tenantId = app('tenant_id');
+        $tenantId = app()->bound('tenant_id') ? app('tenant_id') : $request->user()?->hotel_id;
         $this->housekeepingService->startTask($task, $tenantId);
 
         return response()->json(['message' => 'Task started successfully.', 'data' => $task->fresh()]);
@@ -50,7 +50,7 @@ class HousekeepingTaskController extends Controller
     public function complete(Request $request, HousekeepingTask $task)
     {
         $request->validate(['notes' => 'nullable|string']);
-        $tenantId = app('tenant_id');
+        $tenantId = app()->bound('tenant_id') ? app('tenant_id') : $request->user()?->hotel_id;
 
         $this->housekeepingService->completeTask($task, $tenantId, $request->notes);
 

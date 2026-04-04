@@ -41,3 +41,5 @@ Artisan::command('pms:night-audit', function () {
 \Illuminate\Support\Facades\Schedule::command('sync:cleanup')->daily();
 
 \Illuminate\Support\Facades\Schedule::job(new \App\Jobs\BatchSyncToCloudJob)->everyMinute()->withoutOverlapping();
+
+\Illuminate\Support\Facades\Schedule::command('reports:monthly-stakeholder')->monthlyOn(1, '01:00');

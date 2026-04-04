@@ -64,6 +64,10 @@ class OrganizationController extends Controller
         $groupId = $user->hotel_group_id ?? $request->input('group_id');
         $group = HotelGroup::findOrFail($groupId);
 
+        $validated['name'] = strip_tags($validated['name']);
+        $validated['address'] = isset($validated['address']) ? strip_tags($validated['address']) : null;
+        $validated['phone'] = isset($validated['phone']) ? strip_tags($validated['phone']) : null;
+
         $branch = $this->service->createBranch($group, $validated);
 
         return response()->json([
@@ -125,6 +129,9 @@ class OrganizationController extends Controller
         }
 
         $group = HotelGroup::findOrFail($groupId);
+        if (isset($validated['name'])) {
+            $validated['name'] = strip_tags($validated['name']);
+        }
         $group->update($validated);
 
         return response()->json([

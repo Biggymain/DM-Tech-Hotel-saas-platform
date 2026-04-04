@@ -22,7 +22,7 @@ class MaintenanceRequestController extends Controller
 
     public function index(Request $request)
     {
-        $tenantId = app('tenant_id');
+        $tenantId = app()->bound('tenant_id') ? app('tenant_id') : $request->user()?->hotel_id;
         $tasks = MaintenanceRequest::with(['room', 'reporter', 'assignee'])->where('hotel_id', '=', $tenantId)->get();
         
         return response()->json(['data' => $tasks]);
@@ -37,7 +37,7 @@ class MaintenanceRequestController extends Controller
             'description' => 'required|string'
         ]);
 
-        $tenantId = app('tenant_id');
+        $tenantId = app()->bound('tenant_id') ? app('tenant_id') : $request->user()?->hotel_id;
         $req = $this->maintenanceService->createMaintenanceRequest($validated, $tenantId, auth()->id());
 
         return response()->json(['message' => 'Maintenance request created successfully.', 'data' => $req], 201);
@@ -47,7 +47,7 @@ class MaintenanceRequestController extends Controller
     {
         $request->validate(['user_id' => 'required|exists:users,id']);
         $user = User::findOrFail($request->user_id);
-        $tenantId = app('tenant_id');
+        $tenantId = app()->bound('tenant_id') ? app('tenant_id') : $request->user()?->hotel_id;
 
         $this->maintenanceService->assignMaintenanceStaff($maintenanceRequest, $user, $tenantId);
 
@@ -57,7 +57,7 @@ class MaintenanceRequestController extends Controller
     public function start(Request $request, MaintenanceRequest $maintenanceRequest)
     {
         $request->validate(['maintenance_until' => 'nullable|date']);
-        $tenantId = app('tenant_id');
+        $tenantId = app()->bound('tenant_id') ? app('tenant_id') : $request->user()?->hotel_id;
 
         $this->maintenanceService->markMaintenanceInProgress($maintenanceRequest, $tenantId, $request->maintenance_until);
 

@@ -60,7 +60,7 @@ class AdminAuthTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-            ->assertJson(['message' => 'Password reset link sent to your email.']);
+            ->assertJson(['message' => 'A 6-digit password reset code has been sent to your email.']);
 
         $this->assertDatabaseHas('password_reset_tokens', [
             'email' => 'admin@hotel.com',
@@ -69,15 +69,15 @@ class AdminAuthTest extends TestCase
 
     public function test_user_can_reset_password_with_valid_token()
     {
-        $token = 'test-token';
+        $otp = '123456';
         DB::table('password_reset_tokens')->insert([
             'email' => 'admin@hotel.com',
-            'token' => Hash::make($token),
+            'token' => Hash::make($otp),
             'created_at' => now(),
         ]);
 
         $response = $this->postJson('/api/v1/auth/reset-password', [
-            'token' => $token,
+            'token' => $otp,
             'email' => 'admin@hotel.com',
             'password' => 'newpassword123',
             'password_confirmation' => 'newpassword123',
@@ -98,14 +98,14 @@ class AdminAuthTest extends TestCase
     public function test_reset_password_fails_with_invalid_token()
     {
         $response = $this->postJson('/api/v1/auth/reset-password', [
-            'token' => 'invalid-token',
+            'token' => '000000',
             'email' => 'admin@hotel.com',
             'password' => 'newpassword123',
             'password_confirmation' => 'newpassword123',
         ]);
 
         $response->assertStatus(422)
-            ->assertJson(['message' => 'Invalid or expired token.']);
+            ->assertJson(['message' => 'Invalid or expired reset code.']);
     }
 
     public function test_login_alert_logs_activity()

@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'module.active' => \App\Http\Middleware\ModuleAccessMiddleware::class,
         ]);
         $middleware->api(prepend: [
+//            \App\Http\Middleware\SanitizeInput::class, // Strip tags first
             \App\Http\Middleware\Security\SecureHeadersMiddleware::class, // Execute security headers safely first 
             \App\Http\Middleware\ForceJsonResponse::class,        // 2nd — always JSON
             \App\Http\Middleware\TenantIsolationMiddleware::class, // 3rd — tenant scoping
@@ -32,6 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
         
         // Recommended additionally lock down web interfaces
         $middleware->web(prepend: [
+            \App\Http\Middleware\SanitizeInput::class,
             \App\Http\Middleware\Security\SecureHeadersMiddleware::class,
         ]);
     })

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import KDSPage from '@/app/(dashboard)/kds/page';
+import POSTerminal from '@/components/pos/POSTerminal';
 import { useAuth } from '@/context/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { 
@@ -23,9 +24,9 @@ export default function StaffPinWrapper() {
   const [pin, setPin] = React.useState('');
   const [isVerifying, setIsVerifying] = React.useState(false);
 
-  // If user is already on-boarded, just show the KDS
+  // If user is already on-boarded, show the POS Terminal
   if (user && !user.requires_onboarding) {
-    return <KDSPage />;
+    return <POSTerminal />;
   }
 
   const handleSetup = async () => {

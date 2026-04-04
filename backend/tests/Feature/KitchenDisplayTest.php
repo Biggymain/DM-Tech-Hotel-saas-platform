@@ -46,7 +46,8 @@ class KitchenDisplayTest extends TestCase
             'kds.view',
             'kds.update',
             'kds.manage',
-            'orders.create', // Need this to create the order
+            'orders.create',
+            'pos.manage',
         ];
 
         foreach ($permissions as $permName) {
@@ -59,12 +60,20 @@ class KitchenDisplayTest extends TestCase
             $role->permissions()->attach($perm->id, ['hotel_id' => $this->hotel->id]);
         }
         
+        $this->outlet = Outlet::create([
+            'hotel_id' => $this->hotel->id,
+            'name' => 'Main Restaurant',
+            'type' => 'restaurant'
+        ]);
+
         $this->user = User::create([
             'hotel_id' => $this->hotel->id,
+            'outlet_id' => $this->outlet->id,
             'name' => 'Chef',
             'email' => 'chef@kds.com',
             'password' => bcrypt('password'),
             'is_super_admin' => false,
+            'is_on_duty' => true,
         ]);
 
         $this->user->roles()->attach($role->id, ['hotel_id' => $this->hotel->id]);
@@ -73,12 +82,6 @@ class KitchenDisplayTest extends TestCase
         
         $this->user = User::with('roles.permissions')->find($this->user->id);
         Sanctum::actingAs($this->user, ['*']);
-
-        $this->outlet = Outlet::create([
-            'hotel_id' => $this->hotel->id,
-            'name' => 'Main Restaurant',
-            'type' => 'restaurant'
-        ]);
 
         $this->department = Department::create([
             'hotel_id' => $this->hotel->id,

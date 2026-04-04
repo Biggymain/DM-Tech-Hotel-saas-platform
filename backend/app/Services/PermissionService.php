@@ -22,23 +22,15 @@ class PermissionService
         }
 
         // 2. Load roles with their permissions
-        // We can cache this query per user to optimize performance per request cycle.
-        $cacheKey = "user_permissions_{$user->id}";
-        
-        $userPermissions = Cache::remember($cacheKey, 60 * 60, function () use ($user) {
-            // Get all permission slugs associated with the user's roles
-            return $user->roles()
-                ->withoutGlobalScopes()
-                ->with(['permissions' => function($q) {
-                    $q->withoutGlobalScopes();
-                }])
-                ->get()
-                ->flatMap(function ($role) {
-                    return $role->permissions->pluck('slug');
-                })
-                ->unique()
-                ->toArray();
-        });
+        // Bypass cache in testing for absolute isolation
+        if (app()->environment('testing')) {
+            $userPermissions = $this->loadUserPermissions($user);
+        } else {
+            $cacheKey = "user_permissions_{$user->id}";
+            $userPermissions = Cache::remember($cacheKey, 60 * 60, function () use ($user) {
+                return $this->loadUserPermissions($user);
+            });
+        }
 
         // 3. Check if the required permission is in the user's permissions array
         \Illuminate\Support\Facades\Log::info('Checking permission', [
@@ -48,6 +40,24 @@ class PermissionService
         ]);
         
         return in_array($permissionSlug, $userPermissions);
+    }
+    
+    /**
+     * Load the user's permissions from the database.
+     */
+    private function loadUserPermissions(User $user): array
+    {
+        return $user->roles()
+            ->withoutGlobalScopes()
+            ->with(['permissions' => function($q) {
+                $q->withoutGlobalScopes();
+            }])
+            ->get()
+            ->flatMap(function ($role) {
+                return $role->permissions->pluck('slug');
+            })
+            ->unique()
+            ->toArray();
     }
     
     /**

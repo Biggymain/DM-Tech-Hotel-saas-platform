@@ -24,6 +24,14 @@ class AppServiceProvider extends ServiceProvider
             \App\Listeners\SendLoginAlert::class
         );
 
+        // Early Tenant Binding for Route-Model Binding resilience
+        if (!$this->app->runningInConsole() || $this->app->environment('testing')) {
+            $id = $_SERVER['HTTP_X_TENANT_ID'] ?? $_SERVER['HTTP_X_HOTEL_CONTEXT'] ?? null;
+            if ($id) {
+                $this->app->instance('tenant_id', (int)$id);
+            }
+        }
+
         $router = $this->app['router'];
         $router->aliasMiddleware('subscription.active', \App\Http\Middleware\EnsureActiveSubscription::class);
     }

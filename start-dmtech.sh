@@ -24,6 +24,7 @@ launch_port() {
         cd "$ROOT_DIR/$APP_DIR" && \
         TMPDIR="$ISOLATION_DIR" \
         NEXT_DIST_DIR=".next-$PORT" \
+        NEXT_PUBLIC_PORT=$PORT \
         PORT=$PORT \
         __NEXT_PRIVATE_PREBUNDLED_REACT=1 \
         NEXT_PRIVATE_WORKER=1 \
@@ -33,13 +34,28 @@ launch_port() {
         echo "▶️ 🧊 Booting $APP_DIR on Port $PORT (PRODUCTION MODE - Isolated Socket & Cache)..."
         cd "$ROOT_DIR/$APP_DIR" && \
         TMPDIR="$ISOLATION_DIR" \
-        NEXT_DIST_DIR=".next-$PORT" \
-        PORT=$PORT \
-        __NEXT_PRIVATE_PREBUNDLED_REACT=1 \
-        NEXT_PRIVATE_WORKER=1 \
-        NEXT_TELEMETRY_DISABLED=1 \
-        NODE_OPTIONS="--title=dm-tech-port-$PORT --max-old-space-size=1024" \
-        npx next start -p $PORT &
+        
+        # Detect standalone build
+        if [ -f ".next-$PORT/standalone/server.js" ]; then
+            echo "   (Detected Standalone Build - Launching via Node...)"
+            # Copy public and static to standalone for correct asset resolution
+            cp -r "public" ".next-$PORT/standalone/public" 2>/dev/null
+            cp -r ".next-$PORT/static" ".next-$PORT/standalone/.next-$PORT/static" 2>/dev/null
+            
+            PORT=$PORT \
+            HOSTNAME="0.0.0.0" \
+            NODE_OPTIONS="--title=dm-tech-port-$PORT --max-old-space-size=1024" \
+            node ".next-$PORT/standalone/server.js" &
+        else
+            echo "   (Standard Build - Launching via Next Start...)"
+            NEXT_DIST_DIR=".next-$PORT" \
+            PORT=$PORT \
+            __NEXT_PRIVATE_PREBUNDLED_REACT=1 \
+            NEXT_PRIVATE_WORKER=1 \
+            NEXT_TELEMETRY_DISABLED=1 \
+            NODE_OPTIONS="--title=dm-tech-port-$PORT --max-old-space-size=1024" \
+            npx next start -p $PORT &
+        fi
     fi
 }
 

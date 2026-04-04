@@ -28,6 +28,7 @@ class ProcessPaymentJob implements ShouldQueue
 
     public function handle(\App\Services\BillingService $billingService): void
     {
+        Log::info("ProcessPaymentJob: processing invoice {$this->invoiceId} (Dispatching to BillingService)");
         $invoice = \App\Models\Invoice::findOrFail($this->invoiceId);
 
         // 1. Idempotency: Check if this reference was already processed

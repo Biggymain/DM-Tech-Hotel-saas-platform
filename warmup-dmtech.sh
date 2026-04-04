@@ -10,10 +10,16 @@ build_port() {
     echo "🏗️  Building $APP_DIR for Port $PORT..."
     cd "$ROOT_DIR/$APP_DIR" || exit
     
+    # Remove old build artifacts to ensure a fresh standalone trace
+    rm -rf ".next-$PORT"
+    
     NEXT_TELEMETRY_DISABLED=1 \
     NEXT_DIST_DIR=".next-$PORT" \
+    NEXT_PUBLIC_PORT=$PORT \
     NODE_OPTIONS="--max-old-space-size=1024" \
     npx next build
+    
+    cd "$ROOT_DIR" || exit
 }
 
 # 1. Build Frontends (3000-3003)

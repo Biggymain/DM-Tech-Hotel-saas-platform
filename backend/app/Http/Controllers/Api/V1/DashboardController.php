@@ -121,4 +121,38 @@ class DashboardController extends Controller
 
         return response()->json($data);
     }
+
+    /**
+     * Get leisure hub metrics for GM Pulse.
+     */
+    public function leisureMetrics(Request $request)
+    {
+        $hotelId = $request->user()->hotel_id;
+        $today = now()->startOfDay();
+
+        $membershipRevenue = \App\Models\Membership::where('hotel_id', $hotelId)
+            ->where('created_at', '>=', $today)
+            ->sum('price_paid');
+
+        // Revenue from "Pool Pass" and "Leisure Gear"
+        $leisureRevenue = Order::where('hotel_id', $hotelId)
+            ->where('created_at', '>=', $today)
+            ->where('status', 'served')
+            ->where(function ($query) {
+                $query->where('order_source', 'leisure')
+                      ->orWhereHas('items.menuItem', function ($q) {
+                          $q->where('name', 'like', '%Pool Pass%')
+                            ->orWhere('name', 'like', '%Gym Pass%')
+                            ->orWhere('name', 'like', '%Leisure Gear%');
+                      });
+            })
+            ->sum('total_amount');
+
+        return response()->json([
+            'membership_revenue' => (float) $membershipRevenue,
+            'pass_revenue' => (float) $leisureRevenue,
+            'total_leisure_revenue' => (float) ($membershipRevenue + $leisureRevenue),
+            'currency' => 'USD',
+        ]);
+    }
 }

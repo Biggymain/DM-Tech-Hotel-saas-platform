@@ -8,6 +8,8 @@ import { useTicketTimer } from "@/src/hooks/useTicketTimer";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { initEcho } from "@/src/lib/echo";
+import PulseMetrics from "@/components/dashboard/PulseMetrics";
+import StockMatching from "@/components/dashboard/StockMatching";
 
 interface OutletSLA {
     id: number;
@@ -26,6 +28,24 @@ export default function LiveOperationsPage() {
             return res.data.outlets;
         },
         refetchInterval: 30000,
+    });
+
+    const { data: metrics } = useQuery({
+        queryKey: ["velocity-metrics"],
+        queryFn: async () => {
+            const res = await axios.get("/api/v1/orders/velocity");
+            return res.data;
+        },
+        refetchInterval: 30000,
+    });
+
+    const { data: transfersData } = useQuery({
+        queryKey: ["stock-transfers"],
+        queryFn: async () => {
+            const res = await axios.get("/api/v1/inventory/transfers");
+            return res.data.data ?? [];
+        },
+        refetchInterval: 60000,
     });
 
     useEffect(() => {
@@ -55,10 +75,29 @@ export default function LiveOperationsPage() {
                 </div>
             </header>
 
+            {metrics && (
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <PulseMetrics 
+                        avgLeadTime={metrics.avg_lead_time}
+                        previousAvg={metrics.previous_avg}
+                        totalOrders={metrics.total_served}
+                        activeOrders={metrics.active_orders}
+                    />
+                </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {outlets?.map((outlet) => (
                     <OutletCard key={outlet.id} outlet={outlet} />
                 ))}
+            </div>
+
+            <div className="mt-8">
+                <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                    <AlertCircle className="text-indigo-500" />
+                    Chain of Custody Matching
+                </h2>
+                <StockMatching transfers={transfersData || []} />
             </div>
         </div>
     );

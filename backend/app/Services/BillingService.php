@@ -112,6 +112,7 @@ class BillingService
                 'processed_by_id' => $userId,
             ]);
 
+            \Illuminate\Support\Facades\Log::info("Processing payment for invoice {$invoice->id}: Amount {$amount}");
             $invoice->amount_paid += $amount;
 
             $newBalance = $invoice->total_amount - $invoice->amount_paid;
@@ -122,6 +123,7 @@ class BillingService
                 $invoice->status = 'partially_paid';
             }
 
+            \Illuminate\Support\Facades\Log::info("Invoice {$invoice->id} status updated to: {$invoice->status}");
             $invoice->save();
 
             return $payment;
