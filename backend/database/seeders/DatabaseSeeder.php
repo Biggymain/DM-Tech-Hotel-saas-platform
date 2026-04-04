@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             SetupSeeder::class,
             SubscriptionPlanSeeder::class,
             OtaChannelSeeder::class,
+            SuperAdminSeeder::class,
         ]);
     }
 }

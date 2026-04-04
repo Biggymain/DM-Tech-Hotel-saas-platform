@@ -225,26 +225,29 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        // In a real app we'd use Password::broker()->sendResetLink(...)
-        // But for this SaaS requirement we need signed tokens.
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
             // Return success anyway to prevent email enumeration
-            return response()->json(['message' => 'If your email exists, a reset link has been sent.']);
+            return response()->json(['message' => 'If your email exists, a reset code has been sent.']);
         }
 
-        $token = Str::random(64);
+        // Generate 6-digit OTP
+        $otp = (string) rand(100000, 999999);
+
+        // Store OTP in password_reset_tokens table
         DB::table('password_reset_tokens')->updateOrInsert(
             ['email' => $user->email],
-            ['token' => Hash::make($token), 'created_at' => now()]
+            ['token' => Hash::make($otp), 'created_at' => now()]
         );
 
-        // Notify user (would send an email in production)
-        // For simulation/testing, we can return the token in non-production or log it
-        \Illuminate\Support\Facades\Log::info("Password reset token for {$user->email}: {$token}");
+        // Notify user (simulating email via log)
+        \Illuminate\Support\Facades\Log::info("🔐 Password Reset OTP for {$user->email}: {$otp}");
 
-        return response()->json(['message' => 'Password reset link sent to your email.']);
+        return response()->json([
+            'message' => 'A 6-digit password reset code has been sent to your email.',
+            'dev_otp' => config('app.debug') ? $otp : null // Optional: return OTP in debug mode for easier testing
+        ]);
     }
 
     /**
@@ -253,25 +256,27 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'token' => 'required',
+            'token' => 'required|string|size:6', // Now expecting a 6-digit OTP
             'email' => 'required|email',
             'password' => 'required|min:8|confirmed',
         ]);
 
         $record = DB::table('password_reset_tokens')->where('email', $request->email)->first();
 
+        // Validate OTP
         if (!$record || !isset($record->token) || !Hash::check($request->token, $record->token)) {
-            return response()->json(['message' => 'Invalid or expired token.'], 422);
+            return response()->json(['message' => 'Invalid or expired reset code.'], 422);
         }
 
-        // Validity check (1 hour)
-        if (now()->parse($record->created_at)->addHour()->isPast()) {
-            return response()->json(['message' => 'Token has expired.'], 422);
+        // Validity check (15 minutes for OTP)
+        if (now()->parse($record->created_at)->addMinutes(15)->isPast()) {
+            return response()->json(['message' => 'Reset code has expired.'], 422);
         }
 
         $user = User::where('email', $request->email)->firstOrFail();
         $user->update(['password' => Hash::make($request->password)]);
 
+        // Clear the token
         DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
         // Audit Log
@@ -281,7 +286,7 @@ class AuthController extends Controller
             'entity_type' => 'user',
             'entity_id' => $user->id,
             'change_type' => 'password_reset',
-            'reason' => 'User requested password reset',
+            'reason' => 'User reset password via OTP',
             'source' => 'api'
         ]);
 
