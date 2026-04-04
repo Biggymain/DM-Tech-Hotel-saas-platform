@@ -22,6 +22,7 @@ class Hotel extends Model
         'name', 'slug', 'domain', 'hotel_group_id', 'subscription_plan_id', 'email', 'phone', 'address',
         'is_active', 'currency_id', 'reservation_deadline_hours_before_checkin',
         'reservation_grace_hours', 'no_show_penalty_type',
+        'bank_name', 'account_number', 'account_name', 'pos_terminal_id', 'stakeholder_emails',
     ];
 
     protected static function boot()
@@ -38,6 +39,7 @@ class Hotel extends Model
         'is_active' => 'boolean',
         'phone' => 'encrypted',
         'address' => 'encrypted',
+        'stakeholder_emails' => 'array',
     ];
 
     /** The Organization (HotelGroup) this branch belongs to. */
@@ -94,5 +96,10 @@ class Hotel extends Model
     public function websiteOverride()
     {
         return $this->hasOne(HotelWebsiteOverride::class);
+    }
+
+    public function departments()
+    {
+        return $this->hasMany(Department::class);
     }
 }

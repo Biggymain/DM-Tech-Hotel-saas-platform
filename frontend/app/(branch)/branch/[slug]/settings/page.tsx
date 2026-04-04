@@ -12,6 +12,8 @@ import api from '@/lib/api';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { Plus, X, Landmark, Printer, Mail, UserPlus } from 'lucide-react';
 
 export default function BranchSettingsPage() {
   const [activeTab, setActiveTab] = React.useState('info');
@@ -21,17 +23,29 @@ export default function BranchSettingsPage() {
     name: '',
     primary_color: '#0f172a',
     currency: 'USD',
+    bank_name: '',
+    account_number: '',
+    account_name: '',
+    pos_terminal_id: '',
+    stakeholder_emails: [] as string[],
   });
+  const [newEmail, setNewEmail] = React.useState('');
 
   React.useEffect(() => {
     const fetchSettings = async () => {
       try {
         const { data } = await api.get('/api/v1/organization/overview');
-        if (data.group) {
+        if (data.group || data.hotel) {
+          const source = data.hotel || data.group;
           setConfig({
-            name: data.group.name || '',
-            primary_color: data.group.primary_color || '#0f172a',
-            currency: data.group.currency || 'USD',
+            name: source.name || '',
+            primary_color: source.primary_color || '#0f172a',
+            currency: source.currency || 'USD',
+            bank_name: data.hotel?.bank_name || '',
+            account_number: data.hotel?.account_number || '',
+            account_name: data.hotel?.account_name || '',
+            pos_terminal_id: data.hotel?.pos_terminal_id || '',
+            stakeholder_emails: data.hotel?.stakeholder_emails || [],
           });
         }
       } catch (err) {
@@ -81,7 +95,11 @@ export default function BranchSettingsPage() {
           </TabsTrigger>
           <TabsTrigger value="gateways" className="gap-2">
             <CreditCard className="h-4 w-4" />
-            Payments
+            Gateways
+          </TabsTrigger>
+          <TabsTrigger value="finance" className="gap-2">
+            <Landmark className="h-4 w-4" />
+            Finance
           </TabsTrigger>
           <TabsTrigger value="localization" className="gap-2">
             <Globe className="h-4 w-4" />
@@ -178,6 +196,98 @@ export default function BranchSettingsPage() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="finance">
+          <div className="grid gap-6">
+            <form onSubmit={handleSave}>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Manual Payment Routing</CardTitle>
+                  <CardDescription>Configure the bank account details displayed to guests for manual transfers.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label>Bank Name</Label>
+                    <Input 
+                      value={config.bank_name} 
+                      onChange={e => setConfig({...config, bank_name: e.target.value})} 
+                      placeholder="e.g. GTBank, Zenith"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Account Name (Beneficiary)</Label>
+                    <Input 
+                      value={config.account_name} 
+                      onChange={e => setConfig({...config, account_name: e.target.value})} 
+                      placeholder="e.g. DM-Tech Hotel Osogbo"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Account Number</Label>
+                    <Input 
+                      value={config.account_number} 
+                      onChange={e => setConfig({...config, account_number: e.target.value})} 
+                      placeholder="0123456789"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>POS Terminal ID</Label>
+                    <Input 
+                      value={config.pos_terminal_id} 
+                      onChange={e => setConfig({...config, pos_terminal_id: e.target.value})} 
+                      placeholder="2034AB12"
+                    />
+                  </div>
+                </CardContent>
+                <CardHeader className="border-t">
+                  <CardTitle>Audit Recipients</CardTitle>
+                  <CardDescription>Emails that will receive the Stakeholder Monthly Audit Report.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex gap-2">
+                    <Input 
+                      value={newEmail} 
+                      onChange={e => setNewEmail(e.target.value)} 
+                      placeholder="stakeholder@email.com" 
+                      type="email"
+                    />
+                    <Button type="button" variant="secondary" onClick={() => {
+                        if (newEmail && !config.stakeholder_emails.includes(newEmail)) {
+                            setConfig({...config, stakeholder_emails: [...config.stakeholder_emails, newEmail]});
+                            setNewEmail('');
+                        }
+                    }}>
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Add
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {config.stakeholder_emails.map(email => (
+                      <Badge key={email} variant="secondary" className="pl-3 pr-1 py-1 gap-1">
+                        {email}
+                        <Button 
+                          type="button"
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-4 w-4 hover:bg-destructive hover:text-white rounded-full"
+                          onClick={() => setConfig({...config, stakeholder_emails: config.stakeholder_emails.filter(e => e !== email)})}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </Badge>
+                    ))}
+                    {config.stakeholder_emails.length === 0 && <p className="text-xs text-muted-foreground italic">No recipients added. Monthly audit reports will not be sent.</p>}
+                  </div>
+                </CardContent>
+                <CardFooter className="justify-end border-t pt-6">
+                  <Button type="submit" disabled={loading}>
+                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <SaveIcon className="mr-2 h-4 w-4" />}
+                    Save Finance Settings
+                  </Button>
+                </CardFooter>
+              </Card>
+            </form>
+          </div>
+        </TabsContent>
         <TabsContent value="localization">
           <Card>
             <CardHeader>

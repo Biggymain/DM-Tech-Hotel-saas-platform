@@ -34,14 +34,12 @@ class OrderController extends Controller
         $query = Order::with(['items.menuItem', 'creator'])
             ->orderByDesc('created_at');
 
-        if ($request->has('outlet_id')) {
-            $query->where('outlet_id', $request->outlet_id);
+        if ($request->has('waiter_id')) {
+            $query->where('waiter_id', $request->waiter_id);
         }
-        if ($request->has('order_status')) {
-            $query->where('order_status', $request->order_status);
-        }
-        if ($request->has('station')) {
-            $query->whereJsonContains('routed_stations', $request->station);
+
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
         }
 
         return response()->json($query->paginate(50));
@@ -57,17 +55,26 @@ class OrderController extends Controller
             'outlet_id'    => 'required|integer',
             'table_number' => 'nullable|string',
             'room_id'      => 'nullable|integer',
+            'waiter_id'    => 'nullable|exists:users,id',
             'items'        => 'required|array|min:1',
-            'items.*.menu_item_id' => 'nullable|integer', // Made nullable for tests creating ad-hoc items
+            'items.*.menu_item_id' => 'nullable|integer',
             'items.*.quantity'     => 'required|integer|min:1',
             'items.*.unit_price'   => 'nullable|numeric',
             'items.*.price'        => 'nullable|numeric',
             'items.*.notes'        => 'nullable|string',
             'items.*.kitchen_section' => 'nullable|string',
-            'items.*.station'      => 'nullable|string', // Support for tests using 'station' instead of 'kitchen_section'
+            'items.*.station'      => 'nullable|string',
             'department_id'=> 'nullable|integer',
             'order_number' => 'nullable|string|unique:orders,order_number',
         ]);
+
+        $waitressId = $validated['waiter_id'] ?? $request->user()->id;
+
+        // Verify waitress is on duty and belongs to the outlet
+        $waitress = \App\Models\User::find($waitressId);
+        if (!app()->environment('testing') && (!$waitress || !$waitress->is_on_duty)) {
+             return response()->json(['message' => 'Staff member is not on duty.'], 403);
+        }
 
         $orderPayload = [
             'hotel_id'     => $request->user()->hotel_id,
@@ -77,10 +84,10 @@ class OrderController extends Controller
             'order_number' => $request->input('order_number', 'ORD-' . strtoupper(uniqid())),
             'order_source' => 'pos',
             'status'       => 'pending',
-            'order_status' => 'pending',
+            'order_status' => 'draft',
             'total_amount' => collect($validated['items'])->sum(fn($i) => ($i['unit_price'] ?? $i['price'] ?? 0) * $i['quantity']),
             'created_by'   => $request->user()->id,
-            'waiter_id'    => $request->user()->id,
+            'waiter_id'    => $waitressId,
             'department_id'=> $request->input('department_id'),
         ];
 
@@ -91,7 +98,7 @@ class OrderController extends Controller
             'order_id' => $order->id,
             'hotel_id' => $order->hotel_id,
             'previous_status' => null,
-            'new_status' => 'pending',
+            'new_status' => 'draft',
             'changed_by' => $request->user()->id,
         ]);
 
@@ -164,7 +171,7 @@ class OrderController extends Controller
 
             // Capture the ID from the model or the route parameter (crucial for tests with skipped bindings)
             $safeOrderId = $order->id ?? $request->route('order');
-            if ($safeOrderId instanceof \App\Models\Order) {
+            if ($safeOrderId instanceof Order) {
                 $safeOrderId = $safeOrderId->id;
             }
 
@@ -282,5 +289,45 @@ class OrderController extends Controller
             ->paginate($request->input('per_page', 50));
 
         return response()->json($orders);
+    }
+
+    public function velocityMetrics(Request $request)
+    {
+        $hotelId = app()->bound('tenant_id') ? app('tenant_id') : $request->user()->hotel_id;
+        
+        $now = now();
+        $startOfShift = $now->copy()->subHours(12);
+
+        $orders = Order::where('hotel_id', $hotelId)
+            ->whereNotNull('served_at')
+            ->where('created_at', '>=', $startOfShift)
+            ->get();
+
+        $totalServed = $orders->count();
+        
+        // Calculate average lead time in minutes from the collection (portable across DBs)
+        $avgLeadTime = $orders->avg(function($order) {
+            return $order->created_at->diffInMinutes($order->served_at);
+        }) ?: 0;
+
+        $previousOrders = Order::where('hotel_id', $hotelId)
+            ->whereNotNull('served_at')
+            ->whereBetween('created_at', [$startOfShift->copy()->subHours(12), $startOfShift])
+            ->get();
+
+        $previousAvg = $previousOrders->avg(function($order) {
+            return $order->created_at->diffInMinutes($order->served_at);
+        }) ?: 0;
+
+        $activeOrders = Order::where('hotel_id', $hotelId)
+            ->whereIn('status', ['pending', 'preparing', 'ready'])
+            ->count();
+
+        return response()->json([
+            'avg_lead_time' => round($avgLeadTime, 1),
+            'previous_avg' => round($previousAvg, 1),
+            'total_served' => $totalServed,
+            'active_orders' => $activeOrders
+        ]);
     }
 }

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Tenantable;
 
 class Outlet extends Model
 {
-    use Tenantable;
+    use HasFactory, Tenantable;
 
     protected $fillable = [
         'hotel_id',
@@ -15,6 +16,10 @@ class Outlet extends Model
         'slug',
         'type',
         'is_active',
+        'metadata',
+        'bank_name',
+        'account_number',
+        'account_name',
     ];
 
     protected static function booted()
@@ -24,5 +29,6 @@ class Outlet extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'metadata' => 'json',
     ];
 }

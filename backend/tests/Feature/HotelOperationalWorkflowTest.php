@@ -121,8 +121,10 @@ class HotelOperationalWorkflowTest extends TestCase
 
         Event::assertDispatched(OrderConfirmed::class);
         
-        // Unfake to let listeners run next
-        Event::fake(); 
+        // Restrict fake manually to avoid deadlocking internal status events
+        Event::fake([
+            \App\Events\NewOrderPlaced::class,
+        ]);
         
         // Manually trigger actual process since we faked event to assert dispatch
         $order->status = 'confirmed';

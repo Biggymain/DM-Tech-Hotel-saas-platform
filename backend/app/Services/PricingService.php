@@ -20,7 +20,7 @@ class PricingService
 
     public function calculateRoomPrice(RoomType $roomType, Carbon $date, ?RatePlan $ratePlan = null)
     {
-        $hotelId = app('tenant_id') ?? $roomType->hotel_id;
+        $hotelId = app()->bound('tenant_id') ? app('tenant_id') : $roomType->hotel_id;
         
         if (!$ratePlan) {
             // Find default active rate plan for this room type

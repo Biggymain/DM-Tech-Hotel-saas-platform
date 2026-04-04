@@ -115,7 +115,11 @@ class PaymentService
                 ];
             } else {
                 $gateway = $this->resolveGateway($hotelId, $gatewayName);
-                $intentResponse = $gateway->createPaymentIntent($amount, $currency);
+                $hotel = \App\Models\Hotel::find($hotelId);
+                $intentResponse = $gateway->createPaymentIntent($amount, $currency, [
+                    'merchant_name' => $hotel?->name ?? 'DM-Tech Hotel',
+                    'description' => "Payment for " . ($hotel?->name ?? 'DM-Tech Hotel')
+                ]);
                 
                 $transaction = PaymentTransaction::create([
                     'hotel_id' => $hotelId,

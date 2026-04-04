@@ -50,6 +50,8 @@ class RoleAndPermissionSeeder extends Seeder
             'orders.update' => 'Update POS Orders',
             'orders.delete' => 'Delete POS Orders',
             'kds.view' => 'View Kitchen Display',
+            'pos.manage' => 'Manage POS Operations',
+            'leisure.manage' => 'Manage Leisure Hub',
         ];
 
         // Seed permissions
@@ -66,15 +68,15 @@ class RoleAndPermissionSeeder extends Seeder
             'SuperAdmin' => [], // Has everything bypass
             'HotelOwner' => array_keys($permissions),
             'GroupAdmin' => array_keys($permissions),
-            'GeneralManager' => ['rooms.manage', 'pms.rooms.view', 'pms.rooms.manage', 'pms.reservations.view', 'pms.reservations.manage', 'pms.checkin', 'pms.checkout', 'pms.housekeeping.manage', 'reservations.manage', 'restaurant.orders.manage', 'orders.view', 'orders.create', 'orders.update', 'orders.delete', 'kds.view', 'inventory.manage', 'inventory.view', 'billing.manage', 'billing.view', 'payments.process', 'payments.refund', 'reports.view', 'notifications.view', 'notifications.manage', 'system.activity.view', 'system.audit.view', 'users.view', 'users.create', 'users.update', 'users.delete'],
+            'GeneralManager' => ['rooms.manage', 'pms.rooms.view', 'pms.rooms.manage', 'pms.reservations.view', 'pms.reservations.manage', 'pms.checkin', 'pms.checkout', 'pms.housekeeping.manage', 'reservations.manage', 'restaurant.orders.manage', 'orders.view', 'orders.create', 'orders.update', 'orders.delete', 'kds.view', 'inventory.manage', 'inventory.view', 'billing.manage', 'billing.view', 'payments.process', 'payments.refund', 'reports.view', 'notifications.view', 'notifications.manage', 'system.activity.view', 'system.audit.view', 'users.view', 'users.create', 'users.update', 'users.delete', 'pos.manage', 'leisure.manage'],
             'Manager' => ['rooms.manage', 'pms.rooms.view', 'pms.rooms.manage', 'pms.reservations.view', 'pms.reservations.manage', 'pms.checkin', 'pms.checkout', 'pms.housekeeping.manage', 'reservations.manage', 'restaurant.orders.manage', 'orders.view', 'orders.create', 'orders.update', 'orders.delete', 'kds.view', 'inventory.manage', 'inventory.view', 'billing.manage', 'billing.view', 'payments.process', 'payments.refund', 'reports.view', 'notifications.view', 'notifications.manage', 'system.activity.view', 'system.audit.view', 'users.view', 'users.create', 'users.update', 'users.delete'],
             'ITSpecialist' => ['system.activity.view', 'system.audit.view', 'notifications.manage', 'users.view', 'users.create', 'users.update', 'users.delete', 'hotel.manage'],
             'Reception' => ['rooms.manage', 'pms.rooms.view', 'pms.rooms.manage', 'pms.reservations.view', 'pms.reservations.manage', 'pms.checkin', 'pms.checkout', 'reservations.manage', 'billing.view', 'payments.process', 'notifications.view', 'users.view', 'users.create'],
             'Housekeeping' => ['pms.rooms.view', 'pms.housekeeping.manage', 'notifications.view'],
             'Cashier' => ['billing.manage', 'billing.view', 'payments.process', 'payments.refund', 'notifications.view', 'restaurant.orders.manage', 'orders.view', 'orders.update'],
             'Kitchen' => ['restaurant.orders.manage', 'orders.view', 'orders.update', 'kds.view', 'inventory.manage', 'inventory.view', 'notifications.view'],
-            'Waitress' => ['restaurant.orders.manage', 'orders.view', 'orders.create', 'orders.update', 'inventory.view', 'notifications.view'],
-            'OutletManager' => ['restaurant.orders.manage', 'orders.view', 'orders.create', 'orders.update', 'orders.delete', 'inventory.manage', 'inventory.view', 'reports.view', 'reports.export', 'users.view', 'users.create', 'notifications.view'],
+            'Waitress' => ['restaurant.orders.manage', 'orders.view', 'orders.create', 'orders.update', 'inventory.view', 'notifications.view', 'pos.manage'],
+            'OutletManager' => ['restaurant.orders.manage', 'orders.view', 'orders.create', 'orders.update', 'orders.delete', 'inventory.manage', 'inventory.view', 'reports.view', 'reports.export', 'users.view', 'users.create', 'notifications.view', 'pos.manage', 'leisure.manage'],
             'Accountant' => ['finance.manage', 'billing.manage', 'billing.view', 'payments.process', 'payments.refund', 'reports.view', 'reports.export', 'notifications.view', 'system.activity.view', 'system.audit.view'],
         ];
 

@@ -76,7 +76,10 @@ class HousekeepingService
 
         $newHousekeepingStatus = $task->task_type === 'inspection' ? 'inspected' : 'clean';
 
-        $this->updateRoomStatusAfterCleaning($task->room, $newHousekeepingStatus, $hotelId);
+        $room = $task->room ?? Room::withoutGlobalScopes()->find($task->room_id);
+        if ($room) {
+            $this->updateRoomStatusAfterCleaning($room, $newHousekeepingStatus, $hotelId);
+        }
 
         return $task;
     }

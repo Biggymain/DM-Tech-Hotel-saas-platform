@@ -4,10 +4,11 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use App\Traits\DashboardCacheCleaner;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends BaseModel
 {
-    use DashboardCacheCleaner;
+    use DashboardCacheCleaner, HasFactory;
 
     protected static function booted()
     {
@@ -55,8 +56,12 @@ class Order extends BaseModel
         'payment_status',
         'payment_method',
         'created_by',
+        'waiter_id',
+        'served_at',
         'order_status',
         'routed_stations',
+        'uuid',
+        'synced_at',
     ];
 
     public function hotel()
@@ -82,6 +87,11 @@ class Order extends BaseModel
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function waiter()
+    {
+        return $this->belongsTo(User::class, 'waiter_id');
     }
 
     public function statusHistory()

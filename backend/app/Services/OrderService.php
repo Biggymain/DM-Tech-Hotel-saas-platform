@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Events\OrderFiredToStation;
 use App\Events\OrderStatusUpdated;
 use App\Models\Order;
+use App\Models\LeisureBundle;
+use App\Services\InventoryService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -17,6 +19,8 @@ use Illuminate\Support\Facades\Log;
  */
 class OrderService
 {
+    public function __construct(private InventoryService $inventoryService) {}
+
     /**
      * Fire an order to the kitchen.
      * Transitions: draft → pending
@@ -89,7 +93,12 @@ class OrderService
             );
         }
 
-        $order->update(['order_status' => $newStatus]);
+        $updateData = ['order_status' => $newStatus];
+        if ($newStatus === 'served') {
+            $updateData['served_at'] = now();
+        }
+
+        $order->update($updateData);
 
         \App\Models\OrderStatusHistory::create([
             'order_id' => $order->id,
@@ -106,10 +115,29 @@ class OrderService
         if ($newStatus === 'confirmed') {
             event(new \App\Events\OrderConfirmed($order));
         } elseif ($newStatus === 'served') {
+            // "Drink-Check" mandatory requirement (Port 3003 Leisure Hub)
+            $order->loadMissing('items.menuItem');
+            foreach ($order->items as $item) {
+                $bundle = LeisureBundle::where('menu_item_id', $item->menu_item_id)->first();
+                if ($bundle) {
+                    try {
+                        $this->inventoryService->deductStock(
+                            $bundle->inventory_item_id, 
+                            $bundle->quantity * $item->quantity, 
+                            get_class($order), 
+                            $order->id
+                        );
+                    } catch (\Exception $e) {
+                         // calibration: "No Pool Pass can be 'Served' without a linked InventoryItem deduction."
+                         Log::error("[Drink-Check] Failure for order #{$order->id}: " . $e->getMessage());
+                         throw new \LogicException("Cannot serve Pool Pass: Drink inventory (Bottle Water) is empty.");
+                    }
+                }
+            }
             event(new \App\Events\OrderServed($order));
         }
 
-        Log::info("[OrderService] Order #{$order->id} status: {$currentStatus} → {$newStatus} (station: {$station})");
+        Log::info("[OrderService] Workflow stepping to: {$newStatus} for order #{$order->id} (station: {$station})");
 
         return $order->fresh();
     }

@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Schema;
 class TenantScope implements Scope
 {
     private static bool $isApplying = false;
+    private static ?int $resolvedTenantId = null;
+    private static ?array $resolvedBranchIds = null;
 
     /**
      * Apply the scope to a given Eloquent query builder.
@@ -26,6 +28,12 @@ class TenantScope implements Scope
             return;
         }
 
+        // Hard reset if app context changes (Crucial for PHPUnit)
+        if (app()->bound('tenant_id')) {
+            self::$resolvedTenantId = (int)app('tenant_id');
+            self::$resolvedBranchIds = null;
+        }
+
         self::$isApplying = true;
 
         try {
@@ -37,77 +45,66 @@ class TenantScope implements Scope
 
     private function executeApply(Builder $builder, Model $model): void
     {
+        $tenantId = $this->getTenantId();
+
         if (Auth::check()) {
             $user = Auth::user();
+            
+            if (!$user) {
+                return;
+            }
 
             // ── 0. Hotels Table Isolation ─────────────────────────────────────────
-            // Even if the model IS a Hotel, we must scope it so Group Admins see
-            // only their group's branches and Branch staff see only their hotel.
             if ($model instanceof \App\Models\Hotel || $model->getTable() === 'hotels') {
                 if ($user->is_super_admin) {
-                     return; // Super Admin sees all hotels
+                     return; 
                 }
                 
-                if (!empty($user->hotel_group_id) && empty($user->hotel_id)) {
-                    // Group Admin: can only see branches belonging to their group
-                    $builder->where(function($q) use ($model, $user) {
-                        $q->where($model->qualifyColumn('hotel_group_id'), $user->hotel_group_id);
-                    });
+                $idToMatch = $tenantId ?? $user->hotel_id;
+
+                if ($idToMatch) {
+                    $builder->where($model->qualifyColumn('id'), $idToMatch);
+                    return;
+                }
+                
+                if (!empty($user->hotel_group_id)) {
+                    $builder->where($model->qualifyColumn('hotel_group_id'), $user->hotel_group_id);
                     return;
                 }
 
-                if (!empty($user->hotel_id)) {
-                    // Branch User: can only see their own hotel branch
-                    $builder->where(function($q) use ($model, $user) {
-                        $q->where($model->qualifyColumn('id'), $user->hotel_id);
-                    });
-                    return;
-                }
-                
                 $builder->whereRaw('1 = 0');
                 return;
             }
 
             // ── SUPER ADMIN ───────────────────────────────────────────────────────
-            // Super admins see ALL data unless they have explicitly switched to a
-            // specific branch via the session Branch Switcher.
             if ($user->is_super_admin) {
-                if (session()->has('active_hotel_id')) {
-                    $builder->where(function($q) use ($model) {
-                        $q->where($model->getTable() . '.hotel_id', session('active_hotel_id'));
-                    });
+                if ($tenantId) {
+                    $builder->where($model->qualifyColumn('hotel_id'), $tenantId);
                 }
-                // else: no scope applied — full cross-tenant visibility
                 return;
             }
 
             // ── GROUP ADMIN ───────────────────────────────────────────────────────
-            // GROUP_ADMIN users have hotel_id = null but hotel_group_id set.
-            // They must see ALL branches within their group but ZERO branches
-            // from any other organization (data leakage boundary).
             if (!empty($user->hotel_group_id) && empty($user->hotel_id)) {
-                $branchIds = \App\Models\HotelGroup::withoutGlobalScopes()
-                    ->find($user->hotel_group_id)
-                    ?->branches()
-                    ->withoutGlobalScopes()
-                    ->pluck('hotels.id')
-                    ->toArray() ?? [];
+                if (self::$resolvedBranchIds === null) {
+                    self::$resolvedBranchIds = \App\Models\HotelGroup::withoutGlobalScopes()
+                        ->find($user->hotel_group_id)
+                        ?->branches()
+                        ->withoutGlobalScopes()
+                        ->pluck('hotels.id')
+                        ->toArray() ?? [];
+                }
+                $branchIds = self::$resolvedBranchIds;
 
                 $builder->where(function($q) use ($model, $user, $branchIds) {
-                    // 1. Allow if explicitly linked to their group
                     if (Schema::hasColumn($model->getTable(), 'hotel_group_id')) {
                         $q->orWhere($model->qualifyColumn('hotel_group_id'), $user->hotel_group_id);
                     }
-
-                    // 2. Allow if linked to one of their group's branches
                     $q->orWhereIn($model->qualifyColumn('hotel_id'), $branchIds);
-
-                    // 3. Allow system-wide records (NULL hotel_id & NULL hotel_group_id)
-                    // e.g. System Roles, Currencies, Global Settings
                     $q->orWhere(function($sub) use ($model) {
                         $sub->whereNull($model->qualifyColumn('hotel_id'));
                         if (Schema::hasColumn($model->getTable(), 'hotel_group_id')) {
-                            $sub->whereNull($model->qualifyColumn('hotel_group_id'));
+                            $sub->whereNull($model->qualifyColumn('hotel_id'));
                         }
                     });
                 });
@@ -115,30 +112,24 @@ class TenantScope implements Scope
             }
 
             // ── BRANCH USER (Manager, Receptionist, Staff) ────────────────────────
-            // Strictly scoped to their assigned hotel_id only.
-            if (!empty($user->hotel_id)) {
-                $builder->where(function($q) use ($model, $user) {
-                    $q->where($model->getTable() . '.hotel_id', $user->hotel_id)
-                      ->orWhereNull($model->getTable() . '.hotel_id');
+            $idToFilter = $tenantId ?? $user->hotel_id;
+            if ($idToFilter) {
+                $builder->where(function($q) use ($model, $idToFilter) {
+                    $q->where($model->qualifyColumn('hotel_id'), $idToFilter)
+                      ->orWhereNull($model->qualifyColumn('hotel_id'));
                 });
                 return;
             }
 
-            // User has neither hotel_id nor hotel_group_id — allow no data through
             $builder->whereRaw('1 = 0');
             return;
         }
 
-        if (app()->bound('tenant_id')) {
+        if ($tenantId) {
             if ($model instanceof \App\Models\Hotel || $model->getTable() === 'hotels') {
-                $builder->where(function($q) use ($model) {
-                    $q->where($model->getTable() . '.id', app('tenant_id'));
-                });
+                $builder->where($model->qualifyColumn('id'), $tenantId);
             } else {
-                // Bound by middleware (e.g. Guest Portal QR sessions)
-                $builder->where(function($q) use ($model) {
-                    $q->where($model->getTable() . '.hotel_id', app('tenant_id'));
-                });
+                $builder->where($model->qualifyColumn('hotel_id'), $tenantId);
             }
             return;
         }
@@ -146,5 +137,33 @@ class TenantScope implements Scope
         // ── NO AUTH, NO BOUND TENANT ──────────────────────────────────────────────
         // This covers login page, register page, and Artisan seeders.
         // Do NOT apply any scope so these operations succeed on a fresh database.
+    }
+
+    /**
+     * Resilient tenant ID resolution for early lifecycle binding.
+     */
+    private function getTenantId(): ?int
+    {
+        if (self::$resolvedTenantId !== null) {
+            return self::$resolvedTenantId;
+        }
+
+        // 1. Primary Source: App Container (Bound by Middleware)
+        $id = app()->bound('tenant_id') ? app('tenant_id') : null;
+
+        // 2. Secondary Source: Active Context (In-Memory/Global)
+        if (!$id) {
+            $id = app()->bound('active_hotel_id') ? app('active_hotel_id') : null;
+        }
+
+        // 3. Late Fallback: Check Request Context
+        if (!$id && !app()->runningInConsole()) {
+             $id = request()->header('X-Tenant-ID') 
+                ?? request()->header('X-Hotel-Context')
+                ?? session('active_hotel_id');
+        }
+
+        self::$resolvedTenantId = $id ? (int)$id : null;
+        return self::$resolvedTenantId;
     }
 }

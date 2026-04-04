@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Tenantable;
 
 class Department extends Model
 {
-    use Tenantable;
+    use HasFactory, Tenantable;
 
     protected $fillable = [
         'hotel_id',
@@ -16,6 +17,11 @@ class Department extends Model
         'slug',
         'is_active',
     ];
+
+    protected static function booted()
+    {
+        static::creating(fn ($model) => $model->slug = $model->slug ?? \Illuminate\Support\Str::slug($model->name));
+    }
 
     protected $casts = [
         'is_active' => 'boolean',

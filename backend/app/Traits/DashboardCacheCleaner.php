@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Cache;
 
 trait DashboardCacheCleaner
 {
-    public static function booted()
+    public static function bootDashboardCacheCleaner()
     {
         static::saved(function ($model) {
             static::clearDashboardCache($model);

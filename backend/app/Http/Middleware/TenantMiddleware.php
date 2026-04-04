@@ -27,7 +27,8 @@ class TenantMiddleware
             $hotelId = $user->hotel_id;
 
             // Allow Group Admins and Super Admins to switch context via header or slug
-            $contextId = $request->header('X-Hotel-Context') 
+            $contextId = $request->header('X-Tenant-ID')
+                      ?? $request->header('X-Hotel-Context') 
                       ?? $request->query('hotel_id')
                       ?? $request->input('hotel_id');
 

@@ -8,13 +8,13 @@ use App\Http\Controllers\Controller;
 
 use App\Models\RatePlan;
 use Illuminate\Http\Request;
-
 class RatePlanController extends Controller
 {
     public function index()
     {
+        $hotelId = app()->bound('tenant_id') ? app('tenant_id') : auth()->user()?->hotel_id;
         return RatePlan::with(['roomTypes', 'seasonalRates', 'occupancyRules'])
-            ->where('hotel_id', app('tenant_id'))
+            ->where('hotel_id', $hotelId)
             ->get();
     }
 
@@ -35,16 +35,17 @@ class RatePlanController extends Controller
             'room_types.*.base_price' => 'required|numeric|min:0'
         ]);
 
-        $validated['hotel_id'] = app('tenant_id');
+        $validated['hotel_id'] = app()->bound('tenant_id') ? app('tenant_id') : $request->user()->hotel_id;
 
         $ratePlanData = collect($validated)->except('room_types')->toArray();
         $ratePlan = RatePlan::create($ratePlanData);
 
         if (!empty($validated['room_types'])) {
             $syncData = [];
+            $hotelId = app()->bound('tenant_id') ? app('tenant_id') : $request->user()->hotel_id;
             foreach ($validated['room_types'] as $rt) {
                 // Attach the room type with its specific base price constraint
-                $syncData[$rt['id']] = ['base_price' => $rt['base_price'], 'hotel_id' => app('tenant_id')];
+                $syncData[$rt['id']] = ['base_price' => $rt['base_price'], 'hotel_id' => $hotelId];
             }
             $ratePlan->roomTypes()->sync($syncData);
         }
@@ -54,7 +55,8 @@ class RatePlanController extends Controller
 
     public function update(Request $request, RatePlan $ratePlan)
     {
-        if ($ratePlan->hotel_id !== app('tenant_id')) {
+        $currentHotelId = app()->bound('tenant_id') ? app('tenant_id') : $request->user()->hotel_id;
+        if ($ratePlan->hotel_id !== $currentHotelId) {
             abort(403);
         }
 
@@ -78,8 +80,9 @@ class RatePlanController extends Controller
 
         if (isset($validated['room_types'])) {
              $syncData = [];
+             $hotelId = app()->bound('tenant_id') ? app('tenant_id') : $request->user()->hotel_id;
              foreach ($validated['room_types'] as $rt) {
-                 $syncData[$rt['id']] = ['base_price' => $rt['base_price'], 'hotel_id' => app('tenant_id')];
+                 $syncData[$rt['id']] = ['base_price' => $rt['base_price'], 'hotel_id' => $hotelId];
              }
              $ratePlan->roomTypes()->sync($syncData);
         }
@@ -89,7 +92,8 @@ class RatePlanController extends Controller
 
     public function destroy(RatePlan $ratePlan)
     {
-        if ($ratePlan->hotel_id !== app('tenant_id')) {
+        $currentHotelId = app()->bound('tenant_id') ? app('tenant_id') : auth()->user()?->hotel_id;
+        if ($ratePlan->hotel_id !== $currentHotelId) {
             abort(403);
         }
 

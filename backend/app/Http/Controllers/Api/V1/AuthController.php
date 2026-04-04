@@ -202,6 +202,11 @@ class AuthController extends Controller
             'name'            => $user->name,
             'email'           => $user->email,
             'hotel_id'        => $user->hotel_id,
+            'hotel'           => $user->hotel ? [
+                'id' => $user->hotel->id,
+                'name' => $user->hotel->name,
+                'departments' => $user->hotel->departments->map(fn($d) => ['id' => $d->id, 'name' => $d->name])
+            ] : null,
             'hotel_slug'      => $user->hotel?->slug,
             'hotel_group_id'  => $user->hotel_group_id ?? null,
             'outlet_id'       => $user->outlet_id ?? null,
@@ -213,7 +218,6 @@ class AuthController extends Controller
                 'slug' => strtolower(str_replace(' ', '-', $r->name)),
             ])->values(),
             'active_modules'  => $active_modules,
-            'permissions'     => $permissions,
             'requires_onboarding' => (bool) ($request?->header('X-Frontend-Port') === '3003' && ($user->password_changed_at === null || $user->pin_code === null)),
         ];
     }
