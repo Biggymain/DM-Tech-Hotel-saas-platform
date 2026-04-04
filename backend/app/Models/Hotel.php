@@ -36,6 +36,8 @@ class Hotel extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'phone' => 'encrypted',
+        'address' => 'encrypted',
     ];
 
     /** The Organization (HotelGroup) this branch belongs to. */

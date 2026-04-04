@@ -1,0 +1,4 @@
+# Fingerprints for silencing mock credentials in tests
+# Finding: test-api-key-abc123 in backend/tests/Feature/OtaChannelManagerTest.php
+# Please update with the exact fingerprint from Gitleaks logs if the CI fails.
+be5c0d6415ab544372e92da720122_placeholder
