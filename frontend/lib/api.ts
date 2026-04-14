@@ -10,12 +10,34 @@ const api = axios.create({
   withCredentials: true, // Matches Backend Sanctum port-domain cookies 
 });
 
+// ── Hardware Bridge ID Cache ──────────────────────────
+let cachedHardwareId: string | null = typeof window !== 'undefined' ? localStorage.getItem('hardware_id') : null;
+
+const fetchHardwareId = async () => {
+  if (cachedHardwareId) return cachedHardwareId;
+  try {
+    // Using a direct axios call to avoid interceptor recursion
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/hardware-id`);
+    if (response.data.hardware_id) {
+      cachedHardwareId = response.data.hardware_id;
+      localStorage.setItem('hardware_id', cachedHardwareId!);
+      return cachedHardwareId;
+    }
+  } catch (e) {
+    console.error("Hardware Bridge unreachable:", e);
+  }
+  return null;
+};
+
 // ── Strict Port-Aware Request Interceptor ────────────────
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(async (config) => {
   if (typeof window !== 'undefined') {
     const port = window.location.port;
     config.headers['X-Frontend-Port'] = port;
     
+    const hId = await fetchHardwareId();
+    if (hId) config.headers['X-Hardware-Id'] = hId;
+
     // Do not attach admin tokens if we are on the group landing pages
     if (port !== '3001') {
       const token = localStorage.getItem(`auth_token_${port}`); // Isolate storage globally
@@ -46,6 +68,21 @@ api.interceptors.response.use(
         // Protected Routes list
         const protectedPrefixes = ['/dashboard', '/reception', '/organization', '/kds', '/pos', '/housekeeping', '/profile'];
         const isProtected = protectedPrefixes.some(p => window.location.pathname.startsWith(p));
+
+        const errorCode = error.response?.data?.code;
+
+        if (errorCode === 'LICENSE_UNREGISTERED') {
+          window.location.href = '/activate';
+          return Promise.reject(error);
+        }
+
+        if (errorCode === 'LICENSE_LOCKED' || errorCode === 'LICENSE_EXPIRED') {
+          const params = new URLSearchParams();
+          if (error.response?.data?.manager_email) params.set('manager', error.response.data.manager_email);
+          if (error.response?.data?.owner_email) params.set('owner', error.response.data.owner_email);
+          window.location.href = `/subscription-expired?${params.toString()}`;
+          return Promise.reject(error);
+        }
 
         if (isProtected || error.response?.status === 403) {
           localStorage.removeItem(`auth_token_${port}`);

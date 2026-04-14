@@ -34,7 +34,7 @@ class HotelRegistrationService
                 'hotel_id' => $hotel->id,
                 'name' => $data['owner_name'],
                 'email' => $data['email'],
-                'password' => Hash::make($data['password']),
+                'password' => $data['password'],
                 'is_super_admin' => false,
             ]);
 

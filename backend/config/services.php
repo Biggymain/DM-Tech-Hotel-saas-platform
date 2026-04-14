@@ -43,4 +43,8 @@ return [
         'secret_hash' => env('FLUTTERWAVE_SECRET_HASH'),
     ],
 
+    'supabase' => [
+        'passphrase' => env('DEV_PASSPHRASE'),
+    ],
+
 ];

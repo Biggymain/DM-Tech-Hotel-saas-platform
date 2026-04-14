@@ -21,6 +21,13 @@ export interface User {
   must_change_password: boolean;
   password_changed_at: string | null;
   requires_onboarding?: boolean;
+  license?: {
+    status: string;
+    expires_at: string | null;
+    manager_email: string | null;
+    owner_email: string | null;
+    days_remaining: number;
+  };
   hotel?: {
     id: number;
     name: string;

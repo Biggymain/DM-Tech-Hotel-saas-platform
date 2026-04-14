@@ -82,6 +82,7 @@ Route::prefix('v1')->group(function () {
         Route::post('staff-pin', [AuthController::class, 'staffPinLogin']);
         Route::post('forgot-password', [AuthController::class, 'forgotPassword']); // Kept existing route
         Route::post('reset-password', [AuthController::class, 'resetPassword']);
+        Route::post('activate-branch', [\App\Http\Controllers\Api\V1\LicensingController::class, 'activate']); 
 
         // Staff Setup (PIN & Password Activation)
         Route::middleware('auth:sanctum')->post('staff/setup', [AuthController::class, 'setupStaff']);
@@ -133,6 +134,7 @@ Route::prefix('v1')->group(function () {
     // ── LEISURE HUB HARDWARE BRIDGE ──────────────────────────────────────────
     // GET /api/v1/hardware/verify/{code}
     Route::get('/hardware/verify/{code}', [HardwareController::class, 'verify']);
+    Route::get('/hardware-id', [HardwareController::class, 'hardwareId']);
 
     // ── PUBLIC BOOKING ENGINE ─────────────────────────────────────────────────
     // No auth required. Tenant is resolved from {hotel_slug} or Host header

@@ -35,17 +35,23 @@ launch_port() {
         cd "$ROOT_DIR/$APP_DIR" && \
         TMPDIR="$ISOLATION_DIR" \
         
-        # Detect standalone build
-        if [ -f ".next-$PORT/standalone/server.js" ]; then
+        # Check for missing manifests to prevent ENOENT errors
+        if [ ! -f ".next-$PORT/prerender-manifest.json" ]; then
+            echo "   (Missing Build Manifests - Executing Clean Build...)"
+            NEXT_DIST_DIR=".next-$PORT" npx next build
+        fi
+
+        # Detect standalone build (with workspace root optimization applied)
+        if [ -f ".next-$PORT/standalone/$APP_DIR/server.js" ]; then
             echo "   (Detected Standalone Build - Launching via Node...)"
             # Copy public and static to standalone for correct asset resolution
-            cp -r "public" ".next-$PORT/standalone/public" 2>/dev/null
-            cp -r ".next-$PORT/static" ".next-$PORT/standalone/.next-$PORT/static" 2>/dev/null
+            cp -r "public" ".next-$PORT/standalone/$APP_DIR/public" 2>/dev/null
+            cp -r ".next-$PORT/static" ".next-$PORT/standalone/$APP_DIR/.next-$PORT/static" 2>/dev/null
             
             PORT=$PORT \
             HOSTNAME="0.0.0.0" \
             NODE_OPTIONS="--title=dm-tech-port-$PORT --max-old-space-size=1024" \
-            node ".next-$PORT/standalone/server.js" &
+            node ".next-$PORT/standalone/$APP_DIR/server.js" &
         else
             echo "   (Standard Build - Launching via Next Start...)"
             NEXT_DIST_DIR=".next-$PORT" \

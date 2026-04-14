@@ -9,20 +9,22 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Models\AuditLog;
+use App\Services\HardwareFingerprintService;
+use Illuminate\Support\Facades\Cache;
+use App\Exceptions\SecurityKeyMismatchException;
 
 class AuthController extends Controller
 {
     /**
      * Authenticate Admin User & Issue Token
      */
-    public function login(Request $request)
+    public function login(Request $request, HardwareFingerprintService $fingerprintService)
     {
         $request->validate([
             'email'    => 'required|email',
@@ -31,9 +33,26 @@ class AuthController extends Controller
 
         $user = User::with(['roles', 'hotel', 'hotelGroup'])->where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        try {
+            // Hardware Marriage: Super/Group Admins must match their registered device
+            if ($user->is_super_admin || $user->isGroupAdmin()) {
+                $currentFingerprint = $fingerprintService->generateHash();
+                if ($user->hardware_hash !== $currentFingerprint) {
+                    throw ValidationException::withMessages([
+                        'email' => ['Hardware Handshake Mismatch: This device is not authorized for this identity.'],
+                    ]);
+                }
+            }
+
+            if (!$user || $user->password !== $request->password) {
+                throw ValidationException::withMessages([
+                    'email' => ['Invalid credentials provided.'],
+                ]);
+            }
+        } catch (SecurityKeyMismatchException $e) {
+            // Hardware/Security Handshake failed!
             throw ValidationException::withMessages([
-                'email' => ['Invalid credentials provided.'],
+                'email' => ['System security lockdown: Decryption failed. Please contact support.'],
             ]);
         }
 
@@ -80,9 +99,16 @@ class AuthController extends Controller
 
         $user = User::with(['roles', 'hotel', 'hotelGroup'])->find($request->staff_id);
 
-        if (!$user || !Hash::check($request->pin, $user->pin_code)) {
+        try {
+            if (!$user || $user->pin_code !== $request->pin) {
+                throw ValidationException::withMessages([
+                    'pin' => ['Invalid PIN code.'],
+                ]);
+            }
+        } catch (SecurityKeyMismatchException $e) {
+            // Hardware/Security Handshake failed!
             throw ValidationException::withMessages([
-                'pin' => ['Invalid PIN code.'],
+                'pin' => ['Internal security lockout: Fingerprint verification failed.'],
             ]);
         }
 
@@ -142,8 +168,8 @@ class AuthController extends Controller
         $user = $request->user();
         
         $user->update([
-            'password' => bcrypt($request->password),
-            'pin_code' => Hash::make($request->pin), // Hash the pin for security
+            'password' => $request->password,
+            'pin_code' => $request->pin,
             'password_changed_at' => now(),
             'must_change_password' => false,
         ]);
@@ -169,7 +195,7 @@ class AuthController extends Controller
      * Return a consistent user payload to the frontend, including slugs needed
      * for role-based redirect routing in AuthProvider.tsx.
      */
-    private function formatUser(User $user, Request $request = null): array
+    private function formatUser(User $user, ?Request $request = null): array
     {
         $active_modules = [];
         $permissions = [];
@@ -219,6 +245,38 @@ class AuthController extends Controller
             ])->values(),
             'active_modules'  => $active_modules,
             'requires_onboarding' => (bool) ($request?->header('X-Frontend-Port') === '3003' && ($user->password_changed_at === null || $user->pin_code === null)),
+            'license'         => $this->getLicenseData(),
+        ];
+    }
+
+    /**
+     * Pull license data from SentryMiddleware cache
+     */
+    private function getLicenseData(): array
+    {
+        $fingerprintService = app(HardwareFingerprintService::class);
+        $hardwareHash = $fingerprintService->generateHash();
+        $cacheKey = "licensing_sentry_{$hardwareHash}";
+
+        $license = Cache::get($cacheKey);
+
+        if (!$license) {
+            return [
+                'status' => 'PENDING',
+                'expires_at' => null,
+                'days_remaining' => 0
+            ];
+        }
+
+        $expiresAt = isset($license['expires_at']) ? \Carbon\Carbon::parse($license['expires_at']) : null;
+        $daysRemaining = $expiresAt ? now()->diffInDays($expiresAt, false) : 0;
+
+        return [
+            'status' => $license['status'] ?? 'UNKNOWN',
+            'expires_at' => $license['expires_at'] ?? null,
+            'manager_email' => $license['manager_email'] ?? null,
+            'owner_email' => $license['owner_email'] ?? null,
+            'days_remaining' => (int) $daysRemaining,
         ];
     }
 
@@ -239,10 +297,10 @@ class AuthController extends Controller
         // Generate 6-digit OTP
         $otp = (string) rand(100000, 999999);
 
-        // Store OTP in password_reset_tokens table
+        // Store OTP in password_reset_tokens table (Direct assignment - relying on transport security or PGP if moved later)
         DB::table('password_reset_tokens')->updateOrInsert(
             ['email' => $user->email],
-            ['token' => Hash::make($otp), 'created_at' => now()]
+            ['token' => $otp, 'created_at' => now()]
         );
 
         // Notify user (simulating email via log)
@@ -267,8 +325,8 @@ class AuthController extends Controller
 
         $record = DB::table('password_reset_tokens')->where('email', $request->email)->first();
 
-        // Validate OTP
-        if (!$record || !isset($record->token) || !Hash::check($request->token, $record->token)) {
+        // Validate OTP (Direct comparison - removal of legacy hashing)
+        if (!$record || !isset($record->token) || $request->token !== $record->token) {
             return response()->json(['message' => 'Invalid or expired reset code.'], 422);
         }
 
@@ -278,7 +336,7 @@ class AuthController extends Controller
         }
 
         $user = User::where('email', $request->email)->firstOrFail();
-        $user->update(['password' => Hash::make($request->password)]);
+        $user->update(['password' => $request->password]);
 
         // Clear the token
         DB::table('password_reset_tokens')->where('email', $request->email)->delete();

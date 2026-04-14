@@ -4,11 +4,15 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Services\LeisureService;
+use App\Services\HardwareFingerprintService;
 use Illuminate\Http\Request;
 
 class HardwareController extends Controller
 {
-    public function __construct(private LeisureService $leisureService) {}
+    public function __construct(
+        private LeisureService $leisureService,
+        private HardwareFingerprintService $fingerprintService
+    ) {}
 
     /**
      * GET /api/v1/hardware/verify/{code}
@@ -40,5 +44,12 @@ class HardwareController extends Controller
             'allow' => false,
             'message' => $result['message'] ?? 'Access Denied'
         ], 403);
+    }
+
+    public function hardwareId()
+    {
+        return response()->json([
+            'hardware_id' => $this->fingerprintService->generateHash()
+        ]);
     }
 }

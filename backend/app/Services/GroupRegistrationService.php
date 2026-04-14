@@ -36,19 +36,22 @@ class GroupRegistrationService
 
             // 2. Create the first Branch Hotel, inheriting group settings
             $branch = Hotel::create([
-                'hotel_group_id' => $group->id,
+                'hotel_group_id' => $group->getAttribute('id'),
                 'name'           => $data['hotel_name'],
                 'domain'         => Str::slug($data['hotel_name']) . '-' . Str::random(4),
                 'email'          => $data['email'],
                 'is_active'      => true,
             ]);
 
+            // 2.1 Sync with Supabase Licensing Hub
+            $this->syncBranchToSupabase($branch, $data['tier'] ?? 'basic', $group->getAttribute('id'));
+
             // 3. Create the GROUP_ADMIN user (belongs to group, NOT a single hotel)
             $groupAdmin = User::create([
                 'name'           => $data['owner_name'],
                 'email'          => $data['email'],
-                'password'       => Hash::make($data['password']),
-                'hotel_group_id' => $group->id,
+                'password'       => $data['password'],
+                'hotel_group_id' => $group->getAttribute('id'),
                 'hotel_id'       => null,     // GROUP_ADMIN is cross-branch
                 'is_super_admin' => false,
             ]);
@@ -107,6 +110,9 @@ class GroupRegistrationService
                 'is_active'      => true,
             ]);
 
+            // Sync with Supabase Licensing Hub
+            $this->syncBranchToSupabase($branch, $data['tier'] ?? 'basic', $group->id);
+
             // Seed default outlets on the new branch too
             $defaultOutlets = [
                 ['name' => 'Main Restaurant', 'type' => 'restaurant'],
@@ -115,7 +121,7 @@ class GroupRegistrationService
             ];
             foreach ($defaultOutlets as $outletData) {
                 Outlet::create([
-                    'hotel_id'  => $branch->id,
+                    'hotel_id'  => $branch->getAttribute('id'),
                     'name'      => $outletData['name'],
                     'type'      => $outletData['type'],
                     'is_active' => true,
@@ -124,5 +130,28 @@ class GroupRegistrationService
 
             return $branch;
         });
+    }
+
+    /**
+     * Internal: Syncs a local branch model to the Supabase Licensing system.
+     */
+    private function syncBranchToSupabase(Hotel $branch, string $tier, $groupId): void
+    {
+        $expiryDays = match($tier) {
+            'basic' => 30,
+            'standard' => 90,
+            'premium' => 365,
+            'enterprise' => 730,
+            default => 30
+        };
+
+        DB::connection('supabase')->table('branches')->insert([
+            'id' => $branch->getAttribute('id'), // Robust UUID access
+            'group_id' => $groupId,
+            'expires_at' => now()->addDays($expiryDays),
+            'manager_email' => $branch->getAttribute('email'), // Mapped for licensing alerts
+            'owner_email' => $branch->getAttribute('email'),   // Primary fallback
+            'created_at' => now(),
+        ]);
     }
 }

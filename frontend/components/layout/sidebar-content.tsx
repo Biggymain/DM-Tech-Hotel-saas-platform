@@ -138,9 +138,50 @@ export function SidebarContent({ onItemClick, forcedCollapsed }: { onItemClick?:
             </Link>
           );
         })}
-      </div>
+    </div>
 
-      {user && (
+    {user?.license && (
+      <div className={cn(
+        "mx-3 mt-4 p-3 rounded-xl border transition-all duration-300",
+        isSidebarCollapsed ? "flex justify-center px-1" : "px-3 shadow-[0_0_15px_rgba(37,99,235,0.05)]",
+        (user.license.days_remaining ?? 0) > 30 ? "bg-emerald-500/5 border-emerald-500/20" :
+        (user.license.days_remaining ?? 0) > 7 ? "bg-amber-500/5 border-amber-500/20" :
+        "bg-red-500/5 border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)] animate-pulse-subtle"
+      )}>
+        {isSidebarCollapsed ? (
+          <div className={cn(
+            "w-2 h-2 rounded-full",
+            (user.license.days_remaining ?? 0) > 30 ? "bg-emerald-500" :
+            (user.license.days_remaining ?? 0) > 7 ? "bg-amber-500" : "bg-red-500"
+          )} />
+        ) : (
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">License Status</span>
+              <span className={cn(
+                "text-[10px] font-bold uppercase",
+                (user.license.days_remaining ?? 0) > 30 ? "text-emerald-500" :
+                (user.license.days_remaining ?? 0) > 7 ? "text-amber-500 font-extrabold" : "text-red-500 font-black animate-pulse"
+              )}>
+                {(user.license.days_remaining ?? 0) <= 0 ? 'Expired' : `${user.license.days_remaining} Days`}
+              </span>
+            </div>
+            <div className="w-full bg-black/20 h-1 rounded-full overflow-hidden">
+              <div 
+                className={cn(
+                  "h-full transition-all duration-1000 ease-out",
+                  (user.license.days_remaining ?? 0) > 30 ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]" :
+                  (user.license.days_remaining ?? 0) > 7 ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.3)]" : "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"
+                )}
+                style={{ width: `${Math.max(5, Math.min(100, ((user.license.days_remaining ?? 0) / 365) * 100))}%` }}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    )}
+
+    {user && (
         <div className={cn(
           "mx-3 mt-4 p-3 rounded-xl bg-muted/30 border border-border/30 transition-all duration-300",
           isSidebarCollapsed ? "px-1 flex justify-center" : "px-3"

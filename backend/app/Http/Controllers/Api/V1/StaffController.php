@@ -71,7 +71,7 @@ class StaffController extends Controller
         $user = User::create([
             'name' => strip_tags($validated['name']),
             'email' => $validated['email'],
-            'password' => bcrypt($tempPassword),
+            'password' => $tempPassword,
             'hotel_id' => $hotelId,
             'hotel_group_id' => $request->user()->hotel_group_id,
             'outlet_id' => $validated['outlet_id'] ?? null,

@@ -1,18 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import { Toaster } from "@/components/ui/sonner";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Guest Portal | DM Tech Hotel",
@@ -41,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50 text-slate-900 min-h-screen selection:bg-slate-950/10`}
+        className="font-sans antialiased bg-stone-50 text-slate-900 min-h-screen selection:bg-slate-950/10"
       >
         <Providers>
           <div className="relative flex min-h-screen flex-col overflow-x-hidden">

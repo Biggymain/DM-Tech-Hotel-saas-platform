@@ -55,6 +55,7 @@ class OrganizationController extends Controller
             'email'   => 'nullable|email',
             'phone'   => 'nullable|string',
             'address' => 'nullable|string',
+            'tier'    => 'nullable|string|in:basic,standard,premium,enterprise',
         ]);
 
         if (!$user->isGroupAdmin() && !$user->is_super_admin) {
@@ -176,7 +177,7 @@ class OrganizationController extends Controller
                 'hotel_id' => $branch->id,
                 'name' => 'Branch Manager - ' . $branch->name,
                 'email' => 'manager.' . Str::slug($branch->name) . '@hotel.com',
-                'password' => Hash::make($generatedPassword),
+                'password' => $generatedPassword,
                 'is_active' => true,
             ]);
             $manager->roles()->attach($managerRole->id, ['hotel_id' => $branch->id]);

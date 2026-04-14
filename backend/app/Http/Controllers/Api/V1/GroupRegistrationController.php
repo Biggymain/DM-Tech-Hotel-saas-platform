@@ -31,6 +31,7 @@ class GroupRegistrationController extends Controller
             'password'   => 'required|string|min:8|confirmed',
             'currency'   => 'nullable|string|size:3',
             'tax_rate'   => 'nullable|numeric|min:0|max:100',
+            'tier'       => 'nullable|string|in:basic,standard,premium,enterprise',
         ]);
 
         try {

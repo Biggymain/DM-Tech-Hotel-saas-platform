@@ -29,6 +29,7 @@ class User extends Authenticatable
         'must_change_password',
         'password_changed_at',
         'kitchen_station_id',
+        'hardware_hash',
     ];
 
     public function kitchenStation()
@@ -46,7 +47,8 @@ class User extends Authenticatable
         return [
             'name' => 'encrypted',
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password' => \App\Casts\SupabasePgpCast::class,
+            'pin_code' => \App\Casts\SupabasePgpCast::class,
             'is_super_admin' => 'boolean',
             'is_on_duty' => 'boolean',
             'last_duty_toggle_at' => 'datetime',
