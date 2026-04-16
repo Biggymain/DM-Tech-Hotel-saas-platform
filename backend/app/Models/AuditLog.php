@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\Tenantable;
 
 class AuditLog extends Model
 {
-    use Tenantable;
+    use HasFactory;
 
     protected $fillable = [
         'hotel_id', 'user_id', 'entity_type', 'entity_id',

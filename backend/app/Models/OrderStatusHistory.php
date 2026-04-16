@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-use App\Traits\Tenantable;
 
 class OrderStatusHistory extends Model
 {
-    use Tenantable;
+    
 
     protected $fillable = [
         'hotel_id',

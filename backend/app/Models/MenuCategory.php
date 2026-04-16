@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Traits\Tenantable;
 
-class MenuCategory extends Model
+class MenuCategory extends BaseModel
 {
-    use Tenantable;
+    
 
     protected $fillable = [
         'hotel_id',

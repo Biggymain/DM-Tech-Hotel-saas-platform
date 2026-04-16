@@ -30,6 +30,9 @@ class User extends Authenticatable
         'password_changed_at',
         'kitchen_station_id',
         'hardware_hash',
+        'is_approved',
+        'pending_hardware_hash',
+        'is_relinking',
     ];
 
     public function kitchenStation()
@@ -54,6 +57,10 @@ class User extends Authenticatable
             'last_duty_toggle_at' => 'datetime',
             'must_change_password' => 'boolean',
             'password_changed_at' => 'datetime',
+            'is_approved' => 'boolean',
+            'is_suspended' => 'boolean',
+            'is_locked' => 'boolean',
+            'is_relinking' => 'boolean',
         ];
     }
 
@@ -96,22 +103,27 @@ class User extends Authenticatable
 
     public function isKitchenManager(): bool
     {
-        return $this->hasRole('kitchen-manager');
+        return $this->hasRole('kitchenmanager');
     }
 
     public function isGeneralManager(): bool
     {
-        return $this->hasRole('general-manager');
+        return $this->hasRole('generalmanager');
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return (bool) $this->is_super_admin;
     }
 
     public function isBranchManager(): bool
     {
-        return $this->hasRole('hotelowner') || $this->hasRole('general-manager');
+        return $this->hasRole('hotelowner') || $this->hasRole('generalmanager');
     }
 
     public function isOutletManager(): bool
     {
-        return $this->hasRole('outlet-manager');
+        return $this->hasRole('outletmanager');
     }
 
     public function scopeOnDuty($query)

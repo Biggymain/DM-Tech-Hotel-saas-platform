@@ -39,7 +39,7 @@ class InventoryManagementTest extends TestCase
         ]);
         
         // Attach Role correctly
-        $role = Role::where('name', 'Manager')->first();
+        $role = Role::withoutGlobalScopes()->where('slug', 'manager')->first();
         if ($role) {
             $this->user->roles()->attach($role->id);
         }
@@ -116,11 +116,13 @@ class InventoryManagementTest extends TestCase
         ]);
         
         $steakMenu->ingredients()->create([
+            'hotel_id' => $this->hotel->id,
             'inventory_item_id' => $beef->id,
             'quantity_required' => 0.4
         ]);
         
         $steakMenu->ingredients()->create([
+            'hotel_id' => $this->hotel->id,
             'inventory_item_id' => $salt->id,
             'quantity_required' => 10
         ]);
@@ -200,6 +202,7 @@ class InventoryManagementTest extends TestCase
         ]);
         
         $steakMenu->ingredients()->create([
+            'hotel_id' => $this->hotel->id,
             'inventory_item_id' => $beef->id,
             'quantity_required' => 0.4
         ]);

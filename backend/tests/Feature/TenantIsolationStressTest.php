@@ -30,7 +30,7 @@ class TenantIsolationStressTest extends TestCase
         // Setup Hotel A
         $this->hotelA = Hotel::create(['name' => 'Hotel A']);
         $this->userA = User::factory()->create(['hotel_id' => $this->hotelA->id]);
-        $roleA = Role::where('name', 'GeneralManager')->first();
+        $roleA = Role::withoutGlobalScopes()->where('slug', 'generalmanager')->first();
         if ($roleA) {
             $this->userA->roles()->attach($roleA->id);
         }
@@ -38,7 +38,7 @@ class TenantIsolationStressTest extends TestCase
         // Setup Hotel B
         $this->hotelB = Hotel::create(['name' => 'Hotel B']);
         $this->userB = User::factory()->create(['hotel_id' => $this->hotelB->id]);
-        $roleB = Role::where('name', 'GeneralManager')->first();
+        $roleB = Role::withoutGlobalScopes()->where('slug', 'generalmanager')->first();
         if ($roleB) {
             $this->userB->roles()->attach($roleB->id);
         }

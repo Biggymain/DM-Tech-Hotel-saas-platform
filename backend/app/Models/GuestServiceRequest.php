@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use App\Traits\Tenantable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\DashboardCacheCleaner;
 
 class GuestServiceRequest extends Model
 {
-    use HasFactory, Tenantable, DashboardCacheCleaner;
+    use HasFactory,  DashboardCacheCleaner;
 
     protected $fillable = [
         'hotel_id',

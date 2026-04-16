@@ -142,6 +142,18 @@ export default function LoginPage() {
                     <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Authenticating…</>
                   ) : 'Sign In'}
                 </Button>
+
+                {port === '3000' && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-11 border-primary/30 text-primary hover:bg-primary/10 transition-all font-medium"
+                    asChild
+                  >
+                    <Link href="/support-signup">Request Support Access</Link>
+                  </Button>
+                )}
+
                 <p className="text-center text-sm text-white/30">
                   Don't have an account?{' '}
                   <Link href="/register" className="text-primary font-medium hover:text-primary/80 underline underline-offset-4">

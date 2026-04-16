@@ -37,14 +37,14 @@ class MonitoringSystemTest extends TestCase
 
         $this->hotelA = Hotel::create(['name' => 'Monitoring Hotel A']);
         $this->userA = User::factory()->create(['hotel_id' => $this->hotelA->id, 'is_super_admin' => true]);
-        $roleA = \App\Models\Role::where('name', 'HotelOwner')->first();
+        $roleA = \App\Models\Role::withoutGlobalScopes()->where('slug', 'hotelowner')->first();
         if ($roleA) { $this->userA->roles()->attach($roleA->id); }
 
         $this->outletA = Outlet::create(['hotel_id' => $this->hotelA->id, 'name' => 'Outlet A']);
 
         $this->hotelB = Hotel::create(['name' => 'Monitoring Hotel B']);
         $this->userB = User::factory()->create(['hotel_id' => $this->hotelB->id, 'is_super_admin' => true]);
-        $roleB = \App\Models\Role::where('name', 'HotelOwner')->first();
+        $roleB = \App\Models\Role::withoutGlobalScopes()->where('slug', 'hotelowner')->first();
         if ($roleB) { $this->userB->roles()->attach($roleB->id); }
     }
 

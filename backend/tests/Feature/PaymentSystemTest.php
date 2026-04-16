@@ -294,7 +294,7 @@ class PaymentSystemTest extends TestCase
             'payment_source' => 'restaurant_pos'
         ]);
 
-        $response = $this->postJson('/api/v1/payments/manual-confirm', [
+        $response = $this->withPort(3003)->postJson('/api/v1/payments/manual-confirm', [
             'transaction_id' => $transaction->id
         ]);
 

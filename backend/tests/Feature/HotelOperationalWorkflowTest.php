@@ -37,11 +37,15 @@ class HotelOperationalWorkflowTest extends TestCase
         $this->seed(\Database\Seeders\RoleAndPermissionSeeder::class);
 
         $this->hotel = Hotel::create(['name' => 'Integration Hotel']);
-        $this->user = User::factory()->create(['hotel_id' => $this->hotel->id, 'is_super_admin' => true]);
+        $this->user = User::factory()->create([
+            'hotel_id' => $this->hotel->id,
+            'is_super_admin' => false,
+            'is_approved' => true,
+        ]);
         
-        $role = Role::where('name', 'Manager')->first();
+        $role = Role::withoutGlobalScopes()->where('slug', 'generalmanager')->first();
         if ($role) {
-            $this->user->roles()->attach($role->id);
+            $this->user->roles()->attach($role->id, ['hotel_id' => $this->hotel->id]);
         }
 
         $this->department = Department::create([
@@ -78,6 +82,7 @@ class HotelOperationalWorkflowTest extends TestCase
         ]);
         
         $steakMenu->ingredients()->create([
+            'hotel_id' => $this->hotel->id,
             'inventory_item_id' => $beef->id,
             'quantity_required' => 0.5 // 0.5kg per steak
         ]);
@@ -108,6 +113,7 @@ class HotelOperationalWorkflowTest extends TestCase
         ]);
 
         $order->items()->create([
+            'hotel_id' => $this->hotel->id,
             'menu_item_id' => $steakMenu->id,
             'quantity' => 2, // requires 1.0kg beef total
             'price' => 200,
@@ -198,6 +204,7 @@ class HotelOperationalWorkflowTest extends TestCase
         ]);
         
         $steakMenu->ingredients()->create([
+            'hotel_id' => $this->hotel->id,
             'inventory_item_id' => $beef->id,
             'quantity_required' => 0.5
         ]);
@@ -215,6 +222,7 @@ class HotelOperationalWorkflowTest extends TestCase
         ]);
 
         $order->items()->create([
+            'hotel_id' => $this->hotel->id,
             'menu_item_id' => $steakMenu->id,
             'quantity' => 1,
             'price' => 200,
@@ -276,6 +284,7 @@ class HotelOperationalWorkflowTest extends TestCase
         ]);
         
         $steakMenu->ingredients()->create([
+            'hotel_id' => $this->hotel->id,
             'inventory_item_id' => $beef->id,
             'quantity_required' => 1 // 1kg per steak
         ]);
@@ -295,6 +304,7 @@ class HotelOperationalWorkflowTest extends TestCase
             ]);
             
             $order->items()->create([
+                'hotel_id' => $this->hotel->id,
                 'menu_item_id' => $steakMenu->id,
                 'quantity' => 1,
                 'price' => 200,

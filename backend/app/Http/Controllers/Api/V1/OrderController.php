@@ -71,9 +71,9 @@ class OrderController extends Controller
         $waitressId = $validated['waiter_id'] ?? $request->user()->id;
 
         // Verify waitress is on duty and belongs to the outlet
-        $waitress = \App\Models\User::find($waitressId);
-        if (!app()->environment('testing') && (!$waitress || !$waitress->is_on_duty)) {
-             return response()->json(['message' => 'Staff member is not on duty.'], 403);
+        $waiter = \App\Models\User::withoutGlobalScopes()->find($request->input('waiter_id'));
+        if ($waiter && !$waiter->is_on_duty) {
+            return response()->json(['message' => 'Staff member is not on duty.'], 403);
         }
 
         $orderPayload = [

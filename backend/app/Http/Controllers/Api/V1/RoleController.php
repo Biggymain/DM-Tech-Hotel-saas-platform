@@ -13,7 +13,7 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        $excludedSlugs = ['superadmin', 'super-admin', 'groupadmin', 'group-admin', 'hotelowner', 'hotel-owner'];
+        $excludedSlugs = ['superadmin', 'groupadmin', 'hotelowner'];
 
         $roles = Role::where(function($query) use ($request) {
                 $query->where('hotel_id', $request->user()->hotel_id)

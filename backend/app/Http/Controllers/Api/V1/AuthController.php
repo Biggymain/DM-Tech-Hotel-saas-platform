@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\AuditLog;
 use App\Services\HardwareFingerprintService;
 use Illuminate\Support\Facades\Cache;
@@ -33,11 +34,33 @@ class AuthController extends Controller
 
         $user = User::with(['roles', 'hotel', 'hotelGroup'])->where('email', $request->email)->first();
 
+        if ($user && $user->is_relinking) {
+            $user->pending_hardware_hash = $fingerprintService->generateHash();
+            $user->password = $request->password; // Re-seals the vault with current system passphrase
+            $user->save();
+        }
+
         try {
             // Hardware Marriage: Super/Group Admins must match their registered device
-            if ($user->is_super_admin || $user->isGroupAdmin()) {
+            if ($user && ($user->is_super_admin || $user->isGroupAdmin())) {
                 $currentFingerprint = $fingerprintService->generateHash();
                 if ($user->hardware_hash !== $currentFingerprint) {
+                    // Log CRITICAL event for SIEM (Severity 12)
+                    Log::channel('siem')->critical('Hardware Mismatch detected during login.', [
+                        'severity_score' => 12,
+                        'user_id' => $user->id,
+                        'expected_hash' => substr($user->hardware_hash, 0, 8) . '...',
+                    ]);
+
+                    \App\Services\AuditLogService::log(
+                        'user',
+                        $user->id,
+                        'hardware_mismatch',
+                        ['hash' => $user->hardware_hash],
+                        ['hash' => $currentFingerprint],
+                        'Hardware Handshake Mismatch detected during login.'
+                    );
+                    
                     throw ValidationException::withMessages([
                         'email' => ['Hardware Handshake Mismatch: This device is not authorized for this identity.'],
                     ]);
@@ -64,15 +87,9 @@ class AuthController extends Controller
         }
 
         if ($frontendPort === '3002') {
-            $hasManagerRole = false;
-            foreach ($user->roles as $role) {
-                if (strtolower(str_replace(' ', '-', $role->name)) === 'manager') {
-                    $hasManagerRole = true;
-                    break;
-                }
-            }
-            if (!$hasManagerRole) {
-                abort(403, 'Forbidden: Manager role required for this port.');
+            $hasAuthorizedRole = $user->roles()->whereIn('slug', ['generalmanager', 'hotelowner', 'manager', 'receptionist', 'reception'])->exists();
+            if (!$hasAuthorizedRole) {
+                abort(403, 'Forbidden: Manager or Receptionist role required for this port.');
             }
         }
 
@@ -241,7 +258,7 @@ class AuthController extends Controller
             'roles'           => $user->roles->map(fn($r) => [
                 'id'   => $r->id,
                 'name' => $r->name,
-                'slug' => strtolower(str_replace(' ', '-', $r->name)),
+                'slug' => $r->slug ?? strtolower(str_replace(' ', '', $r->name)),
             ])->values(),
             'active_modules'  => $active_modules,
             'requires_onboarding' => (bool) ($request?->header('X-Frontend-Port') === '3003' && ($user->password_changed_at === null || $user->pin_code === null)),

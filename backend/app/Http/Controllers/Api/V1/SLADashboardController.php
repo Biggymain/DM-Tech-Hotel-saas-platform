@@ -17,9 +17,9 @@ class SLADashboardController extends Controller
             ->whereIn('status', ['queued', 'preparing']);
 
         // Role-based scoping
-        if ($user->role === 'outlet-manager') {
+        if ($user->role === 'outletmanager') {
             $query->where(['kitchen_station_id' => $user->kitchen_station_id]);
-        } elseif ($user->role === 'branch-manager') {
+        } elseif ($user->role === 'branchmanager') {
             $query->where(['branch_id' => $user->branch_id ?? $user->hotel_id]);
         } elseif (!$user->is_super_admin) {
              return response()->json(['error' => 'Unauthorized'], 403);

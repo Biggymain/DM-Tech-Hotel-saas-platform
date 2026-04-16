@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 
-class MenuItemIngredient extends Model
+class MenuItemIngredient extends BaseModel
 {
     protected $fillable = [
-        'menu_item_id', 'inventory_item_id', 'quantity_required'
+        'hotel_id', 'menu_item_id', 'inventory_item_id', 'quantity_required'
     ];
 
     public function menuItem()

@@ -3,11 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\Tenantable;
 
-class Modifier extends Model
+class Modifier extends BaseModel
 {
-    use Tenantable;
+    
 
     protected $fillable = [
         'hotel_id',

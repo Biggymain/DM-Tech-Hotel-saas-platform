@@ -25,7 +25,11 @@ class LeisureAccessTest extends TestCase
         parent::setUp();
         $this->hotel = Hotel::factory()->create();
         $this->outlet = Outlet::factory()->create(['hotel_id' => $this->hotel->id]);
-        $this->user = User::factory()->create(['hotel_id' => $this->hotel->id]);
+        $this->user = User::factory()->create([
+            'hotel_id' => $this->hotel->id,
+            'is_approved' => true,
+            'is_super_admin' => true,
+        ]);
         $this->actingAs($this->user);
     }
 

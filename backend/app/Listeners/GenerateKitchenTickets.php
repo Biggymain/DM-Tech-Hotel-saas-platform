@@ -32,6 +32,7 @@ class GenerateKitchenTickets
             // Generate a KitchenTicket per department
             $ticket = \App\Models\KitchenTicket::create([
                 'hotel_id' => $order->hotel_id,
+                'branch_id' => $order->branch_id ?? $order->hotel_id,
                 'order_id' => $order->id,
                 'department_id' => $departmentId,
                 'outlet_id' => $order->outlet_id,

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('menu_item_ingredients', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('hotel_id')->constrained('hotels')->cascadeOnDelete();
             $table->foreignId('menu_item_id')->constrained('menu_items')->cascadeOnDelete();
             $table->foreignId('inventory_item_id')->constrained('inventory_items')->cascadeOnDelete();
             $table->decimal('quantity_required', 10, 2);

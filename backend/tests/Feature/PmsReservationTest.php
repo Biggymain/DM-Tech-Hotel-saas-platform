@@ -33,7 +33,7 @@ class PmsReservationTest extends TestCase
         
         $this->hotel = Hotel::factory()->create();
         
-        $role = Role::where('name', 'Manager')->first();
+        $role = Role::withoutGlobalScopes()->where('slug', 'manager')->first();
         
         $this->manager = User::factory()->create(['hotel_id' => $this->hotel->id]);
         $this->manager->roles()->attach($role);

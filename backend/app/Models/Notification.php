@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use App\Traits\Tenantable;
 
 class Notification extends Model
 {
-    use HasUuids, Tenantable;
+    use HasUuids;
 
     protected $fillable = [
         'hotel_id',

@@ -87,6 +87,9 @@ Route::prefix('v1')->group(function () {
         // Staff Setup (PIN & Password Activation)
         Route::middleware('auth:sanctum')->post('staff/setup', [AuthController::class, 'setupStaff']);
 
+        // ── SUPPORT STAFF SIGNUP ────────────────────────────────────────────────
+        Route::post('support-signup', [\App\Http\Controllers\Api\V1\SupportStaffController::class, 'signup']);
+
         Route::middleware('auth:sanctum')->group(function () {
             Route::get('me', [AuthController::class, 'user']);
             Route::post('logout', [AuthController::class, 'logout']);

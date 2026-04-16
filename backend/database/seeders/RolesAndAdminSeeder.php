@@ -21,17 +21,17 @@ class RolesAndAdminSeeder extends Seeder
     private const ROLES = [
         // Central SaaS roles
         ['name' => 'Super Admin',    'slug' => 'superadmin',       'level' => 100],
-        ['name' => 'Group Admin',    'slug' => 'group-admin',       'level' => 90],
+        ['name' => 'Group Admin',    'slug' => 'groupadmin',       'level' => 90],
         // Hotel management
         ['name' => 'Hotel Owner',    'slug' => 'hotelowner',        'level' => 80],
-        ['name' => 'General Manager','slug' => 'general-manager',   'level' => 70],
+        ['name' => 'General Manager','slug' => 'generalmanager',   'level' => 70],
         ['name' => 'Receptionist',   'slug' => 'receptionist',      'level' => 50],
         // POS / Kitchen
         ['name' => 'Waiter',         'slug' => 'waiter',            'level' => 30],
         ['name' => 'Steward',        'slug' => 'steward',           'level' => 30],
         ['name' => 'Bartender',      'slug' => 'bartender',         'level' => 30],
         ['name' => 'Chef',           'slug' => 'chef',              'level' => 40],
-        ['name' => 'Kitchen Manager','slug' => 'kitchen-manager',   'level' => 50],
+        ['name' => 'Kitchen Manager','slug' => 'kitchenmanager',   'level' => 50],
         // Housekeeping
         ['name' => 'Housekeeper',    'slug' => 'housekeeping',      'level' => 30],
     ];

@@ -27,7 +27,8 @@ return Application::configure(basePath: dirname(__DIR__))
 //            \App\Http\Middleware\SanitizeInput::class, // Strip tags first
             \App\Http\Middleware\Security\SecureHeadersMiddleware::class, // Execute security headers safely first 
             \App\Http\Middleware\ForceJsonResponse::class,        // 2nd — always JSON
-            \App\Http\Middleware\TenantIsolationMiddleware::class, // 3rd — tenant scoping
+            \App\Http\Middleware\SentryMiddleware::class,         // 3rd — Hardware & Approval Gatekeeper
+            \App\Http\Middleware\TenantIsolationMiddleware::class, // 4th — tenant scoping
             \App\Http\Middleware\Tenant\TenantBranchContext::class,       // newly added context
         ]);
         

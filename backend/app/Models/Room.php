@@ -3,13 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use App\Traits\Tenantable;
 use App\Traits\DashboardCacheCleaner;
 
-class Room extends Model
+class Room extends BaseModel
 {
-    use HasFactory, Tenantable, DashboardCacheCleaner, \App\Traits\Syncable;
+    use HasFactory,  DashboardCacheCleaner, \App\Traits\Syncable;
 
     protected $fillable = [
         'hotel_id',

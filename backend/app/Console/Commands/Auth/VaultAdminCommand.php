@@ -35,7 +35,7 @@ class VaultAdminCommand extends Command
 
         $adminEmail = config('app.super_admin_email');
         $plainPass = config('app.super_admin_password');
-        $passphrase = config('services.supabase.passphrase');
+        $passphrase = config('fortress.dev_passphrase');
         $hardwareHash = $fingerprintService->generateHash();
 
         if (empty($adminEmail) || empty($plainPass)) {

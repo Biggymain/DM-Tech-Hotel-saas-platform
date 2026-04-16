@@ -44,6 +44,7 @@ return new class extends Migration
 
         Schema::create('leisure_bundles', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('hotel_id')->constrained()->onDelete('cascade');
             $table->foreignId('menu_item_id')->constrained()->onDelete('cascade');
             $table->foreignId('inventory_item_id')->constrained()->onDelete('cascade');
             $table->integer('quantity')->default(1);

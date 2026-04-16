@@ -62,7 +62,7 @@ class GroupRegistrationTest extends TestCase
         $user = User::where('email', 'micky@dmtech.local')->first();
 
         // Verify Role Assignment
-        $this->assertTrue($user->roles()->where('slug', 'group-admin')->exists());
+        $this->assertTrue($user->roles()->withoutGlobalScopes()->where('slug', 'groupadmin')->exists());
 
         // Verify Default Outlets
         $this->assertDatabaseHas('outlets', [

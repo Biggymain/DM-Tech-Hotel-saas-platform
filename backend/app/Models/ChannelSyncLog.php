@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use App\Traits\Tenantable;
 use Illuminate\Database\Eloquent\Model;
 
 class ChannelSyncLog extends Model
 {
-    use Tenantable;
+    
 
     protected $fillable = [
         'hotel_id',

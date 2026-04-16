@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-use App\Traits\Tenantable;
 
 class OtaReservation extends Model
 {
-    use Tenantable;
+    
 
     protected $fillable = [
         'hotel_id', 'ota_channel_id', 'external_reservation_id', 'guest_name', 'check_in', 'check_out', 

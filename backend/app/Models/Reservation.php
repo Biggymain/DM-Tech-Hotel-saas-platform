@@ -4,12 +4,10 @@ namespace App\Models;
 
 use App\Jobs\GenerateDigitalKeyJob;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use App\Traits\Tenantable;
 
-class Reservation extends Model
+class Reservation extends BaseModel
 {
-    use HasFactory, Tenantable;
+    use HasFactory;
 
     protected $fillable = [
         'hotel_id',

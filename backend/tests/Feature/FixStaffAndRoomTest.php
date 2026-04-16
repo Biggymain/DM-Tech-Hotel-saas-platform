@@ -34,7 +34,7 @@ class FixStaffAndRoomTest extends TestCase
             'is_super_admin' => false,
         ]);
 
-        $ownerRole = Role::where('slug', 'hotelowner')->first();
+        $ownerRole = Role::withoutGlobalScopes()->where('slug', 'hotelowner')->first();
         $this->admin->roles()->attach($ownerRole->id, ['hotel_id' => $this->hotel->id]);
     }
 
@@ -44,7 +44,7 @@ class FixStaffAndRoomTest extends TestCase
             'name' => 'New Staff',
             'email' => 'staff@test.com',
             'password' => 'password123',
-            'role_id' => Role::where('slug', 'reception')->first()->id,
+            'role_id' => Role::withoutGlobalScopes()->where('slug', 'reception')->first()->id,
         ]);
 
         $response->assertStatus(201);

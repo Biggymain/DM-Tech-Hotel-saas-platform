@@ -29,7 +29,7 @@ class BranchManagementTest extends TestCase
             'hotel_group_id' => $this->group->id,
         ]);
 
-        $role = Role::create(['slug' => 'group-admin', 'name' => 'Group Admin']);
+        $role = Role::create(['slug' => 'groupadmin', 'name' => 'Group Admin']);
         $this->user->roles()->attach($role->id);
     }
 
@@ -53,9 +53,9 @@ class BranchManagementTest extends TestCase
         ]);
 
         // Creating manager role
-        Role::create(['slug' => 'manager', 'name' => 'Manager']);
+        Role::create(['slug' => 'generalmanager', 'name' => 'Manager']);
 
-        Sanctum::actingAs($this->user);
+        $this->actingAs($this->user);
 
         $response = $this->postJson("/api/v1/organization/branches/{$branch->id}/onboard");
 

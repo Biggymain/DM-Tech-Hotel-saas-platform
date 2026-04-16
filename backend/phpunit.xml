@@ -32,5 +32,6 @@
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="BROADCAST_DRIVER" value="log"/>
         <env name="BROADCAST_CONNECTION" value="log"/>
+        <env name="DEV_PASSPHRASE" value="dummy-passphrase-for-tests"/>
     </php>
 </phpunit>

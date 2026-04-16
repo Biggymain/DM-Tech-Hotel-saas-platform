@@ -42,7 +42,7 @@ class OrderEngineTest extends TestCase
             'is_super_admin' => false,
         ]);
 
-        $role = \App\Models\Role::where('name', 'GeneralManager')->first();
+        $role = \App\Models\Role::withoutGlobalScopes()->where('slug', 'branchmanager')->first();
         if ($role) {
             $this->user->roles()->attach($role->id);
         }
@@ -60,7 +60,7 @@ class OrderEngineTest extends TestCase
             'slug' => 'kitchen',
         ]);
         
-        Sanctum::actingAs($this->user, ['*']);
+        $this->withPort(3002)->actingAs($this->user);
     }
 
     public function test_can_create_pos_order_with_items()
@@ -103,7 +103,7 @@ class OrderEngineTest extends TestCase
 
         $this->assertDatabaseHas('order_status_histories', [
             'order_id' => $order->id,
-            'new_status' => 'pending',
+            'new_status' => 'draft',
             'changed_by' => $this->user->id
         ]);
     }

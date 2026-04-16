@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Traits\Tenantable;
 
-class InventoryTransaction extends Model
+class InventoryTransaction extends BaseModel
 {
-    use Tenantable;
+    
 
     protected $fillable = [
         'hotel_id', 'outlet_id', 'inventory_item_id', 'type', 'quantity', 'reference_type',

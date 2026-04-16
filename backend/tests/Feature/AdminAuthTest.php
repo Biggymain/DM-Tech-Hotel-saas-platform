@@ -14,6 +14,8 @@ use Tests\TestCase;
 class AdminAuthTest extends TestCase
 {
     use RefreshDatabase;
+    protected $hotel;
+    protected $user;
 
     protected function setUp(): void
     {
@@ -22,16 +24,27 @@ class AdminAuthTest extends TestCase
         $this->user = User::factory()->create([
             'hotel_id' => $this->hotel->id,
             'email' => 'admin@hotel.com',
-            'password' => Hash::make('password123'),
+            'password' => 'password123',
             'password_changed_at' => now(),
+            'hardware_hash' => 'valid-hardware-hash', // satisfy SentryMiddleware requirement
+            'is_approved' => true,
         ]);
+
+        // Seed roles for testing
+        \App\Models\Role::create(['name' => 'General Manager', 'slug' => 'generalmanager']);
+        \App\Models\Role::create(['name' => 'Super Admin', 'slug' => 'superadmin']);
     }
 
     public function test_user_can_login_with_correct_credentials()
     {
         Event::fake([Login::class]);
+        
+        $managerRole = \App\Models\Role::withoutGlobalScopes()->where('slug', 'generalmanager')->first();
+        $this->user->roles()->attach($managerRole->id, ['hotel_id' => $this->hotel->id]);
 
-        $response = $this->postJson('/api/v1/auth/login', [
+        $response = $this->withHeaders(['X-Hardware-Id' => 'valid-hardware-hash'])
+            ->withPort(3002)
+            ->postJson('/api/v1/auth/login', [
             'email' => 'admin@hotel.com',
             'password' => 'password123',
         ]);
@@ -72,7 +85,7 @@ class AdminAuthTest extends TestCase
         $otp = '123456';
         DB::table('password_reset_tokens')->insert([
             'email' => 'admin@hotel.com',
-            'token' => Hash::make($otp),
+            'token' => $otp,
             'created_at' => now(),
         ]);
 
@@ -86,7 +99,7 @@ class AdminAuthTest extends TestCase
         $response->assertStatus(200)
             ->assertJson(['message' => 'Password has been reset successfully.']);
 
-        $this->assertTrue(Hash::check('newpassword123', $this->user->refresh()->password));
+        $this->assertEquals('newpassword123', $this->user->refresh()->password);
         
         // Assert Audit Log
         $this->assertDatabaseHas('audit_logs', [
@@ -119,5 +132,20 @@ class AdminAuthTest extends TestCase
             'user_id' => $this->user->id,
             'change_type' => 'login',
         ]);
+    }
+
+    /**
+     * Port Enforcement: Ghosting (404 Not Found)
+     */
+    public function test_admin_access_on_wrong_port_ghosts()
+    {
+        $role = \App\Models\Role::where('slug', 'superadmin')->first();
+        $this->user->roles()->attach($role->id);
+
+        $response = $this->actingAs($this->user)
+            ->withHeader('X-Frontend-Port', '3005') // Wrong port for SuperAdmin (should be 3000)
+            ->getJson('/api/v1/profile');
+
+        $response->assertStatus(404);
     }
 }

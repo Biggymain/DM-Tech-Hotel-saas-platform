@@ -124,31 +124,39 @@ class PaymentGatewayController extends Controller
     public function manualConfirm(Request $request)
     {
         $user = $request->user();
-        $allowedRoles = ['Group Admin', 'Manager', 'Hotel Manager', 'Reception', 'Receptionist', 'Waiter', 'Cashier'];
+        $allowedRoles = ['groupadmin', 'generalmanager', 'hotelowner', 'reception', 'receptionist', 'waiter', 'cashier'];
         
-        \Illuminate\Support\Facades\Log::info('manualConfirm check', [
-            'user_id' => $user->id,
-            'is_super_admin' => $user->is_super_admin,
-            'is_group_admin' => $user->isGroupAdmin(),
-            'user_roles' => $user->roles()->pluck('name')->toArray(),
-            'allowed_roles' => $allowedRoles,
-            'has_role' => $user->roles()->whereIn('name', $allowedRoles)->exists()
-        ]);
+        $hasRightRole = $user->is_super_admin || $user->isGroupAdmin();
+        if (!$hasRightRole) {
+            foreach ($allowedRoles as $role) {
+                if ($user->hasRole($role)) {
+                    $hasRightRole = true;
+                    break;
+                }
+            }
+        }
 
-        if (!$user->is_super_admin && !$user->isGroupAdmin() && !$user->roles()->whereIn('name', $allowedRoles)->exists()) {
+        if (!$hasRightRole) {
             return response()->json(['message' => 'Unauthorized.'], 403);
         }
 
         $validated = $request->validate([
-            'transaction_id' => 'required|exists:payment_transactions,id',
+            'transaction_id' => 'required',
         ]);
 
+        $query = PaymentTransaction::query();
+        
         if ($user->isGroupAdmin()) {
-            $transaction = PaymentTransaction::whereIn('hotel_id', $user->hotelGroup->branches()->pluck('id'))
-                ->findOrFail($validated['transaction_id']);
+            $branchIds = $user->hotelGroup->branches()->pluck('id');
+            if (app()->environment('testing')) {
+                \Log::info("manualConfirm: Group Admin check", ['user' => $user->id, 'branches' => $branchIds->toArray(), 'target' => $validated['transaction_id']]);
+            }
+            $transaction = $query->whereIn('hotel_id', $branchIds)->findOrFail($validated['transaction_id']);
         } else {
-            $transaction = PaymentTransaction::where('hotel_id', $user->hotel_id)
-                ->findOrFail($validated['transaction_id']);
+            if (app()->environment('testing')) {
+                \Log::info("manualConfirm: User check", ['user' => $user->id, 'hotel' => $user->hotel_id, 'target' => $validated['transaction_id']]);
+            }
+            $transaction = $query->where('hotel_id', $user->hotel_id)->findOrFail($validated['transaction_id']);
         }
 
         if ($transaction->status !== 'manual_pending') {

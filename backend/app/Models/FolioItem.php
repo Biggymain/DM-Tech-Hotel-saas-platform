@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\Tenantable;
 
 class FolioItem extends Model
 {
-    use HasFactory, Tenantable;
+    use HasFactory;
 
     protected $fillable = [
         'folio_id',

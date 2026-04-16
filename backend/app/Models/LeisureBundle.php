@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class LeisureBundle extends BaseModel
@@ -10,6 +9,7 @@ class LeisureBundle extends BaseModel
     use HasFactory;
 
     protected $fillable = [
+        'hotel_id',
         'menu_item_id',
         'inventory_item_id',
         'quantity',

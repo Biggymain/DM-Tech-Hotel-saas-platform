@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class OrderItem extends Model
+class OrderItem extends BaseModel
 {
     protected $fillable = [
+        'hotel_id',
         'order_id',
         'menu_item_id',
         'quantity',

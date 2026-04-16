@@ -85,7 +85,7 @@ class BillingEngineTest extends TestCase
 
         app(\App\Services\PermissionService::class)->clearPermissionCache($this->adminUser);
         $this->adminUser = User::with('roles.permissions')->find($this->adminUser->id);
-        \Laravel\Sanctum\Sanctum::actingAs($this->adminUser, ['*']);
+        $this->actingAs($this->adminUser);
     }
 
     public function test_invoice_creation_on_order_served()

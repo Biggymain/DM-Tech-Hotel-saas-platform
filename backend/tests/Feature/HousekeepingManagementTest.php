@@ -37,7 +37,7 @@ class HousekeepingManagementTest extends TestCase
 
         $this->hotel = Hotel::factory()->create();
         
-        $managerRole = Role::where('name', 'Manager')->first();
+        $managerRole = Role::withoutGlobalScopes()->where('slug', 'manager')->first();
         $this->manager = User::factory()->create(['hotel_id' => $this->hotel->id]);
         $this->manager->roles()->attach($managerRole);
 

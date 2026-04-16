@@ -27,7 +27,7 @@ class FortressUnlockCommand extends Command
     public function handle(FortressLockService $lockService)
     {
         $masterKey = $this->option('master-key');
-        $expectedKey = config('services.supabase.passphrase');
+        $expectedKey = config('fortress.dev_passphrase');
 
         if (empty($masterKey)) {
             $this->error('The --master-key option is required.');

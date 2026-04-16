@@ -60,6 +60,12 @@ jobs:
         DB_DATABASE: omnistay_test
         DB_USERNAME: root
         REDIS_HOST: 127.0.0.1
+        # GRC Mock Keys
+        SUPABASE_URL: http://localhost:54321
+        SUPABASE_KEY: mock-key-for-ci
+        DEV_PASSPHRASE: mock-passphrase-for-ci
+        APP_SUPER_ADMIN_EMAIL: admin@dmtech.ng
+        APP_SUPER_ADMIN_PASSWORD: [REDACTED_BY_SECURITY_SCRUB]
       run: |
         php artisan migrate --force
         php artisan optimize:clear
@@ -84,6 +90,8 @@ jobs:
       working-directory: ./frontend
       env:
         NEXT_PUBLIC_API_URL: http://localhost
+        SUPABASE_URL: http://localhost:54321
+        SUPABASE_ANON_KEY: mock-anon-key
       run: npm run build
 
   docker-build:

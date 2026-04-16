@@ -26,7 +26,9 @@ class OutletManagementTest extends TestCase
         
         // Use proper relationship for roles
         $this->manager = User::factory()->create([
-            'hotel_id' => $this->hotel->id
+            'hotel_id' => $this->hotel->id,
+            'is_approved' => true,
+            'hardware_hash' => 'valid-hardware-hash',
         ]);
         
         $role = \App\Models\Role::create([

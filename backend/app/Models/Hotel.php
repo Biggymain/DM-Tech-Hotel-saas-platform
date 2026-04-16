@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-use App\Traits\Tenantable;
 
 /**
  * Hotel is the root tenant model in this SaaS.
@@ -14,9 +13,9 @@ use App\Traits\Tenantable;
  *  - Group Admins only see hotels in their group.
  *  - Branch staff only see their specific hotel.
  */
-class Hotel extends Model
+class Hotel extends BaseModel
 {
-    use HasFactory, SoftDeletes, Tenantable;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name', 'slug', 'domain', 'hotel_group_id', 'subscription_plan_id', 'email', 'phone', 'address',

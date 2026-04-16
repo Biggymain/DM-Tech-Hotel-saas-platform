@@ -118,6 +118,17 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'siem' => [
+            'driver' => 'monolog',
+            'level' => env('LOG_LEVEL', 'debug'),
+            'handler' => \Monolog\Handler\StreamHandler::class,
+            'formatter' => \App\Logging\SiemJsonFormatter::class,
+            'with' => [
+                'stream' => storage_path('logs/fortress_siem.log'),
+            ],
+            'processors' => [\Monolog\Processor\PsrLogMessageProcessor::class],
+        ],
+
         'null' => [
             'driver' => 'monolog',
             'handler' => NullHandler::class,

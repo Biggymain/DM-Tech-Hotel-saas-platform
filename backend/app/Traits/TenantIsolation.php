@@ -39,10 +39,12 @@ trait TenantIsolation
             $hasOutletId = Schema::hasColumn($tableName, 'outlet_id');
 
             // --- 1. Tenant Hotel Strict Scope ---
-            if ($hasHotelId) {
+            if ($hasHotelId || $tableName === 'hotels') {
+                $col = $hasHotelId ? $tableName . '.hotel_id' : $tableName . '.id';
+
                 if (!empty($user->hotel_group_id) && empty($user->hotel_id)) {
                     // Group Admins bypass strict hotel boundaries but MUST belong to the Group
-                    if (Schema::hasColumn($tableName, 'hotel_group_id')) {
+                    if ($tableName === 'hotels' || Schema::hasColumn($tableName, 'hotel_group_id')) {
                         $builder->where($tableName . '.hotel_group_id', '=', $user->hotel_group_id);
                     } else {
                         // Native mapping via branch linking
@@ -50,13 +52,19 @@ trait TenantIsolation
                             ->find($user->hotel_group_id)?->branches()->withoutGlobalScopes()->pluck('hotels.id')->toArray() ?? [];
                         
                         if (!empty($branchIds)) {
-                            $builder->whereIn($tableName . '.hotel_id', $branchIds);
+                            $builder->where(function($q) use ($col, $branchIds) {
+                                $q->whereIn($col, $branchIds)
+                                  ->orWhereNull($col);
+                            });
                         } else {
-                            $builder->whereRaw('1 = 0');
+                            $builder->whereNull($col);
                         }
                     }
                 } elseif (!empty($user->hotel_id)) {
-                    $builder->where($tableName . '.hotel_id', '=', $user->hotel_id);
+                    $builder->where(function($q) use ($col, $user) {
+                        $q->where($col, '=', $user->hotel_id)
+                          ->orWhereNull($col);
+                    });
                 } else {
                     $builder->whereRaw('1 = 0');
                 }
@@ -72,7 +80,7 @@ trait TenantIsolation
 
             if ($branchCol && !empty($user->outlet_id)) {
                 // Exceptional group roles bypass the localized restriction implicitly 
-                if ($user->isGroupAdmin() || current(array_filter($user->roles->toArray(), fn($r) => in_array($r['slug'], ['general-manager', 'generalmanager'])))) {
+                if ($user->isGroupAdmin() || current(array_filter($user->roles->toArray(), fn($r) => in_array($r['slug'], ['generalmanager'])))) {
                     return; 
                 }
 
@@ -114,7 +122,11 @@ trait TenantIsolation
                 }
             }
             
-            // Auto inject branch mapping implicitly
+            // Auto inject branch mapping implicitly (Strictly only when authenticated)
+            if (!Auth::hasUser()) {
+                return;
+            }
+
             $branchCol = Schema::hasColumn($model->getTable(), 'branch_id') ? 'branch_id' : (Schema::hasColumn($model->getTable(), 'outlet_id') ? 'outlet_id' : null);
             if ($branchCol && empty($model->{$branchCol}) && Auth::hasUser()) {
                 $user = Auth::user();

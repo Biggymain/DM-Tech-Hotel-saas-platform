@@ -73,7 +73,9 @@ class KitchenDisplayTest extends TestCase
             'email' => 'chef@kds.com',
             'password' => bcrypt('password'),
             'is_super_admin' => false,
+            'is_approved' => true,
             'is_on_duty' => true,
+            'hardware_hash' => 'valid-hardware-hash',
         ]);
 
         $this->user->roles()->attach($role->id, ['hotel_id' => $this->hotel->id]);
@@ -89,6 +91,8 @@ class KitchenDisplayTest extends TestCase
             'name' => 'Kitchen',
             'slug' => 'kitchen'
         ]);
+
+        // User is already linked to outlet_id, which provides the necessary context for KDS access.
 
         $category = MenuCategory::create([
             'hotel_id' => $this->hotel->id,

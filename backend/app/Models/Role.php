@@ -3,12 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\Tenantable;
 
-class Role extends Model
+class Role extends BaseModel
 {
-    use Tenantable;
-
     protected $fillable = ['hotel_id', 'name', 'slug', 'is_system_role'];
 
     public function permissions()

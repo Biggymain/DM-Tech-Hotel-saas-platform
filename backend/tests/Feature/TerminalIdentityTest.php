@@ -32,8 +32,16 @@ class TerminalIdentityTest extends TestCase
         $this->terminalUser = User::factory()->create([
             'hotel_id' => $this->hotel->id,
             'outlet_id' => $this->outlet->id,
-            'role' => 'terminal'
         ]);
+        
+        $terminalRole = \App\Models\Role::create(['name' => 'Terminal', 'slug' => 'terminal', 'hotel_id' => $this->hotel->id]);
+        $viewPerm = \App\Models\Permission::firstOrCreate(['slug' => 'orders.view', 'name' => 'View Orders', 'module' => 'orders']);
+        $posPerm = \App\Models\Permission::firstOrCreate(['slug' => 'pos.manage', 'name' => 'Manage POS', 'module' => 'pos']);
+        $terminalRole->permissions()->attach([$viewPerm->id, $posPerm->id]);
+        $this->terminalUser->roles()->attach($terminalRole->id, ['hotel_id' => $this->hotel->id]);
+
+        $waitressRole = \App\Models\Role::create(['name' => 'Waitress', 'slug' => 'waitress', 'hotel_id' => $this->hotel->id]);
+        $this->waitress->roles()->attach($waitressRole->id, ['hotel_id' => $this->hotel->id]);
     }
     public function test_order_attribution_to_waitress_id()
     {

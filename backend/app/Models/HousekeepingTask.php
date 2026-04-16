@@ -2,16 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Traits\Tenantable;
 use App\Traits\DashboardCacheCleaner;
 
-class HousekeepingTask extends Model
+class HousekeepingTask extends BaseModel
 {
-    use HasFactory, Tenantable, DashboardCacheCleaner;
+    use HasFactory,  DashboardCacheCleaner;
 
     protected $fillable = [
         'hotel_id',

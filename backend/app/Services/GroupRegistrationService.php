@@ -56,9 +56,9 @@ class GroupRegistrationService
                 'is_super_admin' => false,
             ]);
 
-            // 4. Assign group-admin role (Ensure it exists as a system role)
-            $groupAdminRole = Role::firstOrCreate(
-                ['slug' => 'group-admin'],
+            // 4. Assign groupadmin role (Ensure it exists as a system role)
+            $groupAdminRole = Role::withoutGlobalScopes()->firstOrCreate(
+                ['slug' => 'groupadmin'],
                 ['name' => 'Group Admin', 'is_system_role' => true]
             );
             // Grant all permissions to group admin

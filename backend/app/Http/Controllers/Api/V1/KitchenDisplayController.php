@@ -87,6 +87,7 @@ class KitchenDisplayController extends Controller
             }
 
             $ticket->statusHistories()->create([
+                'hotel_id' => $ticket->hotel_id,
                 'previous_status' => $previousStatus,
                 'new_status' => $newStatus,
                 'changed_by_user_id' => $request->user() ? $request->user()->id : null,

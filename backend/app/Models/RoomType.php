@@ -3,12 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use App\Traits\Tenantable;
 
-class RoomType extends Model
+class RoomType extends BaseModel
 {
-    use HasFactory, Tenantable;
+    use HasFactory;
 
     protected $fillable = [
         'hotel_id',

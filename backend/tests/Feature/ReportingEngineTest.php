@@ -72,7 +72,7 @@ class ReportingEngineTest extends TestCase
 
         app(\App\Services\PermissionService::class)->clearPermissionCache($this->adminUser);
         $this->adminUser = User::with('roles.permissions')->find($this->adminUser->id);
-        Sanctum::actingAs($this->adminUser, ['*']);
+        $this->actingAs($this->adminUser);
 
         $this->outlet = Outlet::create([
             'hotel_id' => $this->hotel->id,

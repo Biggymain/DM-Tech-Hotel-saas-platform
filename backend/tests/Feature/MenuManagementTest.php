@@ -69,6 +69,8 @@ class MenuManagementTest extends TestCase
             'email' => 'menuowner@test.com',
             'password' => bcrypt('password'),
             'is_super_admin' => false,
+            'is_approved' => true,
+            'hardware_hash' => 'valid-hardware-hash',
         ]);
 
         $this->user->roles()->attach($role->id, ['hotel_id' => $this->hotel->id]);
@@ -104,6 +106,9 @@ class MenuManagementTest extends TestCase
         ];
 
         $response = $this->postJson('/api/v1/menu/categories', $payload);
+        if ($response->status() === 503) {
+            dd($response->content());
+        }
 
         $response->assertStatus(201)
                  ->assertJsonFragment(['name' => 'Starters']);

@@ -24,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
             \App\Listeners\SendLoginAlert::class
         );
 
+        // Digital Fortress: SIEM Watchdog
+        \App\Models\AuditLog::observe(\App\Observers\AuditLogObserver::class);
+
         // Early Tenant Binding for Route-Model Binding resilience
         if (!$this->app->runningInConsole() || $this->app->environment('testing')) {
             $id = $_SERVER['HTTP_X_TENANT_ID'] ?? $_SERVER['HTTP_X_HOTEL_CONTEXT'] ?? null;

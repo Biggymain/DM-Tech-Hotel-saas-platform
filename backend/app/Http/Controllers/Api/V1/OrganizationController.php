@@ -155,10 +155,10 @@ class OrganizationController extends Controller
         $branch = Hotel::findOrFail($id);
         
         // Find or create a manager for this branch
-        $managerRole = Role::where('slug', 'manager')->where('hotel_id', $branch->id)->first();
+        $managerRole = Role::where('slug', 'generalmanager')->where('hotel_id', $branch->id)->first();
         if (!$managerRole) {
             // If no branch-specific manager role, look for system manager role
-            $managerRole = Role::where('slug', 'manager')->whereNull('hotel_id')->first();
+            $managerRole = Role::where('slug', 'generalmanager')->whereNull('hotel_id')->first();
         }
 
         if (!$managerRole) {
@@ -179,6 +179,7 @@ class OrganizationController extends Controller
                 'email' => 'manager.' . Str::slug($branch->name) . '@hotel.com',
                 'password' => $generatedPassword,
                 'is_active' => true,
+                'is_approved' => true,
             ]);
             $manager->roles()->attach($managerRole->id, ['hotel_id' => $branch->id]);
         }

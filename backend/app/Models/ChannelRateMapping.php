@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-use App\Traits\Tenantable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ChannelRateMapping extends Model
 {
-    use HasFactory, Tenantable;
+    use HasFactory;
 
     protected $fillable = [
         'hotel_id',
