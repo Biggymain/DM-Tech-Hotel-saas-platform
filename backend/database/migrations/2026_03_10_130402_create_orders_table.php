@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('room_id')->nullable()->constrained()->nullOnDelete();
             $table->string('table_number')->nullable();
             $table->string('order_number');
-            $table->enum('order_source', ['pos', 'qr_table', 'qr_room', 'room_service', 'mobile'])->default('pos');
+            $table->string('order_source')->default('pos');
             $table->string('status')->default('pending'); // pending, confirmed, preparing, ready, served, closed, cancelled
             $table->decimal('total_amount', 10, 2)->default(0);
             $table->string('payment_status')->default('unpaid'); // unpaid, partial, paid
