@@ -28,6 +28,7 @@ use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\OccupancyRateController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\OrganizationController;
+use App\Http\Controllers\Api\V1\StaffPinController;
 use App\Http\Controllers\Api\V1\OtaChannelController;
 use App\Http\Controllers\Api\V1\OutletController;
 use App\Http\Controllers\Api\V1\PaymentController;
@@ -93,6 +94,7 @@ Route::prefix('v1')->group(function () {
         Route::middleware('auth:sanctum')->group(function () {
             Route::get('me', [AuthController::class, 'user']);
             Route::post('logout', [AuthController::class, 'logout']);
+            Route::post('staff/set-pin', [StaffPinController::class, 'setPin']);
         });
     });
 
@@ -265,6 +267,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/', [OrderController::class, 'store'])->middleware('role.verify:pos.manage');
             Route::get('/{order}', [OrderController::class, 'show'])->middleware('role.verify:orders.view');
             Route::put('/{order}/status', [OrderController::class, 'updateStatus'])->middleware('role.verify:orders.update');
+            Route::post('/{order}/claim', [OrderController::class, 'claim'])->middleware('role.verify:orders.update');
             Route::delete('/{order}', [OrderController::class, 'destroy'])->middleware('role.verify:orders.delete');
             Route::get('/kds', [OrderController::class, 'kds'])->middleware('role.verify:kds.view');
         });
@@ -303,6 +306,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/tickets', [KitchenDisplayController::class, 'index'])->middleware('role.verify:kds.view');
             Route::get('/tickets/{id}', [KitchenDisplayController::class, 'show'])->middleware('role.verify:kds.view');
             Route::put('/tickets/{id}/status', [KitchenDisplayController::class, 'updateStatus'])->middleware('role.verify:kds.update');
+            Route::post('/tickets/{id}/print', [KitchenDisplayController::class, 'printTicket'])->middleware('role.verify:kds.update');
             Route::put('/inventory/{id}/toggle', [KitchenDisplayController::class, 'toggleAvailability'])->middleware('role.verify:kds.update');
             Route::post('/restock', [KitchenDisplayController::class, 'requestRestock'])->middleware('role.verify:kds.update');
             Route::put('/items/{id}/status', [KitchenDisplayController::class, 'updateItemStatus'])->middleware('role.verify:kds.update');

@@ -93,13 +93,17 @@ class OfflineSyncEngineTest extends TestCase
             'https://api.cloud.test/sync' => Http::response(['status' => 'success'], 200),
         ]);
 
-        // Create 100 pending logs
+        $hotel = \App\Models\Hotel::factory()->create();
+        $outlet = \App\Models\Outlet::factory()->create(['hotel_id' => $hotel->id]);
+
+        // Create 100 pending logs for this specific outlet
         $logs = [];
         for ($i = 0; $i < 100; $i++) {
             $logs[] = [
                 'id' => \Illuminate\Support\Str::uuid(),
-                'tenant_id' => null,
-                'branch_id' => null,
+                'tenant_id' => $hotel->hotel_group_id,
+                'branch_id' => $hotel->id,
+                'outlet_id' => $outlet->id,
                 'model_type' => 'App\Models\Room',
                 'model_id' => (string) $i,
                 'action' => 'create',
@@ -110,9 +114,9 @@ class OfflineSyncEngineTest extends TestCase
         }
         SyncLog::insert($logs);
 
-        // Run the service
+        // Run the service for this specific outlet
         $service = new OfflineSyncService();
-        $service->syncToCloud();
+        $service->syncToCloud($outlet->id);
 
         // Assert HTTP was called exactly twice (100 / 50 = 2)
         Http::assertSentCount(2);
@@ -137,11 +141,15 @@ class OfflineSyncEngineTest extends TestCase
 
     public function test_cloud_controller_accepts_valid_signature()
     {
+        $hotel = \App\Models\Hotel::factory()->create();
+        $outlet = \App\Models\Outlet::factory()->create(['hotel_id' => $hotel->id]);
+
         $payload = [
             [
                 'id' => \Illuminate\Support\Str::uuid()->toString(),
-                'tenant_id' => null,
-                'branch_id' => null,
+                'tenant_id' => $hotel->hotel_group_id,
+                'branch_id' => $hotel->id,
+                'outlet_id' => $outlet->id,
                 'model_type' => 'App\Models\Dummy',
                 'model_id' => '1',
                 'action' => 'create',

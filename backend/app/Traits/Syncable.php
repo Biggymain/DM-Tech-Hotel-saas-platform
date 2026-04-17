@@ -13,17 +13,26 @@ trait Syncable
     {
         static::created(function (Model $model) {
             static::recordSyncLog($model, 'create');
-            \App\Jobs\SyncToCloudJob::dispatch()->afterCommit();
+            $outletId = $model->outlet_id ?? $model->hotel_id;
+            if ($outletId) {
+                \App\Jobs\SyncToCloudJob::dispatch((int) $outletId)->afterCommit();
+            }
         });
 
         static::updated(function (Model $model) {
             static::recordSyncLog($model, 'update');
-            \App\Jobs\SyncToCloudJob::dispatch()->afterCommit();
+            $outletId = $model->outlet_id ?? $model->hotel_id;
+            if ($outletId) {
+                \App\Jobs\SyncToCloudJob::dispatch((int) $outletId)->afterCommit();
+            }
         });
 
         static::deleting(function (Model $model) {
             static::recordSyncLog($model, 'delete');
-            \App\Jobs\SyncToCloudJob::dispatch()->afterCommit();
+            $outletId = $model->outlet_id ?? $model->hotel_id;
+            if ($outletId) {
+                \App\Jobs\SyncToCloudJob::dispatch((int) $outletId)->afterCommit();
+            }
         });
     }
 
@@ -31,11 +40,13 @@ trait Syncable
     {
         $tenantId = $model->hotel_group_id ?? null;
         $branchId = $model->hotel_id ?? null;
+        $outletId = $model->outlet_id ?? $branchId;
 
         SyncLog::create([
             'id' => (string) Str::uuid(),
             'tenant_id' => $tenantId,
             'branch_id' => $branchId,
+            'outlet_id' => $outletId,
             'model_type' => get_class($model),
             'model_id' => (string) $model->getKey(),
             'action' => $action,

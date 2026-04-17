@@ -36,10 +36,11 @@ return new class extends Migration
         Schema::create('staff_daily_pins', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('daily_pin');
+            $table->foreignId('hotel_id')->constrained()->onDelete('cascade');
+            $table->string('pin_hash');
             $table->timestamp('expires_at');
             $table->timestamps();
-            $table->index(['user_id', 'daily_pin']);
+            $table->index(['user_id', 'expires_at']);
         });
 
         Schema::create('leisure_bundles', function (Blueprint $table) {

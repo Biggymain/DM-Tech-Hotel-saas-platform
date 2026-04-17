@@ -38,7 +38,7 @@ launch_port() {
         # Check for missing manifests to prevent ENOENT errors
         if [ ! -f ".next-$PORT/prerender-manifest.json" ]; then
             echo "   (Missing Build Manifests - Executing Clean Build...)"
-            NEXT_DIST_DIR=".next-$PORT" npx next build
+            NODE_ENV=production NEXT_DIST_DIR=".next-$PORT" npx next build --webpack
         fi
 
         # Detect standalone build (with workspace root optimization applied)

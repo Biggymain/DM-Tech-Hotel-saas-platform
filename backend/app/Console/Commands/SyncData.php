@@ -12,7 +12,7 @@ class SyncData extends Command
      *
      * @var string
      */
-    protected $signature = 'sync:data';
+    protected $signature = 'sync:data {outlet?}';
 
     /**
      * The console command description.
@@ -26,9 +26,31 @@ class SyncData extends Command
      */
     public function handle()
     {
-        $this->info('Dispatching sync job to queue...');
-        \App\Jobs\SyncToCloudJob::dispatch();
-        $this->info('Sync job pushed to "low" queue.');
+        $outletId = $this->argument('outlet');
+
+        if ($outletId) {
+            $this->info("Dispatching sync job for outlet {$outletId} to queue...");
+            \App\Jobs\SyncToCloudJob::dispatch((int) $outletId);
+        } else {
+            $this->info('Identifying outlets with pending sync logs...');
+            $outletIds = \App\Models\SyncLog::whereIn('status', ['pending', 'failed'])
+                ->where('attempts', '<', 5)
+                ->distinct()
+                ->pluck('outlet_id')
+                ->filter();
+
+            if ($outletIds->isEmpty()) {
+                $this->info('No pending sync logs found.');
+                return Command::SUCCESS;
+            }
+
+            foreach ($outletIds as $id) {
+                \App\Jobs\SyncToCloudJob::dispatch((int) $id);
+                $this->line(" - Dispatched sync stream for outlet {$id}");
+            }
+        }
+
+        $this->info('All sync streams pushed to "low" queue.');
         return Command::SUCCESS;
     }
 }

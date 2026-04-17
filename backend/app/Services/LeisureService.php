@@ -26,13 +26,13 @@ class LeisureService
             ->first();
 
         // If it's a staff daily PIN
-        $staffPin = StaffDailyPin::where('daily_pin', $code)
-            ->where('expires_at', '>', now())
-            ->first();
+        // We need to find all active pins for the day and check them
+        $staffPins = StaffDailyPin::where('expires_at', '>', now())->get();
+        $matchingPin = $staffPins->first(fn($p) => Hash::check($code, $p->pin_hash));
 
-        if ($staffPin) {
-            $this->logAccess($staffPin->user_id, $outletId, 'PIN', $code, true);
-            return ['allow' => true, 'type' => 'staff', 'user' => $staffPin->user];
+        if ($matchingPin) {
+            $this->logAccess($matchingPin->user_id, $outletId, 'PIN', $code, true);
+            return ['allow' => true, 'type' => 'staff', 'user' => $matchingPin->user];
         }
 
         // Find user by code (could be RFID or UUID or dynamic QR data)
@@ -82,11 +82,13 @@ class LeisureService
     public function generateDailyPin(int $userId): string
     {
         $pin = str_pad(random_int(0, 9999), 4, '0', STR_PAD_LEFT);
+        $user = User::withoutGlobalScopes()->findOrFail($userId);
         
         StaffDailyPin::updateOrCreate(
             ['user_id' => $userId],
             [
-                'daily_pin' => $pin,
+                'hotel_id' => $user->hotel_id,
+                'pin_hash' => Hash::make($pin),
                 'expires_at' => now()->addHours(12),
             ]
         );

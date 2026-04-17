@@ -10,6 +10,30 @@ use Exception;
 class InventoryService
 {
     /**
+     * Resolve the specific InventoryItem for a given outlet based on a template item's SKU.
+     * If it doesn't exist, create it.
+     */
+    public function resolveItemForOutlet(InventoryItem $template, int $outletId): InventoryItem
+    {
+        return InventoryItem::where('sku', $template->sku)
+            ->where('outlet_id', $outletId)
+            ->where('hotel_id', $template->hotel_id)
+            ->firstOrCreate([
+                'sku' => $template->sku,
+                'outlet_id' => $outletId,
+                'hotel_id' => $template->hotel_id,
+            ], [
+                'name' => $template->name,
+                'category' => $template->category,
+                'unit_of_measurement' => $template->unit_of_measurement,
+                'minimum_stock_level' => 0,
+                'current_stock' => 0,
+                'cost_per_unit' => $template->cost_per_unit,
+                'status' => 'active',
+            ]);
+    }
+
+    /**
      * Deduct stock from an inventory item.
      * Must be called within a DB transaction for atomicity.
      */

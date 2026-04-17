@@ -42,7 +42,7 @@ class OrderEngineTest extends TestCase
             'is_super_admin' => false,
         ]);
 
-        $role = \App\Models\Role::withoutGlobalScopes()->where('slug', 'branchmanager')->first();
+        $role = Role::withoutGlobalScopes()->where('slug', 'branchmanager')->first();
         if ($role) {
             $this->user->roles()->attach($role->id);
         }

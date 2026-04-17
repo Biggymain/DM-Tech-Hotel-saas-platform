@@ -58,6 +58,7 @@ class CloudSyncController extends Controller
                     'id' => $logData['id'],
                     'tenant_id' => $logData['tenant_id'],
                     'branch_id' => $logData['branch_id'],
+                    'outlet_id' => $logData['outlet_id'] ?? null,
                     'model_type' => $logData['model_type'],
                     'model_id' => $logData['model_id'],
                     'action' => $logData['action'],

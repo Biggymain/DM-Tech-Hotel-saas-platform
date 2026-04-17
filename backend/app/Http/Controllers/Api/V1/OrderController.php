@@ -8,9 +8,11 @@ use App\Events\NewOrderPlaced;
 
 
 use App\Models\Order;
+use App\Models\StaffDailyPin;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * OrderController (POS / KDS endpoints)
@@ -116,6 +118,7 @@ class OrderController extends Controller
 
         \App\Events\OrderCreated::dispatch($order);
         NewOrderPlaced::dispatch($order->fresh(['items.menuItem']));
+        \App\Jobs\SyncToCloudJob::dispatch((int) $order->outlet_id)->afterCommit();
 
         $orderData = $order->fresh(['items.menuItem']);
         return response()->json([
@@ -146,6 +149,8 @@ class OrderController extends Controller
             'message' => 'Order fired to kitchen stations!',
             'data'    => $order->fresh(),
         ]);
+
+        \App\Jobs\SyncToCloudJob::dispatch((int) $order->outlet_id)->afterCommit();
     }
 
     /**
@@ -156,6 +161,11 @@ class OrderController extends Controller
     {
         // Manually resolve if needed (handles skipped bindings in tests)
         $order = $order instanceof Order ? $order : Order::findOrFail($order);
+
+        // Ownership Gate: If claimed, only the owner can modify status
+        if ($order->waiter_id && $order->waiter_id !== $request->user()->id) {
+            return response()->json(['message' => 'This order is owned by another staff member.'], 403);
+        }
 
         $validated = $request->validate([
             'status'  => 'required|string',
@@ -204,6 +214,8 @@ class OrderController extends Controller
             'message' => "Order {$validated['status']}.",
             'data'    => $order,
         ]);
+
+        \App\Jobs\SyncToCloudJob::dispatch((int) $order->outlet_id)->afterCommit();
     }
 
     /**
@@ -220,8 +232,65 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
+        // Ownership Gate: If claimed, only the owner can delete
+        if ($order->waiter_id && $order->waiter_id !== auth()->id()) {
+            return response()->json(['message' => 'This order is owned by another staff member.'], 403);
+        }
+
         $order->delete();
         return response()->json(['message' => 'Order deleted successfully']);
+    }
+
+    /**
+     * POST /api/v1/pos/orders/{order}/claim
+     * Staff member "Elections" themselves as the owner of an unclaimed order.
+     */
+    public function claim(Request $request, Order $order)
+    {
+        $validated = $request->validate([
+            'pin' => 'required|string|size:4'
+        ]);
+
+        $dailyPin = StaffDailyPin::where('user_id', $request->user()->id)
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if (!$dailyPin || !Hash::check($validated['pin'], $dailyPin->pin_hash)) {
+            // Audit log for failed pin attempt (Digital Fortress requirement)
+            \App\Models\AuditLog::create([
+                'hotel_id' => $request->user()->hotel_id,
+                'user_id' => $request->user()->id,
+                'change_type' => 'CLAIM_ORDER_FAILED_PIN',
+                'entity_type' => get_class($order),
+                'entity_id' => $order->id,
+                'reason' => "Invalid Daily PIN attempt for order #{$order->order_number}",
+            ]);
+            return response()->json(['message' => 'Invalid or expired Daily PIN'], 403);
+        }
+
+        if ($order->waiter_id) {
+            return response()->json(['message' => 'Order already claimed by another staff member.'], 409);
+        }
+
+        $order->update([
+            'waiter_id' => $request->user()->id,
+            'claimed_at' => now(),
+        ]);
+
+        // Capture in status history for audit
+        \App\Models\OrderStatusHistory::create([
+            'order_id' => $order->id,
+            'hotel_id' => $order->hotel_id,
+            'previous_status' => $order->order_status,
+            'new_status' => $order->order_status, // Status doesn't change, but ownership does
+            'changed_by' => $request->user()->id,
+            'notes' => 'Order claimed via Daily PIN election.',
+        ]);
+
+        return response()->json([
+            'message' => 'Order claimed successfully.',
+            'order' => $order->fresh(['items.menuItem', 'waiter']),
+        ]);
     }
 
     /**

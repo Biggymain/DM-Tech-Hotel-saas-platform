@@ -14,11 +14,16 @@ use Illuminate\Support\Facades\Log;
 class SyncToCloudJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    public $tries = 5;
-    public $backoff = [300, 600, 1800]; // More aggressive backoff for sync
+    public int $outletId;
 
-    public function __construct() {
+    public function __construct(int $outletId) {
+        $this->outletId = $outletId;
         $this->onQueue('low');
+    }
+
+    public function middleware(): array
+    {
+        return [new \Illuminate\Queue\Middleware\WithoutOverlapping($this->outletId)];
     }
 
     public function handle(OfflineSyncService $syncService): void
@@ -29,10 +34,10 @@ class SyncToCloudJob implements ShouldQueue
             return;
         }
 
-        // 2. Batch Sync
-        $syncService->syncToCloud();
+        // 2. Batch Sync specifically for this outlet
+        $syncService->syncToCloud($this->outletId);
         
-        Log::info("SyncToCloudJob: Processed batch sync logic.");
+        Log::info("SyncToCloudJob: Processed sync for outlet {$this->outletId}.");
     }
 
     private function hasInternet(): bool

@@ -10,7 +10,8 @@ class StaffDailyPin extends BaseModel
 
     protected $fillable = [
         'user_id',
-        'daily_pin',
+        'hotel_id',
+        'pin_hash',
         'expires_at',
     ];
 

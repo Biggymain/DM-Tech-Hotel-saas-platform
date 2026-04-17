@@ -30,7 +30,12 @@ class SiemJsonFormatter extends JsonFormatter
         'trigger_event',
         'event_count',
         'mitigation_action',
-        'hardware_signature'
+        'hardware_signature',
+        'staff_id',
+        'hardware_hash',
+        'transfer_id',
+        'sku',
+        'outlet_id'
     ];
 
     /**

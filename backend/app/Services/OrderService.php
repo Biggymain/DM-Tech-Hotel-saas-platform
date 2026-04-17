@@ -121,16 +121,20 @@ class OrderService
                 $bundle = LeisureBundle::where('menu_item_id', $item->menu_item_id)->first();
                 if ($bundle) {
                     try {
+                        // Resolve the specific inventory item for this outlet
+                        $templateItem = \App\Models\InventoryItem::findOrFail($bundle->inventory_item_id);
+                        $outletItem = $this->inventoryService->resolveItemForOutlet($templateItem, $order->outlet_id);
+
                         $this->inventoryService->deductStock(
-                            $bundle->inventory_item_id, 
+                            $outletItem->id, 
                             $bundle->quantity * $item->quantity, 
                             get_class($order), 
                             $order->id
                         );
                     } catch (\Exception $e) {
                          // calibration: "No Pool Pass can be 'Served' without a linked InventoryItem deduction."
-                         Log::error("[Drink-Check] Failure for order #{$order->id}: " . $e->getMessage());
-                         throw new \LogicException("Cannot serve Pool Pass: Drink inventory (Bottle Water) is empty.");
+                         \Illuminate\Support\Facades\Log::error("[Drink-Check] Failure for order #{$order->id}: " . $e->getMessage());
+                         throw new \LogicException("Cannot serve Pool Pass: Drink inventory ({$templateItem->name}) is empty.");
                     }
                 }
             }

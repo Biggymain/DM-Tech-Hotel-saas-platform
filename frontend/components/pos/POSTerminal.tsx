@@ -13,7 +13,7 @@ import {
 import { useAuth } from '@/context/AuthProvider';
 import StaffTabs from './StaffTabs';
 import PinOverlay from './PinOverlay';
-import POSMobilePage from '@/app/(dashboard)/pos/mobile/page';
+import { POSMobileView } from '@/components/pos/POSMobileView';
 import api from '@/lib/api';
 import { toast } from 'sonner';
 
@@ -189,7 +189,7 @@ export default function POSTerminal() {
         ) : (
           <div className="h-full flex flex-col animate-in fade-in duration-300">
              {/* Pass active context to the actual POS mobile page */}
-             <POSMobilePage 
+             <POSMobileView 
                 activeWaitressId={activeId} 
                 isTerminalMode={true}
              />

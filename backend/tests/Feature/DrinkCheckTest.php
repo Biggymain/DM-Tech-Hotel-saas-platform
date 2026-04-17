@@ -81,6 +81,7 @@ class DrinkCheckTest extends TestCase
         $menuItem = MenuItem::factory()->create(['hotel_id' => $this->hotel->id]);
         $inventoryItem = InventoryItem::factory()->create([
             'hotel_id' => $this->hotel->id,
+            'name' => 'Bottle Water',
             'current_stock' => 0
         ]);
         LeisureBundle::create([

@@ -61,6 +61,7 @@ class Order extends BaseModel
         'routed_stations',
         'uuid',
         'synced_at',
+        'claimed_at',
     ];
 
     public function hotel()

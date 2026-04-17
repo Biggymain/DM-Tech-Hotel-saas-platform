@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:website": "NEXT_DIST_DIR=.next-website next dev -p 3001",
-    "build": "next build",
+    "build": "NODE_ENV=production next build --webpack",
     "start": "next start",
     "lint": "eslint"
   },

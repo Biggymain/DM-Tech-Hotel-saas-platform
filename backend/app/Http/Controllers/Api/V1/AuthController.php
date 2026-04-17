@@ -321,7 +321,7 @@ class AuthController extends Controller
         );
 
         // Notify user (simulating email via log)
-        \Illuminate\Support\Facades\Log::info("🔐 Password Reset OTP for {$user->email}: {$otp}");
+        Log::info("🔐 Password Reset OTP for {$user->email}: {$otp}");
 
         return response()->json([
             'message' => 'A 6-digit password reset code has been sent to your email.',

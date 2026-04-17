@@ -13,11 +13,8 @@ build_port() {
     # Remove old build artifacts to ensure a fresh standalone trace
     rm -rf ".next-$PORT"
     
-    NEXT_TELEMETRY_DISABLED=1 \
-    NEXT_DIST_DIR=".next-$PORT" \
-    NEXT_PUBLIC_PORT=$PORT \
-    NODE_OPTIONS="--max-old-space-size=1024" \
-    npx next build
+    NODE_ENV=production \
+    npx next build --webpack
     
     cd "$ROOT_DIR" || exit
 }

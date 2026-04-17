@@ -273,7 +273,7 @@ class PublicBookingController extends Controller
             ->where('status', 'pending')
             ->firstOrFail();
 
-        DB::transaction(function () use ($reservation, $validated) {
+        DB::transaction(function () use ($reservation, $validated, $hotel) {
             // Confirm reservation
             $reservation->update([
                 'status'             => 'confirmed',
@@ -283,7 +283,7 @@ class PublicBookingController extends Controller
             // [CHAINED JOB] Booking Confirmation -> Sync to Cloud
             \Illuminate\Support\Facades\Bus::chain([
                 new \App\Jobs\ProcessBookingJob($reservation),
-                new \App\Jobs\SyncToCloudJob(),
+                new \App\Jobs\SyncToCloudJob((int) $hotel->id),
             ])->dispatch();
         });
 

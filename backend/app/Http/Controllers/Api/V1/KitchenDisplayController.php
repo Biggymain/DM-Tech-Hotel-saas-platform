@@ -140,4 +140,40 @@ class KitchenDisplayController extends Controller
 
         return response()->json($item);
     }
+
+    /**
+     * POST /api/v1/kds/tickets/{id}/print
+     * Automatically transitions ticket to 'preparing' (Yellow) upon printing.
+     */
+    public function printTicket(Request $request, $id)
+    {
+        $ticket = KitchenTicket::findOrFail($id);
+
+        return DB::transaction(function () use ($ticket, $request) {
+            $previousStatus = $ticket->status;
+            
+            // Auto-transition to preparing if it's currently queued or accepted
+            if (in_array($ticket->status, ['queued', 'accepted'])) {
+                $ticket->update([
+                    'status' => 'preparing',
+                    'started_at' => $ticket->started_at ?? now()
+                ]);
+
+                $ticket->statusHistories()->create([
+                    'hotel_id' => $ticket->hotel_id,
+                    'previous_status' => $previousStatus,
+                    'new_status' => 'preparing',
+                    'changed_by_user_id' => $request->user()->id,
+                    'notes' => 'Automatic transition to preparing upon Print action.'
+                ]);
+
+                broadcast(new \App\Events\KitchenTicketStatusUpdated($ticket, 'preparing'))->toOthers();
+            }
+
+            return response()->json([
+                'message' => 'Ticket sent to printer.',
+                'ticket' => $ticket->fresh(['items'])
+            ]);
+        });
+    }
 }

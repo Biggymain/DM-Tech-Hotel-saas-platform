@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 class OfflineSyncService
 {
-    public function syncToCloud()
+    public function syncToCloud(int $outletId)
     {
         $cloudUrl = config('app.cloud_sync_url', 'https://api.cloud.dm-tech.com/api/v1/sync/ingest');
         $tenantSecret = config('app.sync_tenant_secret');
@@ -19,8 +19,9 @@ class OfflineSyncService
             return;
         }
 
-        // Fetch pending logs in chunks of 50
-        SyncLog::whereIn('status', ['pending', 'failed'])
+        // Fetch pending logs specifically for this outlet in chunks of 50
+        SyncLog::where('outlet_id', $outletId)
+            ->whereIn('status', ['pending', 'failed'])
             ->where('attempts', '<', 5)
             ->chunkById(50, function ($logs) use ($cloudUrl, $tenantSecret, $apiToken) {
                 

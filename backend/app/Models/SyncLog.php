@@ -16,6 +16,7 @@ class SyncLog extends Model
         'id',
         'tenant_id',
         'branch_id',
+        'outlet_id',
         'model_type',
         'model_id',
         'action',
