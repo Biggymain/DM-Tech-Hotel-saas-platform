@@ -22,6 +22,7 @@ class StaffAccountabilityTest extends TestCase
     protected $hotel;
     protected $waitressA;
     protected $waitressB;
+    protected $outlet;
     protected $order;
 
     protected function setUp(): void
@@ -48,11 +49,11 @@ class StaffAccountabilityTest extends TestCase
         $this->waitressB->roles()->attach($waiterRole->id, ['hotel_id' => $this->hotel->id]);
         
         $department = Department::factory()->create(['hotel_id' => $this->hotel->id]);
-        $outlet = Outlet::factory()->create(['hotel_id' => $this->hotel->id]);
+        $this->outlet = Outlet::factory()->create(['hotel_id' => $this->hotel->id]);
 
         $this->order = Order::create([
             'hotel_id' => $this->hotel->id,
-            'outlet_id' => $outlet->id,
+            'outlet_id' => $this->outlet->id,
             'department_id' => $department->id,
             'order_number' => 'ORD-TEST-123',
             'order_status' => 'pending',
@@ -149,7 +150,7 @@ class StaffAccountabilityTest extends TestCase
 
         $ticket = KitchenTicket::create([
             'hotel_id' => $this->hotel->id,
-            'branch_id' => $this->hotel->id,
+            'branch_id' => $this->outlet->id,
             'outlet_id' => $this->order->outlet_id,
             'department_id' => $this->order->department_id,
             'order_id' => $this->order->id,

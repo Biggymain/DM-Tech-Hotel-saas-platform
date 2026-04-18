@@ -81,6 +81,7 @@ class DrinkCheckTest extends TestCase
         $menuItem = MenuItem::factory()->create(['hotel_id' => $this->hotel->id]);
         $inventoryItem = InventoryItem::factory()->create([
             'hotel_id' => $this->hotel->id,
+            'outlet_id' => $this->outlet->id,
             'name' => 'Bottle Water',
             'current_stock' => 0
         ]);
@@ -90,7 +91,11 @@ class DrinkCheckTest extends TestCase
             'quantity' => 1
         ]);
 
-        $order = Order::factory()->create(['order_status' => 'ready']);
+        $order = Order::factory()->create([
+            'hotel_id' => $this->hotel->id,
+            'outlet_id' => $this->outlet->id,
+            'order_status' => 'ready'
+        ]);
         $order->items()->create([
             'menu_item_id' => $menuItem->id,
             'quantity' => 1,
