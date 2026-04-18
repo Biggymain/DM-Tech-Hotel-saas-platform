@@ -11,6 +11,7 @@ use App\Models\Reservation;
 use App\Models\LeisureAccessLog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class LeisureAccessTest extends TestCase
 {
@@ -33,6 +34,7 @@ class LeisureAccessTest extends TestCase
         $this->actingAs($this->user);
     }
 
+    #[Test]
     public function test_hardware_verify_with_membership()
     {
         // 1. Create User & Membership
@@ -60,6 +62,7 @@ class LeisureAccessTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_hardware_verify_with_paid_pass()
     {
         $guest = User::factory()->create(['hotel_id' => $this->hotel->id]);
@@ -77,6 +80,7 @@ class LeisureAccessTest extends TestCase
             ->assertJson(['allow' => true, 'type' => 'pass']);
     }
 
+    #[Test]
     public function test_hardware_verify_denied()
     {
         $guest = User::factory()->create();
@@ -86,6 +90,7 @@ class LeisureAccessTest extends TestCase
             ->assertJson(['allow' => false, 'message' => 'No active membership or pass']);
     }
 
+    #[Test]
     public function test_leisure_provisioning()
     {
         $response = $this->postJson("/api/v1/admin/leisure/provision", [

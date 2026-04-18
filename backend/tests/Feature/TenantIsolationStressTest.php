@@ -11,6 +11,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class TenantIsolationStressTest extends TestCase
 {
@@ -60,6 +61,7 @@ class TenantIsolationStressTest extends TestCase
         }
     }
 
+    #[Test]
     public function test_tenant_cannot_access_other_tenant_orders()
     {
         $outletA = Outlet::create(['hotel_id' => $this->hotelA->id, 'name' => 'Outlet A', 'type' => 'restaurant']);
@@ -87,6 +89,7 @@ class TenantIsolationStressTest extends TestCase
         $listResponse->assertStatus(200)->assertJsonCount(0, 'data');
     }
 
+    #[Test]
     public function test_tenant_cannot_access_other_tenant_inventory()
     {
         $inventoryA = InventoryItem::create([
@@ -109,6 +112,7 @@ class TenantIsolationStressTest extends TestCase
         $updateResponse->assertStatus(404);
     }
 
+    #[Test]
     public function test_tenant_cannot_access_other_tenant_billing()
     {
         $invoiceA = Invoice::create([
@@ -136,6 +140,7 @@ class TenantIsolationStressTest extends TestCase
         $payResponse->assertStatus(422); 
     }
 
+    #[Test]
     public function test_tenant_cannot_access_other_tenant_reports()
     {
         // Reports are generally aggregated by hotel_id implicitly, but we verify the endpoint doesn't leak.

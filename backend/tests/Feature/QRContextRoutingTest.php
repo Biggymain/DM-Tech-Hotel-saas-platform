@@ -9,11 +9,13 @@ use App\Models\Room;
 use App\Models\Guest;
 use App\Models\Reservation;
 use App\Models\GuestPortalSession;
+use PHPUnit\Framework\Attributes\Test;
 
 class QRContextRoutingTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[Test]
     public function test_can_start_session_with_room_context()
     {
         $hotel = Hotel::factory()->create();
@@ -71,6 +73,7 @@ class QRContextRoutingTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_can_start_session_with_outlet_context()
     {
         $hotel = Hotel::factory()->create();

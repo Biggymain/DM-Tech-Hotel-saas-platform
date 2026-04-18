@@ -10,6 +10,7 @@ use App\Services\SubscriptionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class SubscriptionSystemTest extends TestCase
 {
@@ -37,6 +38,7 @@ class SubscriptionSystemTest extends TestCase
         $this->subscriptionService = app(SubscriptionService::class);
     }
 
+    #[Test]
     public function test_new_hotel_can_start_trial()
     {
         $subscription = $this->subscriptionService->createSubscription($this->hotel, $this->plan);
@@ -46,6 +48,7 @@ class SubscriptionSystemTest extends TestCase
         $this->assertTrue($this->hotel->hasActiveSubscription());
     }
 
+    #[Test]
     public function test_active_subscription_allows_admin_access()
     {
         $this->subscriptionService->createSubscription($this->hotel, $this->plan);
@@ -56,6 +59,7 @@ class SubscriptionSystemTest extends TestCase
         $response->assertStatus(200);
     }
 
+    #[Test]
     public function test_expired_subscription_blocks_admin_access()
     {
         $subscription = $this->subscriptionService->createSubscription($this->hotel, $this->plan);
@@ -74,6 +78,7 @@ class SubscriptionSystemTest extends TestCase
             ->assertJson(['error' => 'Payment Required']);
     }
 
+    #[Test]
     public function test_grace_period_allows_temporary_access()
     {
         $subscription = $this->subscriptionService->createSubscription($this->hotel, $this->plan);
@@ -89,6 +94,7 @@ class SubscriptionSystemTest extends TestCase
         $response->assertStatus(200); // Should still work
     }
 
+    #[Test]
     public function test_checkout_upgrades_subscription()
     {
         $response = $this->actingAs($this->user, 'sanctum')
@@ -104,6 +110,7 @@ class SubscriptionSystemTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_invoice_generation_on_payment()
     {
         $subscription = $this->subscriptionService->createSubscription($this->hotel, $this->plan);
@@ -121,6 +128,7 @@ class SubscriptionSystemTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_platform_analytics_returns_data()
     {
         $this->subscriptionService->createSubscription($this->hotel, $this->plan);

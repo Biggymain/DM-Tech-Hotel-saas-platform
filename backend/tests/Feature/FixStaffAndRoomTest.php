@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\RoomType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class FixStaffAndRoomTest extends TestCase
 {
@@ -38,6 +39,7 @@ class FixStaffAndRoomTest extends TestCase
         $this->admin->roles()->attach($ownerRole->id, ['hotel_id' => $this->hotel->id]);
     }
 
+    #[Test]
     public function test_staff_onboarding_permission()
     {
         $response = $this->actingAs($this->admin)->postJson('/api/v1/users', [
@@ -50,6 +52,7 @@ class FixStaffAndRoomTest extends TestCase
         $response->assertStatus(201);
     }
 
+    #[Test]
     public function test_room_creation()
     {
         $roomType = RoomType::create([

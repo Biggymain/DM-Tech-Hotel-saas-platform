@@ -12,6 +12,7 @@ use App\Models\Room;
 use App\Models\MaintenanceRequest;
 use App\Models\Role;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 
 class MaintenanceWorkflowTest extends TestCase
 {
@@ -58,6 +59,7 @@ class MaintenanceWorkflowTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_can_create_maintenance_request()
     {
         \Illuminate\Support\Facades\Event::fake();
@@ -81,6 +83,7 @@ class MaintenanceWorkflowTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_starting_maintenance_blocks_room()
     {
         \Illuminate\Support\Facades\Event::fake();
@@ -118,6 +121,7 @@ class MaintenanceWorkflowTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_resolving_maintenance_unblocks_room_and_sets_dirty()
     {
         \Illuminate\Support\Facades\Event::fake();

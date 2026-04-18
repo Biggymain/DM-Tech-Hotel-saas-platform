@@ -18,6 +18,7 @@ use App\Events\PaymentCompleted;
 use App\Events\PaymentRefunded;
 use App\Models\RoomType;
 use App\Models\Room;
+use PHPUnit\Framework\Attributes\Test;
 
 class PaymentSystemTest extends TestCase
 {
@@ -66,6 +67,7 @@ class PaymentSystemTest extends TestCase
         $this->actingAs($user);
     }
 
+    #[Test]
     public function test_payment_intent_creation()
     {
         Event::fake([PaymentInitiated::class]);
@@ -91,6 +93,7 @@ class PaymentSystemTest extends TestCase
         Event::assertDispatched(PaymentInitiated::class);
     }
 
+    #[Test]
     public function test_payment_capture()
     {
         Event::fake([PaymentCompleted::class]);
@@ -120,6 +123,7 @@ class PaymentSystemTest extends TestCase
         Event::assertDispatched(PaymentCompleted::class);
     }
 
+    #[Test]
     public function test_payment_refund()
     {
         Event::fake([PaymentRefunded::class]);
@@ -150,6 +154,7 @@ class PaymentSystemTest extends TestCase
         Event::assertDispatched(PaymentRefunded::class);
     }
 
+    #[Test]
     public function test_transaction_context_recorded()
     {
         $response = $this->postJson('/api/v1/payments/create-intent', [
@@ -172,6 +177,7 @@ class PaymentSystemTest extends TestCase
         $this->assertEquals($this->reservation->id, $transaction->context_metadata['reservation_id']);
     }
 
+    #[Test]
     public function test_guest_portal_payment_flow()
     {
         $session = GuestPortalSession::create([
@@ -201,6 +207,7 @@ class PaymentSystemTest extends TestCase
         $this->assertEquals('guest_portal', $transaction->context_metadata['action_source']);
     }
 
+    #[Test]
     public function test_payment_webhook_processing()
     {
         $transaction = PaymentTransaction::create([
@@ -228,6 +235,7 @@ class PaymentSystemTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_tenant_isolation_between_hotels()
     {
         $otherHotel = Hotel::create(['name' => 'Other Hotel']);
@@ -243,6 +251,7 @@ class PaymentSystemTest extends TestCase
         $response->assertStatus(403); // Forbidden because hotel_id doesn't match auth user
     }
 
+    #[Test]
     public function test_monnify_gateway_payment_intent()
     {
         PaymentGateway::create([
@@ -273,6 +282,7 @@ class PaymentSystemTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_manual_payment_confirmation()
     {
         Event::fake([PaymentCompleted::class]);
@@ -309,6 +319,7 @@ class PaymentSystemTest extends TestCase
         Event::assertDispatched(PaymentCompleted::class);
     }
 
+    #[Test]
     public function test_payment_mode_online_only()
     {
         $this->paymentGateway->update(['payment_mode' => 'online']);
@@ -325,6 +336,7 @@ class PaymentSystemTest extends TestCase
         $response->assertStatus(500); // InvalidArgumentException
     }
 
+    #[Test]
     public function test_payment_mode_manual_only()
     {
         $this->paymentGateway->update(['payment_mode' => 'manual']);
@@ -341,6 +353,7 @@ class PaymentSystemTest extends TestCase
         $response->assertStatus(500); // InvalidArgumentException
     }
 
+    #[Test]
     public function test_duplicate_webhook_transaction_rejected()
     {
         $transaction = PaymentTransaction::create([
@@ -364,6 +377,7 @@ class PaymentSystemTest extends TestCase
                  ->assertJsonPath('status', 'duplicate');
     }
 
+    #[Test]
     public function test_payment_source_tracking()
     {
         $response = $this->postJson('/api/v1/payments/create-intent', [

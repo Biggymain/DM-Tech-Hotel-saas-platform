@@ -17,6 +17,7 @@ use App\Events\GuestCheckedOut;
 use App\Jobs\CleanExpiredGuestSessionsJob;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
+use PHPUnit\Framework\Attributes\Test;
 
 class GuestPortalTest extends TestCase
 {
@@ -56,6 +57,7 @@ class GuestPortalTest extends TestCase
         $this->reservation->rooms()->attach($this->room->id);
     }
 
+    #[Test]
     public function test_guest_portal_session_creation()
     {
         $response = $this->postJson('/api/v1/guest/session/start', [
@@ -76,6 +78,7 @@ class GuestPortalTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_guest_pin_authentication()
     {
         $session = GuestPortalSession::create([
@@ -96,6 +99,7 @@ class GuestPortalTest extends TestCase
         $response->assertStatus(200);
     }
 
+    #[Test]
     public function test_device_fingerprint_trust()
     {
         $session = GuestPortalSession::create([
@@ -122,6 +126,7 @@ class GuestPortalTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_trusted_device_skips_pin()
     {
         $session = GuestPortalSession::create([
@@ -146,6 +151,7 @@ class GuestPortalTest extends TestCase
         $response->assertStatus(200);
     }
 
+    #[Test]
     public function test_guest_dashboard_returns_reservation()
     {
         $session = GuestPortalSession::create([
@@ -167,6 +173,7 @@ class GuestPortalTest extends TestCase
                  ->assertJsonPath('guest.first_name', 'John');
     }
 
+    #[Test]
     public function test_guest_service_request_creation()
     {
         $session = GuestPortalSession::create([
@@ -202,6 +209,7 @@ class GuestPortalTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_maintenance_request_routes_correctly()
     {
         Event::fake([\App\Events\MaintenanceRequested::class]);
@@ -232,6 +240,7 @@ class GuestPortalTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_late_checkout_request_flow()
     {
         $session = GuestPortalSession::create([
@@ -260,6 +269,7 @@ class GuestPortalTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_session_terminated_on_checkout()
     {
         $session = GuestPortalSession::create([
@@ -279,6 +289,7 @@ class GuestPortalTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_expired_sessions_cleanup()
     {
         $session = GuestPortalSession::create([

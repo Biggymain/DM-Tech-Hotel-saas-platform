@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\Outlet;
 use App\Models\MenuItem;
 use App\Models\MenuCategory;
+use PHPUnit\Framework\Attributes\Test;
 
 class GuestExperienceEnhancementTest extends TestCase
 {
@@ -64,6 +65,7 @@ class GuestExperienceEnhancementTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_guest_can_track_order()
     {
         $outlet = Outlet::create([
@@ -89,6 +91,7 @@ class GuestExperienceEnhancementTest extends TestCase
             ->assertJsonPath('order_number', 'ORD-123');
     }
 
+    #[Test]
     public function test_guest_can_get_recommendations()
     {
         $outlet = Outlet::create([
@@ -114,6 +117,7 @@ class GuestExperienceEnhancementTest extends TestCase
             ->assertJsonStructure(['popular', 'chef_specials', 'perfect_pairings']);
     }
 
+    #[Test]
     public function test_guest_can_create_service_request()
     {
         $response = $this->postJson("/api/v1/guest/service-request", [

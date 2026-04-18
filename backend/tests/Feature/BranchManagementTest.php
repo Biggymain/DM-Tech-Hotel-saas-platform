@@ -9,6 +9,7 @@ use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\Test;
 
 class BranchManagementTest extends TestCase
 {
@@ -33,6 +34,7 @@ class BranchManagementTest extends TestCase
         $this->user->roles()->attach($role->id);
     }
 
+    #[Test]
     public function test_hotel_generates_slug_on_creation()
     {
         $hotel = Hotel::create([
@@ -44,6 +46,7 @@ class BranchManagementTest extends TestCase
         $this->assertEquals('grand-hotel', $hotel->slug);
     }
 
+    #[Test]
     public function test_can_onboard_manager_for_branch()
     {
         $branch = Hotel::create([

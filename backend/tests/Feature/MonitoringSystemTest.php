@@ -16,6 +16,7 @@ use App\Jobs\CleanOldLogsJob;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use PHPUnit\Framework\Attributes\Test;
 
 class MonitoringSystemTest extends TestCase
 {
@@ -48,6 +49,7 @@ class MonitoringSystemTest extends TestCase
         if ($roleB) { $this->userB->roles()->attach($roleB->id); }
     }
 
+    #[Test]
     public function test_activity_log_service_creates_records_with_outlet_and_severity()
     {
         $service = new ActivityLogService();
@@ -68,6 +70,7 @@ class MonitoringSystemTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_audit_log_service_creates_records_with_source_tracking()
     {
         $service = new AuditLogService();
@@ -108,6 +111,7 @@ class MonitoringSystemTest extends TestCase
         $this->assertEquals('paid', $dbLog->new_values['status']);
     }
 
+    #[Test]
     public function test_api_endpoints_support_filtering()
     {
         ActivityLog::create([
@@ -130,6 +134,7 @@ class MonitoringSystemTest extends TestCase
         $this->assertEquals('targeted_action', $response->json('data.0.action'));
     }
 
+    #[Test]
     public function test_tenant_isolation_prevents_cross_hotel_log_access()
     {
         // Add log to Hotel A
@@ -153,6 +158,7 @@ class MonitoringSystemTest extends TestCase
         $this->assertEquals('hotel_b_action', $response->json('data.0.action'));
     }
 
+    #[Test]
     public function test_clean_old_logs_job_properly_deletes_expired_logs()
     {
         \Illuminate\Support\Facades\DB::table('activity_logs')->insert([

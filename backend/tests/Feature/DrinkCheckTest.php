@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\OrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class DrinkCheckTest extends TestCase
 {
@@ -24,12 +25,17 @@ class DrinkCheckTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->hotel = Hotel::factory()->create();
+        $suffix = bin2hex(random_bytes(4));
+        $this->hotel = Hotel::factory()->create([
+            'domain' => "test-{$suffix}.com",
+            'slug' => "hotel-{$suffix}"
+        ]);
         $this->outlet = Outlet::factory()->create(['hotel_id' => $this->hotel->id]);
         $this->user = User::factory()->create(['hotel_id' => $this->hotel->id]);
         $this->actingAs($this->user);
     }
 
+    #[Test]
     public function test_mandatory_drink_deduction_on_served()
     {
         // 1. Create Menu Item (Pool Pass)
@@ -76,6 +82,7 @@ class DrinkCheckTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_order_fails_to_serve_if_inventory_insufficient()
     {
         $menuItem = MenuItem::factory()->create(['hotel_id' => $this->hotel->id]);

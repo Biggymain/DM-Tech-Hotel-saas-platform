@@ -8,11 +8,13 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class GroupRegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[Test]
     public function test_group_registration_creates_group_branch_and_admin_successfully(): void
     {
         $payload = [
@@ -72,6 +74,7 @@ class GroupRegistrationTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_group_registration_fails_missing_fields(): void
     {
         $response = $this->postJson('/api/v1/auth/register-group', []);

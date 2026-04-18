@@ -9,11 +9,13 @@ use App\Models\Hotel;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Outlet;
+use PHPUnit\Framework\Attributes\Test;
 
 class HotelRegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[Test]
     public function test_hotel_registration_creates_tenant_and_owner_successfully(): void
     {
         // Ensure HotelOwner role exists (normally seeded, but good to ensure for test isolation)

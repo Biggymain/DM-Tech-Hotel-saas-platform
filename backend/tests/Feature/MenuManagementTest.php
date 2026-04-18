@@ -14,6 +14,7 @@ use App\Models\MenuItem;
 use App\Models\Modifier;
 use App\Models\ModifierOption;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\Test;
 
 class MenuManagementTest extends TestCase
 {
@@ -95,6 +96,7 @@ class MenuManagementTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_can_create_menu_category()
     {
         $payload = [
@@ -120,6 +122,7 @@ class MenuManagementTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_can_create_menu_item_with_department_routing()
     {
         $category = MenuCategory::create([
@@ -158,6 +161,7 @@ class MenuManagementTest extends TestCase
         $this->assertEquals(12.50, $item->price);
     }
 
+    #[Test]
     public function test_can_create_modifier_and_attach_to_menu_item()
     {
         // 1. Create Modifier with Options
@@ -197,6 +201,7 @@ class MenuManagementTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_menu_items_are_isolated_by_tenant()
     {
         // Hotel 1 Item
@@ -222,6 +227,7 @@ class MenuManagementTest extends TestCase
                  ->assertJsonMissing(['name' => 'Hotel 2 Item']);
     }
 
+    #[Test]
     public function test_tenant_isolation_prevents_unauthorized_updates()
     {
         // Acting as admin of Hotel 1 (implicit from setUp), trying to update Hotel 2's item

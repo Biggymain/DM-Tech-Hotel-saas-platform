@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class QueueIntegrationTest extends TestCase
 {
@@ -82,6 +83,7 @@ class QueueIntegrationTest extends TestCase
         $this->guestId = $guest->id;
     }
 
+    #[Test]
     public function test_booking_dispatches_job()
     {
         Bus::fake();
@@ -99,6 +101,7 @@ class QueueIntegrationTest extends TestCase
         Bus::assertDispatched(ProcessBookingJob::class);
     }
 
+    #[Test]
     public function test_confirm_payment_chains_jobs()
     {
         Bus::fake();
@@ -129,6 +132,7 @@ class QueueIntegrationTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_payment_dispatches_high_priority_job()
     {
         Queue::fake();
@@ -170,6 +174,7 @@ class QueueIntegrationTest extends TestCase
         });
     }
 
+    #[Test]
     public function test_model_change_dispatches_sync_job()
     {
         Queue::fake();

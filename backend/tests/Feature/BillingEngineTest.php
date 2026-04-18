@@ -16,6 +16,7 @@ use App\Models\PaymentMethod;
 use App\Models\Currency;
 use App\Events\OrderServed;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 
 class BillingEngineTest extends TestCase
 {
@@ -88,6 +89,7 @@ class BillingEngineTest extends TestCase
         $this->actingAs($this->adminUser);
     }
 
+    #[Test]
     public function test_invoice_creation_on_order_served()
     {
         $department = Department::create(['hotel_id' => $this->hotel->id, 'name' => 'Kitchen', 'slug' => 'kitchen']);
@@ -129,6 +131,7 @@ class BillingEngineTest extends TestCase
         $this->assertCount(3, $invoice->items);
     }
 
+    #[Test]
     public function test_payment_processing_and_partial_payments()
     {
         $invoice = Invoice::create([
@@ -180,6 +183,7 @@ class BillingEngineTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_refund_workflow()
     {
         $invoice = Invoice::create([

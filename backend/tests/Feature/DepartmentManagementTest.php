@@ -12,6 +12,7 @@ use App\Models\Outlet;
 use App\Models\Department;
 use App\Models\Permission;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\Test;
 
 class DepartmentManagementTest extends TestCase
 {
@@ -55,6 +56,7 @@ class DepartmentManagementTest extends TestCase
         Sanctum::actingAs($this->user, ['*']);
     }
 
+    #[Test]
     public function test_can_create_department_with_automatic_permissions()
     {
         $payload = [
@@ -85,6 +87,7 @@ class DepartmentManagementTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_can_list_departments_isolated_by_tenant()
     {
         // Department for Hotel 1
@@ -111,6 +114,7 @@ class DepartmentManagementTest extends TestCase
                  ->assertJsonMissing(['name' => 'Other Dept']);
     }
 
+    #[Test]
     public function test_can_update_department()
     {
         $department = Department::create([

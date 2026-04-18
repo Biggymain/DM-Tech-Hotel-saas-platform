@@ -10,11 +10,13 @@ use App\Models\Hotel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class RealTimeEventsTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[Test]
     public function test_order_created_broadcasts_to_correct_tenant_channels()
     {
         $hotelId = 99;
@@ -30,6 +32,7 @@ class RealTimeEventsTest extends TestCase
         $this->assertEquals($orderData, $event->orderData);
     }
 
+    #[Test]
     public function test_kitchen_status_updated_broadcasts_correctly()
     {
         $hotelId = 42;
@@ -44,6 +47,7 @@ class RealTimeEventsTest extends TestCase
         $this->assertEquals('presence-presence-hotel.42.staff', $channels[2]->name);
     }
 
+    #[Test]
     public function test_invoice_paid_broadcasts_correctly()
     {
         $hotelId = 7;
@@ -57,6 +61,7 @@ class RealTimeEventsTest extends TestCase
         $this->assertEquals('presence-presence-hotel.7.staff', $channels[1]->name);
     }
 
+    #[Test]
     public function test_low_inventory_broadcasts_correctly()
     {
         $hotelId = 12;

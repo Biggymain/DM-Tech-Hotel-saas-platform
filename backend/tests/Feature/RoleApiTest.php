@@ -7,11 +7,13 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class RoleApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[Test]
     public function test_can_fetch_roles_for_hotel()
     {
         $hotel = Hotel::factory()->create();
@@ -30,6 +32,7 @@ class RoleApiTest extends TestCase
             ->assertJsonFragment(['name' => 'System Admin']);
     }
 
+    #[Test]
     public function test_cannot_fetch_other_hotel_roles()
     {
         $hotel1 = Hotel::factory()->create();

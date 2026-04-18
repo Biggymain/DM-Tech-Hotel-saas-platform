@@ -5,17 +5,20 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class RolePermissionTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[Test]
     public function test_unauthenticated_users_are_rejected(): void
     {
         $response = $this->getJson('/api/v1/departments');
         $response->assertStatus(401);
     }
 
+    #[Test]
     public function test_user_without_permission_receives_403(): void
     {
         $hotel = \App\Models\Hotel::create(['name' => 'Test Hotel', 'domain' => 'test.com']);
@@ -30,6 +33,7 @@ class RolePermissionTest extends TestCase
                  ]);
     }
 
+    #[Test]
     public function test_user_with_permission_can_access_route(): void
     {
         $hotel = \App\Models\Hotel::create(['name' => 'Test Hotel', 'domain' => 'test.com']);
@@ -48,6 +52,7 @@ class RolePermissionTest extends TestCase
         $this->assertNotEquals(401, $response->status());
     }
 
+    #[Test]
     public function test_super_admin_bypasses_permission_checks(): void
     {
         $admin = \App\Models\User::factory()->create(['is_super_admin' => true]);
@@ -58,6 +63,7 @@ class RolePermissionTest extends TestCase
         $this->assertNotEquals(401, $response->status());
     }
 
+    #[Test]
     public function test_tenant_module_toggle_blocks_access(): void
     {
         // 1. Setup hotel and user with valid permissions

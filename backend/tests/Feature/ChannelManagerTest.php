@@ -21,6 +21,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class ChannelManagerTest extends TestCase
 {
@@ -105,6 +106,7 @@ class ChannelManagerTest extends TestCase
         }
     }
 
+    #[Test]
     public function test_channel_integration_creation()
     {
         $integration = ChannelIntegration::create([
@@ -122,6 +124,7 @@ class ChannelManagerTest extends TestCase
         $this->assertEquals('secret_key', $integration->api_key);
     }
 
+    #[Test]
     public function test_room_and_rate_mapping_to_channel()
     {
         $integration = ChannelIntegration::create([
@@ -152,6 +155,7 @@ class ChannelManagerTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_sync_jobs_dispatched_and_log_created()
     {
         Queue::fake();
@@ -199,6 +203,7 @@ class ChannelManagerTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_webhook_signature_validation()
     {
         $integration = ChannelIntegration::create([
@@ -228,6 +233,7 @@ class ChannelManagerTest extends TestCase
         $response->assertStatus(200); // Because 'ping' is ignored cleanly
     }
 
+    #[Test]
     public function test_channel_reservation_creates_pms_reservation()
     {
         $integration = ChannelIntegration::create([
@@ -276,6 +282,7 @@ class ChannelManagerTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_duplicate_reservation_rejected()
     {
         $integration = ChannelIntegration::create([
@@ -316,6 +323,7 @@ class ChannelManagerTest extends TestCase
         $this->assertEquals(1, $count);
     }
 
+    #[Test]
     public function test_channel_sync_toggle_disabled()
     {
         $integration = ChannelIntegration::create([

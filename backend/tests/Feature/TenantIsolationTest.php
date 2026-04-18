@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class TenantIsolationTest extends TestCase
 {
@@ -24,6 +25,7 @@ class TenantIsolationTest extends TestCase
         Role::create(['name' => 'Group Admin', 'slug' => 'group-admin', 'is_system_role' => true]);
     }
 
+    #[Test]
     public function test_branch_user_cannot_see_other_hotels(): void
     {
         $group = HotelGroup::create(['name' => 'Group A', 'slug' => 'group-a']);
@@ -46,6 +48,7 @@ class TenantIsolationTest extends TestCase
         $this->assertEquals($hotel1->id, $hotels->first()->id);
     }
 
+    #[Test]
     public function test_group_admin_cannot_see_other_groups_hotels(): void
     {
         $groupA = HotelGroup::create(['name' => 'Group A', 'slug' => 'group-a']);
@@ -73,6 +76,7 @@ class TenantIsolationTest extends TestCase
         $this->assertNull(Hotel::find($hotelB->id));
     }
 
+    #[Test]
     public function test_super_admin_can_see_everything(): void
     {
         $group = HotelGroup::create(['name' => 'Group A', 'slug' => 'group-a']);
@@ -90,6 +94,7 @@ class TenantIsolationTest extends TestCase
         $this->assertCount(1, Hotel::all());
     }
 
+    #[Test]
     public function test_cross_tenant_is_blocked_on_basemodel()
     {
         $hotelA = Hotel::create(['name' => 'Hotel A', 'domain' => 'a.com']);
@@ -113,6 +118,7 @@ class TenantIsolationTest extends TestCase
         $this->assertEquals('A123', $orders->first()->order_number);
     }
     
+    #[Test]
     public function test_cross_branch_is_blocked_on_basemodel()
     {
         $hotel = Hotel::create(['name' => 'Hotel', 'domain' => 'aa.com']);
@@ -133,6 +139,7 @@ class TenantIsolationTest extends TestCase
         $this->assertEquals('Branch1Ord', $orders->first()->order_number);
     }
 
+    #[Test]
     public function test_exceptional_roles_bypass_branch_but_respect_tenant_on_basemodel()
     {
         $group = HotelGroup::create(['name' => 'My Group', 'slug' => 'my-group']);

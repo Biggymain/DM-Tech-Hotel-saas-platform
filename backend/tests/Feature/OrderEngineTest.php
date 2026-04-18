@@ -12,6 +12,7 @@ use App\Models\Department;
 use App\Models\Order;
 use App\Models\Permission;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\Test;
 
 class OrderEngineTest extends TestCase
 {
@@ -63,6 +64,7 @@ class OrderEngineTest extends TestCase
         $this->withPort(3002)->actingAs($this->user);
     }
 
+    #[Test]
     public function test_can_create_pos_order_with_items()
     {
         $payload = [
@@ -108,6 +110,7 @@ class OrderEngineTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_can_update_order_status_with_audit_trail()
     {
         $order = Order::create([
@@ -139,6 +142,7 @@ class OrderEngineTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_cannot_update_closed_order()
     {
         $order = Order::create([
@@ -158,6 +162,7 @@ class OrderEngineTest extends TestCase
         $response->assertStatus(400);
     }
 
+    #[Test]
     public function test_list_orders_is_tenant_isolated()
     {
         Order::create([

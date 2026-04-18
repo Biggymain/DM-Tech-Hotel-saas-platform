@@ -10,11 +10,13 @@ use Illuminate\Database\QueryException;
 use App\Models\Hotel;
 use App\Services\ModuleService;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class OfflineModuleTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[Test]
     public function test_offline_mode_reads_from_json_snapshot_securely()
     {
         $hotel = Hotel::create(['name' => 'Offline Sim Hotel', 'domain' => 'offline.test']);
@@ -39,6 +41,7 @@ class OfflineModuleTest extends TestCase
         $this->assertFalse($service->isEnabled('reception', $hotel->id, $branchId));
     }
 
+    #[Test]
     public function test_disabled_module_blocks_endpoint_with_safe_403()
     {
         $hotel = Hotel::create(['name' => 'Test Hotel', 'domain' => 'test.com']);

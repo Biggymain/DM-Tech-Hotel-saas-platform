@@ -15,6 +15,7 @@ use App\Models\Order;
 use App\Models\KitchenTicket;
 use App\Models\KitchenTicketItem;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\Test;
 
 class KitchenDisplayTest extends TestCase
 {
@@ -110,6 +111,7 @@ class KitchenDisplayTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_kitchen_ticket_automatically_created_when_order_placed()
     {
         $payload = [
@@ -153,6 +155,7 @@ class KitchenDisplayTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_kds_status_transitions_and_history_logging()
     {
         // Setup initial order & ticket implicitly
@@ -221,6 +224,7 @@ class KitchenDisplayTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_tenant_isolation_prevents_unauthorized_kds_access()
     {
         $hotel2 = Hotel::create(['name' => 'H2', 'domain' => 'h2', 'is_active' => true]);

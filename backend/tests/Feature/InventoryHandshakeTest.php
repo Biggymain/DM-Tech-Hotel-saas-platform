@@ -13,6 +13,7 @@ use App\Models\Permission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class InventoryHandshakeTest extends TestCase
 {
@@ -55,7 +56,7 @@ class InventoryHandshakeTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function test_dispatch_deducts_from_source_immediately()
     {
         $this->storekeeper->refresh();
@@ -82,7 +83,7 @@ class InventoryHandshakeTest extends TestCase
         $this->assertEquals('dispatched', $transfer->status);
     }
 
-    /** @test */
+    #[Test]
     public function test_receive_fails_without_valid_daily_pin()
     {
         $this->actingAs($this->storekeeper);
@@ -116,7 +117,7 @@ class InventoryHandshakeTest extends TestCase
         ])->assertStatus(403);
     }
 
-    /** @test */
+    #[Test]
     public function test_receive_handshake_shifts_liability_to_destination()
     {
         $this->barman->refresh();

@@ -14,6 +14,7 @@ use App\Services\SubscriptionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class OtaChannelManagerTest extends TestCase
 {
@@ -49,6 +50,7 @@ class OtaChannelManagerTest extends TestCase
 
     // =================== OtaConnectionTest ===================
 
+    #[Test]
     public function test_hotel_can_connect_to_ota_channel(): void
     {
         $response = $this->actingAs($this->admin)->postJson('/api/v1/admin/ota/connect', [
@@ -67,6 +69,7 @@ class OtaChannelManagerTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_api_credentials_are_encrypted_in_database(): void
     {
         $connection = HotelChannelConnection::create([
@@ -84,6 +87,7 @@ class OtaChannelManagerTest extends TestCase
         $this->assertEquals('plaintext-key', $connection->fresh()->api_key);
     }
 
+    #[Test]
     public function test_connections_endpoint_returns_sync_status(): void
     {
         HotelChannelConnection::create([
@@ -102,6 +106,7 @@ class OtaChannelManagerTest extends TestCase
 
     // =================== RoomTypeMappingTest ===================
 
+    #[Test]
     public function test_admin_can_map_room_type_to_ota(): void
     {
         $roomType = RoomType::create(['hotel_id' => $this->hotel->id, 'name' => 'Deluxe', 'base_price' => 10000, 'capacity' => 2]);
@@ -121,6 +126,7 @@ class OtaChannelManagerTest extends TestCase
 
     // =================== OtaReservationImportTest ===================
 
+    #[Test]
     public function test_can_import_ota_reservation_via_webhook(): void
     {
         $roomType = RoomType::create(['hotel_id' => $this->hotel->id, 'name' => 'Deluxe', 'base_price' => 10000, 'capacity' => 2]);
@@ -163,6 +169,7 @@ class OtaChannelManagerTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_duplicate_ota_reservation_is_skipped(): void
     {
         OtaReservation::create([
@@ -183,6 +190,7 @@ class OtaChannelManagerTest extends TestCase
 
     // =================== ChannelSyncLogTest ===================
 
+    #[Test]
     public function test_sync_logs_are_accessible(): void
     {
         \App\Models\ChannelSyncLog::create([
@@ -200,6 +208,7 @@ class OtaChannelManagerTest extends TestCase
 
     // =================== InventorySyncTest ===================
 
+    #[Test]
     public function test_manual_sync_can_be_triggered(): void
     {
         HotelChannelConnection::create([
@@ -217,6 +226,7 @@ class OtaChannelManagerTest extends TestCase
 
     // =================== OverbookingProtectionTest ===================
 
+    #[Test]
     public function test_overbooking_is_prevented_when_no_rooms_available(): void
     {
         $roomType = RoomType::create(['hotel_id' => $this->hotel->id, 'name' => 'Standard', 'base_price' => 8000, 'capacity' => 2]);

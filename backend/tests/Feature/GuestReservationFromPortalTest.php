@@ -9,11 +9,13 @@ use App\Models\RoomType;
 use App\Models\Room;
 use App\Models\GuestPortalSession;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\Test;
 
 class GuestReservationFromPortalTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[Test]
     public function test_guest_can_search_availability()
     {
         $hotel = Hotel::factory()->create();
@@ -55,6 +57,7 @@ class GuestReservationFromPortalTest extends TestCase
             ->assertJsonStructure(['available_room_types']);
     }
 
+    #[Test]
     public function test_guest_can_create_reservation()
     {
         $hotel = Hotel::factory()->create();

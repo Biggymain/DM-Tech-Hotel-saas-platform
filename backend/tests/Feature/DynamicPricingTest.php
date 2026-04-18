@@ -16,6 +16,7 @@ use App\Models\Role;
 use App\Models\Permission;
 use Illuminate\Support\Facades\DB;
 use App\Services\PricingService;
+use PHPUnit\Framework\Attributes\Test;
 
 class DynamicPricingTest extends TestCase
 {
@@ -57,6 +58,7 @@ class DynamicPricingTest extends TestCase
         app()->instance('tenant_id', $this->hotel->id);
     }
 
+    #[Test]
     public function test_rate_plan_creation()
     {
         $response = $this->actingAs($this->user)->postJson('/api/v1/pricing/rate-plans', [
@@ -74,6 +76,7 @@ class DynamicPricingTest extends TestCase
         $this->assertDatabaseHas('room_type_rate_plan', ['room_type_id' => $this->roomType->id, 'base_price' => 250]);
     }
 
+    #[Test]
     public function test_rate_plan_validity_window()
     {
         $ratePlan = RatePlan::create([
@@ -98,6 +101,7 @@ class DynamicPricingTest extends TestCase
         $this->assertEquals(150, $priceInside);
     }
 
+    #[Test]
     public function test_seasonal_price_modifier()
     {
         $ratePlan = RatePlan::create([
@@ -123,6 +127,7 @@ class DynamicPricingTest extends TestCase
         $this->assertEquals(300, $price); // 200 + 100
     }
 
+    #[Test]
     public function test_weekend_seasonal_pricing()
     {
         $ratePlan = RatePlan::create([
@@ -157,6 +162,7 @@ class DynamicPricingTest extends TestCase
         $this->assertEquals(200, $priceMonday);
     }
 
+    #[Test]
     public function test_occupancy_pricing_rule()
     {
         $ratePlan = RatePlan::create([
@@ -187,6 +193,7 @@ class DynamicPricingTest extends TestCase
         $this->assertEquals(250, $price); // 200 + (200 * 0.25)
     }
 
+    #[Test]
     public function test_price_guard_limits()
     {
         $ratePlan = RatePlan::create([
@@ -205,6 +212,7 @@ class DynamicPricingTest extends TestCase
         $this->assertEquals(500, $price); // Clamped to max_price
     }
 
+    #[Test]
     public function test_pricing_cache_returns_same_value()
     {
         $ratePlan = RatePlan::create([
@@ -230,6 +238,7 @@ class DynamicPricingTest extends TestCase
         $this->assertEquals(200, $price2);
     }
 
+    #[Test]
     public function test_reservation_uses_dynamic_price()
     {
         $ratePlan = RatePlan::create([
@@ -262,6 +271,7 @@ class DynamicPricingTest extends TestCase
         $this->assertEquals(600, $reservation['locked_price']);
     }
 
+    #[Test]
     public function test_tenant_isolation_between_hotels()
     {
         $hotelB = Hotel::create([

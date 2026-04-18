@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Mockery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use PHPUnit\Framework\Attributes\Test;
 
 class DigitalFortressTest extends TestCase
 {
@@ -33,6 +34,7 @@ class DigitalFortressTest extends TestCase
     /**
      * Step 1: Database Connectivity Check
      */
+    #[Test]
     public function test_supabase_connection_exists()
     {
         $connections = config('database.connections');
@@ -42,6 +44,7 @@ class DigitalFortressTest extends TestCase
     /**
      * Step 2: Zero-Knowledge (ZK) Encryption Test
      */
+    #[Test]
     public function test_zero_knowledge_encryption_cast()
     {
         config(['fortress.dev_passphrase' => 'test-pass']);
@@ -57,6 +60,7 @@ class DigitalFortressTest extends TestCase
     /**
      * Step 3: Global Hardware Sentry - Valid
      */
+    #[Test]
     public function test_sentry_middleware_scenario_active()
     {
         $hash = 'valid-hardware-hash';
@@ -77,6 +81,7 @@ class DigitalFortressTest extends TestCase
     /**
      * Step 3: Global Hardware Sentry - Locked (403 Forbidden)
      */
+    #[Test]
     public function test_sentry_middleware_scenario_locked()
     {
         $hash = 'locked-hardware-hash';
@@ -102,6 +107,7 @@ class DigitalFortressTest extends TestCase
     /**
      * Step 3: Global Hardware Sentry - Unregistered (403 Forbidden)
      */
+    #[Test]
     public function test_sentry_middleware_scenario_unregistered()
     {
         $hash = 'unknown-hardware-hash';
@@ -127,6 +133,7 @@ class DigitalFortressTest extends TestCase
     /**
      * Port Enforcement: Ghosting (404 Not Found)
      */
+    #[Test]
     public function test_sentry_middleware_port_violation_ghosting()
     {
         $user = \App\Models\User::factory()->create();
@@ -155,6 +162,7 @@ class DigitalFortressTest extends TestCase
     /**
      * Scenario 8: System Lockdown (503 Service Unavailable)
      */
+    #[Test]
     public function test_sentry_middleware_lockdown()
     {
         $lockService = $this->app->make(\App\Services\FortressLockService::class);
@@ -174,6 +182,7 @@ class DigitalFortressTest extends TestCase
     /**
      * Scenario 9: Hardware Marriage Enforcement during Login
      */
+    #[Test]
     public function test_login_hardware_marriage_enforcement_and_siem_audit()
     {
         $user = \App\Models\User::factory()->create([

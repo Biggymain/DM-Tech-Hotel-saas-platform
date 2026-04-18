@@ -14,6 +14,7 @@ use App\Services\SubscriptionService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class RevenueIntelligenceTest extends TestCase
 {
@@ -58,6 +59,7 @@ class RevenueIntelligenceTest extends TestCase
         }
     }
 
+    #[Test]
     public function test_occupancy_trend_calculation(): void
     {
         $this->actingAs($this->admin);
@@ -76,6 +78,7 @@ class RevenueIntelligenceTest extends TestCase
         $this->assertEquals(50.00, (float)$insight->occupancy_rate);
     }
 
+    #[Test]
     public function test_revenue_prediction_and_demand_score(): void
     {
         // High occupancy (9 of 10 rooms) should trigger high demand score
@@ -88,6 +91,7 @@ class RevenueIntelligenceTest extends TestCase
         $this->assertGreaterThanOrEqual(90, $insight->demand_score);
     }
 
+    #[Test]
     public function test_pricing_recommendation_generation(): void
     {
         // 100% occupancy
@@ -104,6 +108,7 @@ class RevenueIntelligenceTest extends TestCase
         $this->assertGreaterThan(50000, $recommendations[0]['suggested_rate']);
     }
 
+    #[Test]
     public function test_api_endpoints_return_insights(): void
     {
         $this->actingAs($this->admin);
@@ -121,6 +126,7 @@ class RevenueIntelligenceTest extends TestCase
             ]);
     }
 
+    #[Test]
     public function test_event_impact_on_demand_score(): void
     {
         $this->actingAs($this->admin);

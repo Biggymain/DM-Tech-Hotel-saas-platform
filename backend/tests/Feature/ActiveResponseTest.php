@@ -9,6 +9,7 @@ use App\Services\AuditLogService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class ActiveResponseTest extends TestCase
 {
@@ -29,6 +30,7 @@ class ActiveResponseTest extends TestCase
     /**
      * Step A: Verify Correlated Attack Detection (60s window)
      */
+    #[Test]
     public function test_detects_correlated_attack_within_60_seconds()
     {
         Log::shouldReceive('channel')->with('siem')->andReturnSelf();
@@ -60,6 +62,7 @@ class ActiveResponseTest extends TestCase
     /**
      * Step B: Verify Neutrality Gate (Severity < 12 Return Immediately)
      */
+    #[Test]
     public function test_neutrality_gate_ignores_low_severity_events()
     {
         Log::shouldReceive('channel')->with('siem')->andReturnSelf();
@@ -83,6 +86,7 @@ class ActiveResponseTest extends TestCase
     /**
      * Step C: Verify Indestructible Recursion Guard
      */
+    #[Test]
     public function test_recursion_protection_prevents_infinite_loops()
     {
         Log::shouldReceive('channel')->andReturnSelf();
@@ -103,6 +107,7 @@ class ActiveResponseTest extends TestCase
     /**
      * Step D: Verify No Correlation Outside 60s Window
      */
+    #[Test]
     public function test_does_not_correlate_events_outside_60_second_window()
     {
         Log::shouldReceive('channel')->with('siem')->andReturnSelf();
@@ -128,6 +133,7 @@ class ActiveResponseTest extends TestCase
     /**
      * Step E: Identify Auto-Lock Enforcement (Active Response)
      */
+    #[Test]
     public function test_attacker_is_automatically_suspended()
     {
         Log::shouldReceive('channel')->andReturnSelf();

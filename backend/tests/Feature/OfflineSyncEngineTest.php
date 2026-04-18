@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Client\Request;
 use App\Services\OfflineSyncService;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Test;
 
 class OfflineSyncEngineTest extends TestCase
 {
@@ -27,6 +28,7 @@ class OfflineSyncEngineTest extends TestCase
         Config::set('app.sync_tenant_secret', 'test-secret');
     }
 
+    #[Test]
     public function test_deletion_captures_payload_and_multi_tenancy()
     {
         $groupId = DB::table('hotel_groups')->insertGetId([
@@ -86,6 +88,7 @@ class OfflineSyncEngineTest extends TestCase
         $this->assertEquals($hotelId, $deleteLog->branch_id);
     }
 
+    #[Test]
     public function test_batch_sends_in_chunks_of_50()
     {
         // Fake HTTP
@@ -125,6 +128,7 @@ class OfflineSyncEngineTest extends TestCase
         $this->assertEquals(100, SyncLog::where('status', 'synced')->count());
     }
 
+    #[Test]
     public function test_cloud_controller_rejects_invalid_signature()
     {
         // The endpoint uses the configured secret, we simulate a bad signature from the request
@@ -139,6 +143,7 @@ class OfflineSyncEngineTest extends TestCase
         $response->assertJson(['error' => 'Invalid signature']);
     }
 
+    #[Test]
     public function test_cloud_controller_accepts_valid_signature()
     {
         $hotel = \App\Models\Hotel::factory()->create();

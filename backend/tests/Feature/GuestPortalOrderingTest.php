@@ -10,11 +10,13 @@ use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\GuestPortalSession;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\Test;
 
 class GuestPortalOrderingTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[Test]
     public function test_guest_can_fetch_outlet_menu()
     {
         $hotel = Hotel::factory()->create();
@@ -51,6 +53,7 @@ class GuestPortalOrderingTest extends TestCase
             ->assertJsonPath('categories.0.items.0.name', 'Mojito');
     }
 
+    #[Test]
     public function test_guest_can_place_order()
     {
         $hotel = Hotel::factory()->create();

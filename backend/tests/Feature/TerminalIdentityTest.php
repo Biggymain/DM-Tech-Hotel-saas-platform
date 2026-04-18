@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Outlet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class TerminalIdentityTest extends TestCase
 {
@@ -43,6 +44,7 @@ class TerminalIdentityTest extends TestCase
         $waitressRole = \App\Models\Role::create(['name' => 'Waitress', 'slug' => 'waitress', 'hotel_id' => $this->hotel->id]);
         $this->waitress->roles()->attach($waitressRole->id, ['hotel_id' => $this->hotel->id]);
     }
+    #[Test]
     public function test_order_attribution_to_waitress_id()
     {
         $dept = \App\Models\Department::factory()->create(['hotel_id' => $this->hotel->id]);
@@ -75,6 +77,7 @@ class TerminalIdentityTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_cannot_attribute_to_off_duty_staff()
     {
         $this->waitress->update(['is_on_duty' => false]);
@@ -106,6 +109,7 @@ class TerminalIdentityTest extends TestCase
         $response->assertJsonFragment(['message' => 'Staff member is not on duty.']);
     }
 
+    #[Test]
     public function test_filtering_orders_by_waiter_id()
     {
         $dept = \App\Models\Department::factory()->create(['hotel_id' => $this->hotel->id]);

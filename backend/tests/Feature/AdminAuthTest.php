@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Auth\Events\Login;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class AdminAuthTest extends TestCase
 {
@@ -35,6 +36,7 @@ class AdminAuthTest extends TestCase
         \App\Models\Role::create(['name' => 'Super Admin', 'slug' => 'superadmin']);
     }
 
+    #[Test]
     public function test_user_can_login_with_correct_credentials()
     {
         Event::fake([Login::class]);
@@ -55,6 +57,7 @@ class AdminAuthTest extends TestCase
         Event::assertDispatched(Login::class);
     }
 
+    #[Test]
     public function test_user_cannot_login_with_incorrect_password()
     {
         $response = $this->postJson('/api/v1/auth/login', [
@@ -66,6 +69,7 @@ class AdminAuthTest extends TestCase
             ->assertJsonValidationErrors(['email']);
     }
 
+    #[Test]
     public function test_user_can_request_password_reset_link()
     {
         $response = $this->postJson('/api/v1/auth/forgot-password', [
@@ -80,6 +84,7 @@ class AdminAuthTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_user_can_reset_password_with_valid_token()
     {
         $otp = '123456';
@@ -108,6 +113,7 @@ class AdminAuthTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_reset_password_fails_with_invalid_token()
     {
         $response = $this->postJson('/api/v1/auth/reset-password', [
@@ -121,6 +127,7 @@ class AdminAuthTest extends TestCase
             ->assertJson(['message' => 'Invalid or expired reset code.']);
     }
 
+    #[Test]
     public function test_login_alert_logs_activity()
     {
         $listener = new \App\Listeners\SendLoginAlert();
@@ -137,6 +144,7 @@ class AdminAuthTest extends TestCase
     /**
      * Port Enforcement: Ghosting (404 Not Found)
      */
+    #[Test]
     public function test_admin_access_on_wrong_port_ghosts()
     {
         $role = \App\Models\Role::where('slug', 'superadmin')->first();

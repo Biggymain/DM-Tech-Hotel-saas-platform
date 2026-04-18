@@ -14,6 +14,7 @@ use App\Models\KitchenTicket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class StaffAccountabilityTest extends TestCase
 {
@@ -62,7 +63,7 @@ class StaffAccountabilityTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function test_pin_expires_after_12_hours()
     {
         $this->actingAs($this->waitressA);
@@ -83,7 +84,7 @@ class StaffAccountabilityTest extends TestCase
             ->assertJsonPath('message', 'Invalid or expired Daily PIN');
     }
 
-    /** @test */
+    #[Test]
     public function test_waitress_can_claim_unclaimed_order()
     {
         $this->actingAs($this->waitressA);
@@ -101,7 +102,7 @@ class StaffAccountabilityTest extends TestCase
         $this->assertNotNull($this->order->claimed_at);
     }
 
-    /** @test */
+    #[Test]
     public function test_unauthorized_order_claim_by_another_staff()
     {
         // Waitress A claims the order
@@ -120,7 +121,7 @@ class StaffAccountabilityTest extends TestCase
             ->assertJsonPath('message', 'Order already claimed by another staff member.');
     }
 
-    /** @test */
+    #[Test]
     public function test_claimed_order_lockout_enforcement()
     {
         // Waitress A claims the order
@@ -139,7 +140,7 @@ class StaffAccountabilityTest extends TestCase
             ->assertStatus(403);
     }
 
-    /** @test */
+    #[Test]
     public function test_print_automatically_sets_preparing_status()
     {
         $kdsRole = Role::where('slug', 'kds')->first();

@@ -9,6 +9,7 @@ use App\Models\Hotel;
 use App\Models\Order;
 use App\Models\Department;
 use App\Models\Outlet;
+use PHPUnit\Framework\Attributes\Test;
 
 class LiveOrdersFeedTest extends TestCase
 {
@@ -35,6 +36,7 @@ class LiveOrdersFeedTest extends TestCase
         $this->outlet = Outlet::create(['hotel_id' => $this->hotel->id, 'name' => 'Cafe', 'type' => 'restaurant', 'slug' => 'cafe']);
     }
 
+    #[Test]
     public function test_admin_can_see_live_guest_orders()
     {
         // Guest Order

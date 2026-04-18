@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\Department;
 use App\Models\Outlet;
 use App\Models\RoomType;
+use PHPUnit\Framework\Attributes\Test;
 
 class CommandCenterDashboardTest extends TestCase
 {
@@ -59,6 +60,7 @@ class CommandCenterDashboardTest extends TestCase
         Room::create(['hotel_id' => $this->hotelB->id, 'room_number' => '201', 'status' => 'occupied', 'housekeeping_status' => 'clean', 'room_type_id' => $roomTypeB->id]);
     }
 
+    #[Test]
     public function test_admin_can_access_occupancy_summary_with_isolation()
     {
         $response = $this->actingAs($this->adminA, 'sanctum')
@@ -74,6 +76,7 @@ class CommandCenterDashboardTest extends TestCase
         $this->assertNotEquals(3, $response->json('total_rooms'));
     }
 
+    #[Test]
     public function test_admin_can_access_revenue_summary_with_isolation()
     {
         $response = $this->actingAs($this->adminA, 'sanctum')

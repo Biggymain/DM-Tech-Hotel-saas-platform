@@ -20,6 +20,7 @@ use App\Models\Department;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class HotelOperationalWorkflowTest extends TestCase
 {
@@ -61,6 +62,7 @@ class HotelOperationalWorkflowTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_full_pos_lifecycle_and_event_bus()
     {
         // Setup Inventory
@@ -185,6 +187,7 @@ class HotelOperationalWorkflowTest extends TestCase
         $this->assertEquals($invoice->amount_paid, $sumPayments);
     }
 
+    #[Test]
     public function test_event_replay_protection()
     {
         $beef = InventoryItem::create([
@@ -265,6 +268,7 @@ class HotelOperationalWorkflowTest extends TestCase
         $this->assertEquals(1, $replayInvoiceCount);
     }
 
+    #[Test]
     public function test_load_simulation_concurrent_orders()
     {
         $beef = InventoryItem::create([

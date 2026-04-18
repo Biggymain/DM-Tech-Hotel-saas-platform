@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class NotificationSystemTest extends TestCase
 {
@@ -21,6 +22,7 @@ class NotificationSystemTest extends TestCase
         $this->artisan('db:seed', ['--class' => 'RoleAndPermissionSeeder']);
     }
 
+    #[Test]
     public function test_user_can_fetch_own_tenant_notifications()
     {
         $hotel = Hotel::create(['name' => 'Test Hotel', 'domain' => 'test', 'is_active' => true]);
@@ -67,6 +69,7 @@ class NotificationSystemTest extends TestCase
             ->assertJsonMissing(['title' => 'Foreign Alert']);
     }
 
+    #[Test]
     public function test_user_can_mark_notification_as_read()
     {
         $hotel = Hotel::create(['name' => 'Test Hotel', 'domain' => 'test', 'is_active' => true]);
@@ -88,6 +91,7 @@ class NotificationSystemTest extends TestCase
         $this->assertTrue($notification->fresh()->is_read);
     }
 
+    #[Test]
     public function test_user_can_bulk_read_notifications()
     {
         $hotel = Hotel::create(['name' => 'Test Hotel', 'domain' => 'test', 'is_active' => true]);
@@ -102,6 +106,7 @@ class NotificationSystemTest extends TestCase
         $this->assertEquals(2, Notification::where('is_read', true)->count());
     }
 
+    #[Test]
     public function test_clean_expired_notifications_job_removes_old_data()
     {
         $hotel = Hotel::create(['name' => 'Test Hotel', 'domain' => 'test', 'is_active' => true]);

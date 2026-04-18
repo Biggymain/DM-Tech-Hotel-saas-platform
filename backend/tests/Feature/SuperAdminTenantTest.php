@@ -10,6 +10,7 @@ use App\Models\Role;
 use App\Models\Permission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class SuperAdminTenantTest extends TestCase
 {
@@ -25,6 +26,7 @@ class SuperAdminTenantTest extends TestCase
         $role->permissions()->attach($perm->id);
     }
 
+    #[Test]
     public function test_super_admin_can_switch_hotel_context_via_header(): void
     {
         $group = HotelGroup::create(['name' => 'Group A', 'slug' => 'group-a']);
@@ -55,6 +57,7 @@ class SuperAdminTenantTest extends TestCase
         $this->assertEquals($hotel->id, app('tenant_id'));
     }
 
+    #[Test]
     public function test_super_admin_without_context_allowed_by_middleware(): void
     {
         $superAdmin = User::create([

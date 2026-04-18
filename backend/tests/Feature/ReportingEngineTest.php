@@ -21,6 +21,7 @@ use App\Models\InventoryTransaction;
 use Laravel\Sanctum\Sanctum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Test;
 
 class ReportingEngineTest extends TestCase
 {
@@ -81,6 +82,7 @@ class ReportingEngineTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_dashboard_aggregates_today_revenue()
     {
         $department = Department::create(['hotel_id' => $this->hotel->id, 'name' => 'Bar', 'slug' => 'bar']);
@@ -140,6 +142,7 @@ class ReportingEngineTest extends TestCase
             ]);
     }
 
+    #[Test]
     public function test_exports_daily_sales_csv()
     {
         $response = $this->get('/api/v1/reports/export/daily-sales');
@@ -149,6 +152,7 @@ class ReportingEngineTest extends TestCase
             // ->assertHeader('Content-Disposition', 'attachment; filename=daily_sales.csv');
     }
 
+    #[Test]
     public function test_api_tenant_isolation_prevents_fetching_external_data()
     {
         $hotel2 = Hotel::create(['name' => 'Foreign Hotel', 'domain' => 'foreign', 'is_active' => true]);

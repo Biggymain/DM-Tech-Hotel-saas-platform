@@ -6,12 +6,14 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class SystemHealthTest extends TestCase
 {
     /**
      * Verify database connection is healthy.
      */
+    #[Test]
     public function test_database_connection_is_healthy()
     {
         try {
@@ -25,6 +27,7 @@ class SystemHealthTest extends TestCase
     /**
      * Verify Cache functionality is active.
      */
+    #[Test]
     public function test_cache_is_working()
     {
         Cache::put('health_check', true, 10);
@@ -34,6 +37,7 @@ class SystemHealthTest extends TestCase
     /**
      * Verify Redis connection is available for queues and broadcasting.
      */
+    #[Test]
     public function test_redis_connection_is_healthy()
     {
         // Skip actual redis ping if not configured locally to prevent build failures on minimal runners

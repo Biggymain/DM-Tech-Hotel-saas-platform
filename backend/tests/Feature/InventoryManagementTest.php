@@ -14,6 +14,7 @@ use App\Models\MenuItem;
 use App\Models\MenuItemIngredient;
 use App\Models\Order;
 use App\Models\Role;
+use PHPUnit\Framework\Attributes\Test;
 
 class InventoryManagementTest extends TestCase
 {
@@ -57,6 +58,7 @@ class InventoryManagementTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_can_view_inventory_items_scoped_to_hotel()
     {
         $otherHotel = Hotel::create(['name' => 'Other Hotel']);
@@ -86,6 +88,7 @@ class InventoryManagementTest extends TestCase
         $this->assertEquals('BEEF-01', $response->json(0)['sku']);
     }
 
+    #[Test]
     public function test_stock_reservation_and_deduction_workflow()
     {
         $beef = InventoryItem::create([
@@ -183,6 +186,7 @@ class InventoryManagementTest extends TestCase
         ]);
     }
     
+    #[Test]
     public function test_reservation_throws_insufficient_stock_exception()
     {
         $beef = InventoryItem::create([

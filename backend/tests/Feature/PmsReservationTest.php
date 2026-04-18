@@ -14,6 +14,7 @@ use App\Models\Reservation;
 use App\Models\Permission;
 use App\Models\Role;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 
 class PmsReservationTest extends TestCase
 {
@@ -59,6 +60,7 @@ class PmsReservationTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_can_create_reservation_with_automatic_folio()
     {
         $payload = [
@@ -86,6 +88,7 @@ class PmsReservationTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_prevents_overlapping_reservations_in_availability()
     {
         // Add existing booking
@@ -107,6 +110,7 @@ class PmsReservationTest extends TestCase
         $this->assertEmpty($response->json('data')); // Room 101 should not be in the list
     }
     
+    #[Test]
     public function test_check_in_opens_folio_and_sets_room_occupied()
     {
         $reservation = Reservation::create([
@@ -129,6 +133,7 @@ class PmsReservationTest extends TestCase
         $this->assertDatabaseHas('folios', ['reservation_id' => $reservation->id, 'status' => 'open']);
     }
 
+    #[Test]
     public function test_check_out_requires_zero_balance_folio()
     {
         $reservation = Reservation::create([
@@ -167,6 +172,7 @@ class PmsReservationTest extends TestCase
         $this->assertDatabaseHas('rooms', ['id' => $this->room->id, 'status' => 'available', 'housekeeping_status' => 'dirty']);
     }
 
+    #[Test]
     public function test_cannot_modify_reservation_after_deadline()
     {
         $this->hotel->update(['reservation_deadline_hours_before_checkin' => 24]);
@@ -191,6 +197,7 @@ class PmsReservationTest extends TestCase
         $response->assertJsonValidationErrors('modification_deadline');
     }
 
+    #[Test]
     public function test_admin_can_modify_reservation_after_deadline()
     {
         $this->manager->update(['is_super_admin' => true]);
@@ -214,6 +221,7 @@ class PmsReservationTest extends TestCase
         $this->assertDatabaseHas('reservations', ['id' => $reservation->id, 'special_requests' => 'Urgent modification by admin']);
     }
 
+    #[Test]
     public function test_no_show_job_marks_reservation_and_adds_penalty()
     {
         $this->hotel->update(['no_show_penalty_type' => 'full_stay']);
@@ -244,6 +252,7 @@ class PmsReservationTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_no_show_respects_grace_period()
     {
         $this->hotel->update(['reservation_grace_hours' => 24]);
@@ -263,6 +272,7 @@ class PmsReservationTest extends TestCase
         $this->assertDatabaseHas('reservations', ['id' => $reservation->id, 'status' => 'confirmed']);
     }
 
+    #[Test]
     public function test_no_show_penalty_deposit_type()
     {
         $this->hotel->update(['no_show_penalty_type' => 'deposit']);
@@ -293,6 +303,7 @@ class PmsReservationTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_qr_session_invalidated_after_no_show()
     {
         $this->hotel->update(['no_show_penalty_type' => 'deposit']);

@@ -11,6 +11,7 @@ use App\Services\HardwareFingerprintService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Config;
+use PHPUnit\Framework\Attributes\Test;
 
 class SiemWatchdogTest extends TestCase
 {
@@ -20,6 +21,7 @@ class SiemWatchdogTest extends TestCase
      * Test high-severity correlation: Hardware Mismatch + Port Violation
      * result in automatic account suspension (is_approved = false).
      */
+    #[Test]
     public function test_watchdog_suspends_user_on_severity_threshold()
     {
         // 1. Setup a legit Group Admin user

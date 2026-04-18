@@ -12,6 +12,7 @@ use App\Models\Room;
 use App\Models\HousekeepingTask;
 use App\Models\Role;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 
 class HousekeepingManagementTest extends TestCase
 {
@@ -60,6 +61,7 @@ class HousekeepingManagementTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_can_generate_tasks_automatically()
     {
         \Illuminate\Support\Facades\Event::fake();
@@ -75,6 +77,7 @@ class HousekeepingManagementTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_prevents_duplicate_daily_tasks()
     {
         HousekeepingTask::create([
@@ -92,6 +95,7 @@ class HousekeepingManagementTest extends TestCase
         $this->assertEquals(1, $count);
     }
 
+    #[Test]
     public function test_manager_can_assign_task()
     {
         \Illuminate\Support\Facades\Event::fake();
@@ -120,6 +124,7 @@ class HousekeepingManagementTest extends TestCase
         ]);
     }
 
+    #[Test]
     public function test_housekeeper_can_complete_task_which_updates_room_status()
     {
         \Illuminate\Support\Facades\Event::fake();

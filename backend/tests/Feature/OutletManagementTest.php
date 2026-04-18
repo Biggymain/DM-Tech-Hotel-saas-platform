@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Department;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class OutletManagementTest extends TestCase
 {
@@ -49,6 +50,7 @@ class OutletManagementTest extends TestCase
         $this->actingAs($this->manager);
     }
 
+    #[Test]
     public function test_can_create_outlet()
     {
         $payload = [
@@ -63,6 +65,7 @@ class OutletManagementTest extends TestCase
         $this->assertDatabaseHas('outlets', ['name' => 'Beach Bar', 'hotel_id' => $this->hotel->id]);
     }
 
+    #[Test]
     public function test_can_duplicate_item_to_outlet()
     {
         $store = Outlet::create([
