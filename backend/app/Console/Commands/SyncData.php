@@ -41,7 +41,7 @@ class SyncData extends Command
 
             if ($outletIds->isEmpty()) {
                 $this->info('No pending sync logs found.');
-                return Command::SUCCESS;
+                return self::SUCCESS;
             }
 
             foreach ($outletIds as $id) {
@@ -51,6 +51,6 @@ class SyncData extends Command
         }
 
         $this->info('All sync streams pushed to "low" queue.');
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 }
