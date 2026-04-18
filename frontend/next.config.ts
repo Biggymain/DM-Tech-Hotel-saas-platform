@@ -2,16 +2,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  outputFileTracingRoot: '/home/micky/DM-Tech-Hotel-saas-platform',
-  // @ts-ignore - Valid top-level config in Next.js 16.2.1
+  // Dynamic root detection for Kali, Docker, and GitHub Actions
+  outputFileTracingRoot: process.cwd(),
+
+  // @ts-ignore - Required for specific build optimizations in v16
   turbopack: {
-    root: '/home/micky/DM-Tech-Hotel-saas-platform'
+    root: process.cwd()
   },
-  experimental: {
-  },
+
   distDir: process.env.NEXT_DIST_DIR || ".next",
   trailingSlash: true,
-  assetPrefix: '',
   images: {
     unoptimized: true,
   },
