@@ -13,20 +13,23 @@ class ImageUploadService
      *
      * @param UploadedFile $file
      * @param string $folder
-     * @return string The public URL of the uploaded image
+     * @param string $visibility 'public' or 'private'
+     * @return string The relative path of the uploaded image
      */
-    public function upload(UploadedFile $file, string $folder = 'uploads'): string
+    public function upload(UploadedFile $file, string $folder = 'uploads', string $visibility = 'public'): string
     {
         $disk = config('filesystems.default') === 'gcs' ? 'gcs' : 'public';
         
+        $tenantId = app()->bound('tenant_id') ? app('tenant_id') : (auth()->check() ? auth()->user()->hotel_id : 'default');
+        
         // Use a unique filename to prevent overwrites and security issues
         $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-        $path = $file->storeAs($folder, $filename, $disk);
+        
+        // Structure: tenants/{tenant_id}/{visibility}/{module}/{filename}
+        $fullPath = "tenants/{$tenantId}/{$visibility}/{$folder}";
+        
+        $path = $file->storeAs($fullPath, $filename, $disk);
 
-        if ($disk === 'gcs') {
-            return Storage::disk('gcs')->url($path);
-        }
-
-        return asset(Storage::url($path));
+        return $path;
     }
 }

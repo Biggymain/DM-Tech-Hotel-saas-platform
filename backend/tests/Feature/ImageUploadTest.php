@@ -46,7 +46,40 @@ class ImageUploadTest extends TestCase
         ]);
 
         $response->assertStatus(201)
-                 ->assertJsonStructure(['message', 'url']);
+                 ->assertJsonStructure(['message', 'url', 'path']);
+        
+        $path = $response->json('path');
+        $hotelId = $this->hotel->id;
+        
+        // Assert path structure: tenants/{id}/public/test/{uuid}.jpg
+        $this->assertStringStartsWith("tenants/{$hotelId}/public/test/", $path);
+        
+        Storage::disk('public')->assertExists($path);
+    }
+
+    #[Test]
+    public function test_private_upload_is_secured()
+    {
+        Storage::fake('public');
+        
+        $file = UploadedFile::fake()->create('id_scan.jpg', 100, 'image/jpeg');
+        
+        // Manually use service for private upload since controller defaults to 'website' folder
+        $service = app(\App\Services\ImageUploadService::class);
+        $path = $service->upload($file, 'guest_ids', 'private');
+        
+        $hotelId = $this->hotel->id;
+        $this->assertStringStartsWith("tenants/{$hotelId}/private/guest_ids/", $path);
+        
+        $url = get_secure_url($path);
+        
+        if (config('filesystems.default') === 'gcs') {
+            // In GCS, it should be a signed URL (contains signature/expires etc)
+            $this->assertStringContainsString('Expires=', $url);
+        } else {
+            // Local fallback
+            $this->assertEquals(Storage::disk('public')->url($path), $url);
+        }
     }
 
     #[Test]

@@ -31,11 +31,13 @@ class ImageUploadController extends Controller
 
         try {
             $folder = $request->input('folder', 'website');
-            $url = $this->uploadService->upload($request->file('image'), $folder);
+            $path = $this->uploadService->upload($request->file('image'), $folder);
+            $url = get_secure_url($path);
 
             return response()->json([
                 'message' => 'Image uploaded successfully',
                 'url'     => $url,
+                'path'    => $path,
             ], 201);
         } catch (\Exception $e) {
             Log::error('Image upload failed: ' . $e->getMessage());

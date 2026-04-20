@@ -17,6 +17,7 @@ class Guest extends Model
         'phone',
         'identification_type',
         'identification_number',
+        'id_scan_url',
     ];
 
     protected $casts = [
@@ -26,6 +27,7 @@ class Guest extends Model
         'phone' => 'encrypted',
         'identification_type' => 'encrypted',
         'identification_number' => 'encrypted',
+        'id_scan_url' => 'encrypted',
     ];
 
     protected static function booted()
