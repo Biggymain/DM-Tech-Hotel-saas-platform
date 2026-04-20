@@ -32,7 +32,7 @@ class CommandCenterDashboardTest extends TestCase
         $this->adminA = User::create([
             'name' => 'Admin A',
             'email' => 'admin_a@test.com',
-            'password' => bcrypt('password'),
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'hotel_id' => $this->hotelA->id,
         ]);
 

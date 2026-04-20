@@ -17,6 +17,7 @@ class StaffDailyPin extends BaseModel
 
     protected $casts = [
         'expires_at' => 'datetime',
+        'pin_hash' => 'hashed',
     ];
 
     public function user()

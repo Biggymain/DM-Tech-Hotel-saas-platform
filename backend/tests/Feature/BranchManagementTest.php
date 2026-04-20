@@ -26,7 +26,7 @@ class BranchManagementTest extends TestCase
         $this->user = User::create([
             'name' => 'Group Admin',
             'email' => 'admin@test.com',
-            'password' => bcrypt('password'),
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'hotel_group_id' => $this->group->id,
         ]);
 

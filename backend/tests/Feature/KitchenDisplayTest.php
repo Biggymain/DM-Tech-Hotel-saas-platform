@@ -72,7 +72,7 @@ class KitchenDisplayTest extends TestCase
             'outlet_id' => $this->outlet->id,
             'name' => 'Chef',
             'email' => 'chef@kds.com',
-            'password' => bcrypt('password'),
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'is_super_admin' => false,
             'is_approved' => true,
             'is_on_duty' => true,

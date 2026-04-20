@@ -9,10 +9,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PaymentTransaction;
 use App\Models\PaymentGateway;
+use App\Models\ProcessedWebhook;
 use App\Services\PaymentService;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Concerns\HandlesWebhookSignatures;
 
 class PaymentWebhookController extends Controller
 {
+    use HandlesWebhookSignatures;
     protected PaymentService $paymentService;
 
     public function __construct(PaymentService $paymentService)
@@ -69,22 +73,43 @@ class PaymentWebhookController extends Controller
             return response()->json(['message' => 'Duplicate webhook transaction rejected', 'status' => 'duplicate'], 200);
         }
 
+        // Idempotency Gate
+        if (ProcessedWebhook::where('provider_reference', $gatewayTransactionId)->exists()) {
+            return response()->json(['message' => 'Webhook Processed']); // Idempotent 200 OK
+        }
+
         if ($webhookData['status'] === 'captured' && in_array($transaction->status, ['pending', 'authorized'])) {
-            try {
+            DB::transaction(function () use ($gatewayTransactionId, $gateway, $webhookData, $transaction) {
+                ProcessedWebhook::create([
+                    'provider_reference' => $gatewayTransactionId,
+                    'gateway' => $gateway,
+                    'amount' => $transaction->amount ?? null,
+                    'status' => 'captured',
+                    'processed_at' => now(),
+                ]);
+
                 $transaction->update([
                     'status' => 'captured',
                     'processed_at' => now(),
                 ]);
                 event(new \App\Events\PaymentCompleted($transaction));
-            } catch (\Illuminate\Database\QueryException $e) {
-                return response()->json(['message' => 'Duplicate transaction caught'], 409);
-            }
+            });
         } elseif ($webhookData['status'] === 'failed') {
-            $transaction->update([
-                'status' => 'failed',
-                'processed_at' => now(),
-            ]);
-            event(new \App\Events\PaymentFailed($transaction));
+            DB::transaction(function () use ($gatewayTransactionId, $gateway, $webhookData, $transaction) {
+                ProcessedWebhook::create([
+                    'provider_reference' => $gatewayTransactionId,
+                    'gateway' => $gateway,
+                    'amount' => $transaction->amount ?? null,
+                    'status' => 'failed',
+                    'processed_at' => now(),
+                ]);
+
+                $transaction->update([
+                    'status' => 'failed',
+                    'processed_at' => now(),
+                ]);
+                event(new \App\Events\PaymentFailed($transaction));
+            });
         }
 
         return response()->json(['message' => 'Webhook Processed']);
@@ -104,9 +129,7 @@ class PaymentWebhookController extends Controller
             }
 
             $signature = $request->header('x-paystack-signature');
-            $computedSignature = hash_hmac('sha512', $rawContent, $secret);
-
-            return hash_equals(trim($signature), $computedSignature);
+            return $this->verifyPaystackSignature($rawContent, $secret, trim($signature));
         }
 
         if ($gateway === 'flutterwave') {
@@ -118,8 +141,7 @@ class PaymentWebhookController extends Controller
             }
 
             $signature = $request->header('verif-hash');
-
-            return hash_equals(trim($signature), $secret);
+            return $this->verifyFlutterwaveSignature($secret, trim($signature));
         }
 
         // Add other gateways as needed (Stripe, PayPal usually have their own SDK verifiers)

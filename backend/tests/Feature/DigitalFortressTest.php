@@ -6,7 +6,7 @@ use Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
-use App\Casts\SupabasePgpCast;
+
 use App\Services\HardwareFingerprintService;
 use App\Services\HardwareValidationService;
 use App\Services\FortressLockService;
@@ -45,16 +45,16 @@ class DigitalFortressTest extends TestCase
      * Step 2: Zero-Knowledge (ZK) Encryption Test
      */
     #[Test]
-    public function test_zero_knowledge_encryption_cast()
+    public function test_data_at_rest_is_secure()
     {
-        config(['fortress.dev_passphrase' => 'test-pass']);
-        $cast = new SupabasePgpCast();
-        
-        $encrypted = $cast->set(new \App\Models\User, 'name', "Secret Message", []);
-        $this->assertEquals('encrypted_Secret Message', $encrypted);
+        $user = \App\Models\User::factory()->create([
+            'password' => 'Secret Message'
+        ]);
 
-        $decrypted = $cast->get(new \App\Models\User, 'name', "encrypted_Secret Message", []);
-        $this->assertEquals('Secret Message', $decrypted);
+        $rawPassword = DB::table('users')->where('id', $user->id)->value('password');
+
+        $this->assertNotEquals('Secret Message', $rawPassword);
+        $this->assertTrue(\Illuminate\Support\Facades\Hash::check('Secret Message', $rawPassword));
     }
 
     /**

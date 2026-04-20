@@ -27,7 +27,7 @@ class ImageUploadTest extends TestCase
             'hotel_id' => $this->hotel->id,
             'name' => 'Admin User',
             'email' => 'admin@test.com',
-            'password' => bcrypt('password'),
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
         ]);
 
         Sanctum::actingAs($this->user);

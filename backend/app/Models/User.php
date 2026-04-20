@@ -50,8 +50,8 @@ class User extends Authenticatable
         return [
             'name' => 'encrypted',
             'email_verified_at' => 'datetime',
-            'password' => \App\Casts\SupabasePgpCast::class,
-            'pin_code' => \App\Casts\SupabasePgpCast::class,
+            'password' => 'hashed',
+            'pin_code' => 'hashed',
             'is_super_admin' => 'boolean',
             'is_on_duty' => 'boolean',
             'last_duty_toggle_at' => 'datetime',

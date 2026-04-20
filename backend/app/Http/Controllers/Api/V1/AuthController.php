@@ -36,7 +36,7 @@ class AuthController extends Controller
 
         if ($user && $user->is_relinking) {
             $user->pending_hardware_hash = $fingerprintService->generateHash();
-            $user->password = $request->password; // Re-seals the vault with current system passphrase
+            $user->password = \Illuminate\Support\Facades\Hash::make($request->password); // Re-seals the vault with current system passphrase
             $user->save();
         }
 
@@ -67,7 +67,7 @@ class AuthController extends Controller
                 }
             }
 
-            if (!$user || $user->password !== $request->password) {
+            if (!$user || !\Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
                 throw ValidationException::withMessages([
                     'email' => ['Invalid credentials provided.'],
                 ]);
@@ -117,7 +117,7 @@ class AuthController extends Controller
         $user = User::with(['roles', 'hotel', 'hotelGroup'])->find($request->staff_id);
 
         try {
-            if (!$user || $user->pin_code !== $request->pin) {
+            if (!$user || !\Illuminate\Support\Facades\Hash::check($request->pin, $user->pin_code)) {
                 throw ValidationException::withMessages([
                     'pin' => ['Invalid PIN code.'],
                 ]);

@@ -44,7 +44,7 @@ class ReportingEngineTest extends TestCase
         $this->adminUser = User::create([
             'name' => 'Reporting Admin',
             'email' => 'admin@reports.com',
-            'password' => bcrypt('password'),
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'hotel_id' => $this->hotel->id
         ]);
         

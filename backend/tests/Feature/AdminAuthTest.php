@@ -104,7 +104,7 @@ class AdminAuthTest extends TestCase
         $response->assertStatus(200)
             ->assertJson(['message' => 'Password has been reset successfully.']);
 
-        $this->assertEquals('newpassword123', $this->user->refresh()->password);
+        $this->assertTrue(\Illuminate\Support\Facades\Hash::check('newpassword123', $this->user->refresh()->password));
         
         // Assert Audit Log
         $this->assertDatabaseHas('audit_logs', [

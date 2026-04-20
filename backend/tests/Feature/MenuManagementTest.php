@@ -68,7 +68,7 @@ class MenuManagementTest extends TestCase
             'hotel_id' => $this->hotel->id,
             'name' => 'Owner',
             'email' => 'menuowner@test.com',
-            'password' => bcrypt('password'),
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'is_super_admin' => false,
             'is_approved' => true,
             'hardware_hash' => 'valid-hardware-hash',

@@ -28,7 +28,7 @@ class LiveOrdersFeedTest extends TestCase
         $this->admin = User::create([
             'name' => 'Admin',
             'email' => 'admin@test.com',
-            'password' => bcrypt('password'),
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'hotel_id' => $this->hotel->id,
         ]);
 

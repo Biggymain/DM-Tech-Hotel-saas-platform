@@ -39,7 +39,7 @@ class OrderEngineTest extends TestCase
             'hotel_id' => $this->hotel->id,
             'name' => 'POS Staff',
             'email' => 'pos@test.com',
-            'password' => bcrypt('password'),
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'is_super_admin' => false,
         ]);
 

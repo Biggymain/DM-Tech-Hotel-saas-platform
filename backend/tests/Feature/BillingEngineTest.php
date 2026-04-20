@@ -55,7 +55,7 @@ class BillingEngineTest extends TestCase
         $this->adminUser = User::create([
             'name' => 'Billing Admin',
             'email' => 'admin@billing.com',
-            'password' => bcrypt('password'),
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'hotel_id' => $this->hotel->id
         ]);
         
