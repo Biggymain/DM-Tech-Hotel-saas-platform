@@ -8,6 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::table('hotel_groups', function (Blueprint $table) {
             $table->boolean('is_licensed')->default(false);
         });
@@ -15,6 +16,7 @@ return new class extends Migration
         Schema::table('hotels', function (Blueprint $table) {
             $table->foreignId('subscription_tier_id')->nullable()->constrained('subscription_tiers')->nullOnDelete();
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     public function down(): void

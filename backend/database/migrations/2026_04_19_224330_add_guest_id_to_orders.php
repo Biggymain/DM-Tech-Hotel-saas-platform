@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::table('orders', function (Blueprint $table) {
-            //
+            $table->foreignId('guest_id')->nullable()->after('hotel_id')->constrained('guests')->nullOnDelete();
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -22,7 +24,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            //
+            $table->dropForeign(['guest_id']);
+            $table->dropColumn('guest_id');
         });
     }
 };

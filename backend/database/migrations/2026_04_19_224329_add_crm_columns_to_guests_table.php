@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::table('guests', function (Blueprint $table) {
-            //
+            $table->boolean('is_vip')->default(false)->after('identification_number');
+            $table->integer('loyalty_points')->default(0)->after('is_vip');
+            $table->string('status')->default('active')->index()->after('loyalty_points');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -22,7 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('guests', function (Blueprint $table) {
-            //
+            $table->dropColumn(['is_vip', 'loyalty_points', 'status']);
         });
     }
 };

@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::table('hotel_groups', function (Blueprint $table) {
-            $table->boolean('license_fee_paid')->default(false);
+            $table->timestamp('license_fee_paid_at')->nullable()->after('is_licensed');
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -22,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('hotel_groups', function (Blueprint $table) {
-            //
+            $table->dropColumn('license_fee_paid_at');
         });
     }
 };
