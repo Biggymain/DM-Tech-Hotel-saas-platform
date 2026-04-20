@@ -23,11 +23,18 @@ class PmsFolioController extends Controller
      */
     public function index(Request $request)
     {
-        $folios = Folio::with(['reservation.guest', 'items'])
+        $folios = Folio::with(['reservation.guest', 'items', 'payments'])
             ->where('hotel_id', $request->user()->hotel_id)
             ->where('status', 'open')
             ->get();
             
+        foreach ($folios as $folio) {
+            $this->verifyFolioIntegrity($folio);
+        }
+
+        // Filter out any that were just suspended
+        $folios = $folios->filter(fn($f) => $f->status === 'open')->values();
+
         return response()->json(['success' => true, 'data' => $folios]);
     }
 
@@ -112,10 +119,41 @@ class PmsFolioController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        $folio = Folio::with(['items', 'reservation.guest'])
+        $folio = Folio::with(['items', 'reservation.guest', 'payments'])
             ->where('reservation_id', $reservation->id)
             ->firstOrFail();
 
+        $this->verifyFolioIntegrity($folio);
+
         return response()->json(['success' => true, 'data' => $folio]);
+    }
+
+    /**
+     * Internal: Re-verify all JWS receipts for this folio.
+     */
+    private function verifyFolioIntegrity(Folio $folio)
+    {
+        if ($folio->status === 'suspended_tamper_detected') {
+            return;
+        }
+
+        $payments = $folio->payments;
+        foreach ($payments as $payment) {
+            if (!\App\Services\ReceiptTokenGuard::verifyToken($payment)) {
+                $folio->update(['status' => 'suspended_tamper_detected']);
+
+                \App\Models\AuditLog::create([
+                    'hotel_id' => $folio->hotel_id,
+                    'change_type' => 'security_alert',
+                    'entity_type' => 'folio',
+                    'entity_id' => $folio->id,
+                    'source' => 'jws_shield',
+                    'reason' => "Tamper detected! JWS Token verification failed for PaymentTransaction #{$payment->id}.",
+                    'new_values' => ['payment_transaction_id' => $payment->id, 'severity' => 20]
+                ]);
+
+                abort(403, 'TAMPER DETECTED: Financial ledger seal broken. Folio suspended. SIEM Alert dispatched.');
+            }
+        }
     }
 }

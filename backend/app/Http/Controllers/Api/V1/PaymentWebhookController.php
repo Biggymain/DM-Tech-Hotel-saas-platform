@@ -88,9 +88,16 @@ class PaymentWebhookController extends Controller
                     'processed_at' => now(),
                 ]);
 
+                $receiptToken = \App\Services\ReceiptTokenGuard::generateToken(
+                    $transaction->id,
+                    $transaction->amount,
+                    $gatewayTransactionId
+                );
+
                 $transaction->update([
                     'status' => 'captured',
                     'processed_at' => now(),
+                    'receipt_token' => $receiptToken,
                 ]);
                 event(new \App\Events\PaymentCompleted($transaction));
             });

@@ -109,7 +109,7 @@ class GuestReservationFromPortalTest extends TestCase
         ]);
         
         $this->assertDatabaseHas('guests', [
-            'email' => 'alice@example.com',
+            'email_bidx' => hash_hmac('sha256', 'alice@example.com', config('app.key')),
         ]);
     }
 }

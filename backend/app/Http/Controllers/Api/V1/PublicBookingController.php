@@ -204,11 +204,12 @@ class PublicBookingController extends Controller
         return DB::transaction(function () use ($validated, $hotel, $roomType, $availableRooms, $checkIn, $checkOut, $nights, $totalAmount, $quantity) {
             // 1. Create or find guest
             $guest = Guest::withoutGlobalScopes()->firstOrCreate(
-                ['email' => $validated['guest_email'], 'hotel_id' => $hotel->id],
+                ['email_bidx' => hash_hmac('sha256', strtolower(trim($validated['guest_email'])), config('app.key')), 'hotel_id' => $hotel->id],
                 [
                     'hotel_id'   => $hotel->id,
                     'first_name' => explode(' ', $validated['guest_name'])[0],
                     'last_name'  => explode(' ', $validated['guest_name'])[1] ?? '',
+                    'email'      => $validated['guest_email'],
                     'phone'      => $validated['guest_phone'] ?? null,
                 ]
             );

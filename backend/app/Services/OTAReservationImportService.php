@@ -78,10 +78,25 @@ class OTAReservationImportService
         
         // Assuming ReservationService takes raw arrays per existing architecture context
         // OR we can create the Guest explicitly if ReservationService demands guest_id
-        $guest = \App\Models\Guest::firstOrCreate(
-            ['email' => $guestData['email'], 'hotel_id' => $integration->hotel_id],
-            ['first_name' => $guestData['first_name'], 'last_name' => $guestData['last_name'], 'phone' => $guestData['phone']]
-        );
+        $email = $guestData['email'];
+        if ($email) {
+            $guest = \App\Models\Guest::firstOrCreate(
+                ['email_bidx' => hash_hmac('sha256', strtolower(trim($email)), config('app.key')), 'hotel_id' => $integration->hotel_id],
+                [
+                    'first_name' => $guestData['first_name'], 
+                    'last_name' => $guestData['last_name'], 
+                    'email' => $email,
+                    'phone' => $guestData['phone']
+                ]
+            );
+        } else {
+            $guest = \App\Models\Guest::create([
+                'hotel_id' => $integration->hotel_id,
+                'first_name' => $guestData['first_name'],
+                'last_name' => $guestData['last_name'],
+                'phone' => $guestData['phone']
+            ]);
+        }
 
         // Find an available physical room of this type
         $availableRooms = $this->reservationService->getAvailableRooms(

@@ -19,6 +19,28 @@ class Guest extends Model
         'identification_number',
     ];
 
+    protected $casts = [
+        'first_name' => 'encrypted',
+        'last_name' => 'encrypted',
+        'email' => 'encrypted',
+        'phone' => 'encrypted',
+        'identification_type' => 'encrypted',
+        'identification_number' => 'encrypted',
+    ];
+
+    protected static function booted()
+    {
+        static::saving(function ($guest) {
+            $secret = config('app.key');
+            if (!empty($guest->email)) {
+                $guest->email_bidx = hash_hmac('sha256', strtolower(trim($guest->email)), $secret);
+            }
+            if (!empty($guest->phone)) {
+                $guest->phone_bidx = hash_hmac('sha256', trim($guest->phone), $secret);
+            }
+        });
+    }
+
     public function hotel()
     {
         return $this->belongsTo(Hotel::class);

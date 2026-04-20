@@ -59,10 +59,11 @@ class GuestReservationController extends Controller
         ]);
 
         $guest = Guest::firstOrCreate(
-            ['email' => $validated['guest']['email'], 'hotel_id' => $session->hotel_id],
+            ['email_bidx' => hash_hmac('sha256', strtolower(trim($validated['guest']['email'])), config('app.key')), 'hotel_id' => $session->hotel_id],
             [
                 'first_name' => $validated['guest']['first_name'],
                 'last_name' => $validated['guest']['last_name'],
+                'email' => $validated['guest']['email'],
                 'phone' => $validated['guest']['phone'] ?? null,
             ]
         );

@@ -22,6 +22,7 @@ class PaymentTransaction extends BaseModel
         'payment_source',
         'context_metadata',
         'processed_at',
+        'receipt_token',
     ];
 
     protected $casts = [

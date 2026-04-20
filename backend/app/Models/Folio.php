@@ -38,4 +38,9 @@ class Folio extends BaseModel
     {
         return $this->hasMany(FolioItem::class);
     }
+
+    public function payments()
+    {
+        return $this->hasMany(PaymentTransaction::class);
+    }
 }

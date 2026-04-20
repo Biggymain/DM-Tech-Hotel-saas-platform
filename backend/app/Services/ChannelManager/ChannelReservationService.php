@@ -61,14 +61,25 @@ class ChannelReservationService
 
             // 4. Find or create guest record
             $guestName = $payload['guest_name'] ?? ($payload['guest']['first_name'] . ' ' . $payload['guest']['last_name']);
-            $guest = Guest::firstOrCreate(
-                ['email' => $payload['guest']['email'] ?? null, 'hotel_id' => $connection->hotel_id],
-                [
+            $email = $payload['guest']['email'] ?? null;
+            if ($email) {
+                $guest = Guest::firstOrCreate(
+                    ['email_bidx' => hash_hmac('sha256', strtolower(trim($email)), config('app.key')), 'hotel_id' => $connection->hotel_id],
+                    [
+                        'first_name' => $payload['guest']['first_name'] ?? $guestName,
+                        'last_name' => $payload['guest']['last_name'] ?? '',
+                        'email' => $email,
+                        'phone' => $payload['guest']['phone'] ?? null,
+                    ]
+                );
+            } else {
+                $guest = Guest::create([
+                    'hotel_id' => $connection->hotel_id,
                     'first_name' => $payload['guest']['first_name'] ?? $guestName,
                     'last_name' => $payload['guest']['last_name'] ?? '',
                     'phone' => $payload['guest']['phone'] ?? null,
-                ]
-            );
+                ]);
+            }
 
             // 5. Create the PMS reservation
             $reservationData = [
