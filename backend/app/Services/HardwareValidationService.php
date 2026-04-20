@@ -15,7 +15,7 @@ class HardwareValidationService
      */
     public function validate(string $hash): ?array
     {
-        \Illuminate\Support\Facades\Log::debug("HardwareValidationService: Validating hash: {$hash}");
+
         $cacheKey = "licensing_sentry_{$hash}";
         $device = Cache::get($cacheKey);
 

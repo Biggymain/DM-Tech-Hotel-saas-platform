@@ -13,9 +13,9 @@ class TerminateGuestPortalSessions
     public function handle(GuestCheckedOut $event): void
     {
         GuestPortalSession::where('reservation_id', $event->reservation->id)
-            ->where('is_active', true)
+            ->where('status', '!=', 'revoked')
             ->update([
-                'is_active' => false,
+                'status' => 'revoked',
                 'expires_at' => now(),
             ]);
     }

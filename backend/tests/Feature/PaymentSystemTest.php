@@ -187,7 +187,7 @@ class PaymentSystemTest extends TestCase
             'guest_id' => $this->guest->id,
             'session_token' => 'portal_token_999',
             'device_fingerprint' => 'portal_fingerprint',
-            'is_active' => true,
+            'status' => 'active',
             'expires_at' => now()->addDay()
         ]);
 

@@ -46,97 +46,35 @@ class TenantScope implements Scope
     private function executeApply(Builder $builder, Model $model): void
     {
         $tenantId = $this->getTenantId();
+        $branchId = app()->bound('current_branch_id') ? (int)app('current_branch_id') : null;
 
-        if (Auth::check()) {
-            $user = Auth::user();
-            
-            if (!$user) {
-                return;
-            }
-
-            // ── 0. Hotels Table Isolation ─────────────────────────────────────────
-            if ($model instanceof \App\Models\Hotel || $model->getTable() === 'hotels') {
-                if ($user->is_super_admin) {
-                     return; 
-                }
-                
-                $idToMatch = $tenantId ?? $user->hotel_id;
-
-                if ($idToMatch) {
-                    $builder->where($model->qualifyColumn('id'), $idToMatch);
-                    return;
-                }
-                
-                if (!empty($user->hotel_group_id)) {
-                    $builder->where($model->qualifyColumn('hotel_group_id'), $user->hotel_group_id);
-                    return;
-                }
-
-                $builder->whereRaw('1 = 0');
-                return;
-            }
-
-            // ── SUPER ADMIN ───────────────────────────────────────────────────────
-            if ($user->is_super_admin) {
-                if ($tenantId) {
-                    $builder->where($model->qualifyColumn('hotel_id'), $tenantId);
-                }
-                return;
-            }
-
-            // ── GROUP ADMIN ───────────────────────────────────────────────────────
-            if (!empty($user->hotel_group_id) && empty($user->hotel_id)) {
-                if (self::$resolvedBranchIds === null) {
-                    self::$resolvedBranchIds = \App\Models\HotelGroup::withoutGlobalScopes()
-                        ->find($user->hotel_group_id)
-                        ?->branches()
-                        ->withoutGlobalScopes()
-                        ->pluck('hotels.id')
-                        ->toArray() ?? [];
-                }
-                $branchIds = self::$resolvedBranchIds;
-
-                $builder->where(function($q) use ($model, $user, $branchIds) {
-                    if (Schema::hasColumn($model->getTable(), 'hotel_group_id')) {
-                        $q->orWhere($model->qualifyColumn('hotel_group_id'), $user->hotel_group_id);
-                    }
-                    $q->orWhereIn($model->qualifyColumn('hotel_id'), $branchIds);
-                    $q->orWhere(function($sub) use ($model) {
-                        $sub->whereNull($model->qualifyColumn('hotel_id'));
-                        if (Schema::hasColumn($model->getTable(), 'hotel_group_id')) {
-                            $sub->whereNull($model->qualifyColumn('hotel_id'));
-                        }
-                    });
-                });
-                return;
-            }
-
-            // ── BRANCH USER (Manager, Receptionist, Staff) ────────────────────────
-            $idToFilter = $tenantId ?? $user->hotel_id;
-            if ($idToFilter) {
-                $builder->where(function($q) use ($model, $idToFilter) {
-                    $q->where($model->qualifyColumn('hotel_id'), $idToFilter)
-                      ->orWhereNull($model->qualifyColumn('hotel_id'));
-                });
-                return;
-            }
-
-            $builder->whereRaw('1 = 0');
-            return;
-        }
-
-        if ($tenantId) {
-            if ($model instanceof \App\Models\Hotel || $model->getTable() === 'hotels') {
+        // 1. Hotels Table Isolation
+        if ($model instanceof \App\Models\Hotel || $model->getTable() === 'hotels') {
+            if ($tenantId) {
                 $builder->where($model->qualifyColumn('id'), $tenantId);
-            } else {
-                $builder->where($model->qualifyColumn('hotel_id'), $tenantId);
             }
             return;
         }
 
-        // ── NO AUTH, NO BOUND TENANT ──────────────────────────────────────────────
-        // This covers login page, register page, and Artisan seeders.
-        // Do NOT apply any scope so these operations succeed on a fresh database.
+        // 2. Primary Scope: Tenant (hotel_id)
+        if ($tenantId) {
+            $builder->where($model->qualifyColumn('hotel_id'), $tenantId);
+
+            // 3. Sub-Scope: Branch (If model supports it and branch is bound)
+            // We check for both 'outlet_id' and 'branch_id' as they are used interchangeably in legacy code
+            if ($branchId) {
+                if (Schema::hasColumn($model->getTable(), 'outlet_id')) {
+                    $builder->where($model->qualifyColumn('outlet_id'), $branchId);
+                } elseif (Schema::hasColumn($model->getTable(), 'branch_id')) {
+                    $builder->where($model->qualifyColumn('branch_id'), $branchId);
+                }
+            }
+            return;
+        }
+
+        // 4. Fallback for unauthenticated access / Artisan commands
+        // If we are in the console or have a bound tenant, we've already handled it.
+        // Group Admin multi-branch scoping is now bound in TenantIsolationMiddleware exclusively.
     }
 
     /**

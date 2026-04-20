@@ -42,7 +42,7 @@ class OrderFiredToStation implements ShouldBroadcast
      */
     public function broadcastOn(): PrivateChannel
     {
-        return new PrivateChannel("hotel.{$this->order->hotel_id}.station.{$this->stationName}");
+        return new PrivateChannel("hotel.{$this->order->hotel_id}.branch.{$this->order->outlet_id}.station.{$this->stationName}");
     }
 
     public function broadcastAs(): string

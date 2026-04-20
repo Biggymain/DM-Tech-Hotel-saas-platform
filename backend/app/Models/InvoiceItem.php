@@ -12,6 +12,7 @@ class InvoiceItem extends Model
         'quantity',
         'unit_price',
         'total',
+        'transfer_log_id',
     ];
 
     public function invoice()

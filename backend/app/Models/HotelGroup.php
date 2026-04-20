@@ -26,6 +26,7 @@ class HotelGroup extends Model
         'currency',
         'tax_rate',
         'is_active',
+        'is_licensed',
     ];
 
     protected $casts = [

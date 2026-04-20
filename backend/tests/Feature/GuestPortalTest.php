@@ -74,7 +74,7 @@ class GuestPortalTest extends TestCase
             'room_id' => $this->room->id,
             'reservation_id' => $this->reservation->id,
             'guest_id' => $this->guest->id,
-            'is_active' => true
+            'status' => 'pending_activation'
         ]);
     }
 
@@ -88,7 +88,7 @@ class GuestPortalTest extends TestCase
             'session_token' => 'token_123',
             'pin_code' => 'doe',
             'expires_at' => now()->addDay(),
-            'is_active' => true
+            'status' => 'active'
         ]);
 
         $response = $this->postJson('/api/v1/guest/session/authenticate', [
@@ -109,7 +109,7 @@ class GuestPortalTest extends TestCase
             'session_token' => 'token_123',
             'pin_code' => 'doe',
             'expires_at' => now()->addDay(),
-            'is_active' => true
+            'status' => 'active'
         ]);
 
         $response = $this->postJson('/api/v1/guest/session/authenticate', [
@@ -138,7 +138,7 @@ class GuestPortalTest extends TestCase
             'device_fingerprint' => 'hash_abc123',
             'trusted_device' => true,
             'expires_at' => now()->addDay(),
-            'is_active' => true
+            'status' => 'active'
         ]);
 
         // Deliberately wrong/null PIN, but valid fingerprint
@@ -163,7 +163,7 @@ class GuestPortalTest extends TestCase
             'pin_code' => 'doe',
             'trusted_device' => true, // authenticated
             'expires_at' => now()->addDay(),
-            'is_active' => true
+            'status' => 'active'
         ]);
 
         $response = $this->getJson("/api/v1/guest/dashboard?session_token=token_123");
@@ -185,7 +185,7 @@ class GuestPortalTest extends TestCase
             'pin_code' => 'doe',
             'trusted_device' => true,
             'expires_at' => now()->addDay(),
-            'is_active' => true
+            'status' => 'active'
         ]);
 
         $response = $this->postJson('/api/v1/guest/requests', [
@@ -223,7 +223,7 @@ class GuestPortalTest extends TestCase
             'pin_code' => 'doe',
             'trusted_device' => true,
             'expires_at' => now()->addDay(),
-            'is_active' => true
+            'status' => 'active'
         ]);
 
         $response = $this->postJson('/api/v1/guest/requests', [
@@ -252,7 +252,7 @@ class GuestPortalTest extends TestCase
             'pin_code' => 'doe',
             'trusted_device' => true,
             'expires_at' => now()->addDay(),
-            'is_active' => true
+            'status' => 'active'
         ]);
 
         $response = $this->postJson('/api/v1/guest/requests', [
@@ -278,14 +278,14 @@ class GuestPortalTest extends TestCase
             'reservation_id' => $this->reservation->id,
             'session_token' => 'token_123',
             'expires_at' => now()->addDay(),
-            'is_active' => true
+            'status' => 'active'
         ]);
 
         event(new GuestCheckedOut($this->reservation));
 
         $this->assertDatabaseHas('guest_portal_sessions', [
             'id' => $session->id,
-            'is_active' => false
+            'status' => 'revoked'
         ]);
     }
 
@@ -297,14 +297,14 @@ class GuestPortalTest extends TestCase
             'room_id' => $this->room->id,
             'session_token' => 'token_old',
             'expires_at' => now()->subDay(),
-            'is_active' => true
+            'status' => 'active'
         ]);
 
         dispatch(new CleanExpiredGuestSessionsJob());
 
         $this->assertDatabaseHas('guest_portal_sessions', [
             'id' => $session->id,
-            'is_active' => false
+            'status' => 'revoked'
         ]);
     }
 }

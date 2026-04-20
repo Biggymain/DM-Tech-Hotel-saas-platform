@@ -15,14 +15,16 @@ class LowInventoryBroadcast implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $hotelId;
+    public $branchId;
     public $inventoryData;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(int $hotelId, array $inventoryData)
+    public function __construct(int $hotelId, int $branchId, array $inventoryData)
     {
         $this->hotelId = $hotelId;
+        $this->branchId = $branchId;
         $this->inventoryData = $inventoryData;
     }
 
@@ -34,9 +36,9 @@ class LowInventoryBroadcast implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel("hotel.{$this->hotelId}.inventory"),
-            new PrivateChannel("hotel.{$this->hotelId}.notifications"),
-            new PresenceChannel("presence-hotel.{$this->hotelId}.staff")
+            new PrivateChannel("hotel.{$this->hotelId}.branch.{$this->branchId}.inventory"),
+            new PrivateChannel("hotel.{$this->hotelId}.branch.{$this->branchId}.notifications"),
+            new PresenceChannel("presence-hotel.{$this->hotelId}.branch.{$this->branchId}.staff")
         ];
     }
 }

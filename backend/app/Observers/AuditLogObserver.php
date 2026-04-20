@@ -21,7 +21,24 @@ class AuditLogObserver
         'port_violation'      => 12,
         'watchdog_suspension' => 15,
         'cross_tenant_violation' => 14,
+        'order_voided'        => 12,
+        'failed_handshake'    => 10,
+        'webhook_spoofing'    => 15,
+        'stock_transfer_dispute' => 10,
     ];
+
+    /**
+     * Handle the AuditLog "creating" event to persist severity score.
+     */
+    public function creating(AuditLog $log): void
+    {
+        $log->severity_score = self::SEVERITY_MAP[$log->change_type] ?? 0;
+        
+        // Ensure entity_id is never NULL to satisfy database NOT NULL constraints in legacy tests
+        if ($log->entity_id === null) {
+            $log->entity_id = 0;
+        }
+    }
 
     /**
      * Handle the AuditLog "created" event.
@@ -35,7 +52,7 @@ class AuditLogObserver
 
         // 2. Neutrality Gate: Return immediately for low-severity events (< 12)
         // This ensures zero overhead for 99% of standard system actions.
-        $severity = self::SEVERITY_MAP[$log->change_type] ?? 0;
+        $severity = $log->severity_score;
         if ($severity < 12) {
             return;
         }

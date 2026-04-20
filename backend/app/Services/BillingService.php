@@ -42,9 +42,9 @@ class BillingService
                 $subtotal += ($item->price * $item->quantity);
             }
             
-            // Fixed tax and service charge logic for the sake of the engine architecture (can be dynamic per hotel later)
-            $taxRate = 0.10; // 10%
-            $serviceChargeRate = 0.05; // 5%
+            // Dynamic tax and service charge logic sourced from SystemSettings
+            $taxRate = \App\Models\SystemSetting::getSetting('global_tax_rate', 0.10);
+            $serviceChargeRate = \App\Models\SystemSetting::getSetting('global_service_charge', 0.05);
             
             $taxAmount = $subtotal * $taxRate;
             $serviceCharge = $subtotal * $serviceChargeRate;
@@ -72,12 +72,18 @@ class BillingService
                 $description = $item->menuItem ? $item->menuItem->name : 'Custom Item';
                 $lineTotal = $item->price * $item->quantity;
                 
+                $transferLog = \App\Models\TransferLog::where('order_item_id', $item->id)
+                    ->where('status', 'success')
+                    ->latest()
+                    ->first();
+                
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
                     'description' => $description,
                     'quantity' => $item->quantity,
                     'unit_price' => $item->price,
                     'total' => $lineTotal,
+                    'transfer_log_id' => $transferLog ? $transferLog->id : null,
                 ]);
             }
 
@@ -119,6 +125,21 @@ class BillingService
             
             if (round($newBalance, 2) <= 0) {
                 $invoice->status = 'paid';
+                
+                // Payment Kill-Switch
+                $sessionToken = request()->cookie('guest_session') ?? request()->header('X-Guest-Session');
+                if ($sessionToken) {
+                    app(\App\Services\SessionSentryService::class)->revoke($sessionToken);
+                } else {
+                    // Fallback to active sessions linked to this order's context
+                    $session = \App\Models\GuestPortalSession::where('context_type', 'order')
+                        ->where('context_id', $invoice->order_id)
+                        ->where('status', '!=', 'revoked')
+                        ->first();
+                    if ($session) {
+                        app(\App\Services\SessionSentryService::class)->revoke($session->id);
+                    }
+                }
             } else {
                 $invoice->status = 'partially_paid';
             }

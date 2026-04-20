@@ -42,7 +42,7 @@ class GuestPortalOrderingTest extends TestCase
             'context_id' => 5,
             'session_token' => Str::random(64),
             'expires_at' => now()->addHours(24),
-            'is_active' => true,
+            'status' => 'active',
         ]);
 
         $response = $this->withHeaders(['X-Guest-Session' => $session->session_token])
@@ -78,7 +78,7 @@ class GuestPortalOrderingTest extends TestCase
             'context_id' => 12,
             'session_token' => Str::random(64),
             'expires_at' => now()->addHours(24),
-            'is_active' => true,
+            'status' => 'active',
         ]);
 
         $response = $this->withHeaders(['X-Guest-Session' => $session->session_token])

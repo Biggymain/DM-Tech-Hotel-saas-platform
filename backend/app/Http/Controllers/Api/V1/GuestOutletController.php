@@ -29,7 +29,7 @@ class GuestOutletController extends Controller
         $categories = MenuCategory::where('hotel_id', $session->hotel_id)
             ->with(['items' => function($query) use ($outletId) {
                 $query->where('outlet_id', $outletId)
-                      ->where('is_active', true)
+                      ->where('status', '!=', 'revoked')
                       ->where('is_available', true);
             }])
             ->get();
@@ -68,7 +68,7 @@ class GuestOutletController extends Controller
         // Simple recommendation logic: Top items or chef specials
         // In a real scenario, this would use a recommendation engine or history
         $recommendations = MenuItem::where('outlet_id', $outletId)
-            ->where('is_active', true)
+            ->where('status', '!=', 'revoked')
             ->where('is_available', true)
             ->where(function($query) {
                 // Return items marked as popular or special (if columns exist) 
@@ -181,7 +181,7 @@ class GuestOutletController extends Controller
         $token = $request->header('X-Guest-Session') ?? $request->session_token ?? $request->bearerToken();
         
         $session = GuestPortalSession::where('session_token', $token)
-            ->where('is_active', true)
+            ->where('status', '!=', 'revoked')
             ->where('expires_at', '>', now())
             ->firstOrFail();
 

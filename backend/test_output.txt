@@ -1,0 +1,11 @@
+PHPUnit 11.5.55 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.16
+Configuration: /home/micky/DM-Tech-Hotel-saas-platform/backend/phpunit.xml
+
+MIGRATION_DEBUG: Running create_audit_logs_table migration
+.....                                                               5 / 5 (100%)
+
+Time: 00:01.415, Memory: 52.50 MB
+
+OK (5 tests, 11 assertions)

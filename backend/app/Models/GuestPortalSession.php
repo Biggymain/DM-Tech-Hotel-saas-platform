@@ -23,14 +23,16 @@ class GuestPortalSession extends Model
         'device_fingerprint',
         'trusted_device',
         'expires_at',
-        'is_active',
+        'status',
+        'waiter_id',
+        'last_activity_at',
     ];
 
     protected $casts = [
         'trusted_device' => 'boolean',
-        'is_active' => 'boolean',
         'expires_at' => 'datetime',
         'context_data' => 'array',
+        'last_activity_at' => 'datetime',
     ];
 
     public function guest()
@@ -46,5 +48,10 @@ class GuestPortalSession extends Model
     public function reservation()
     {
         return $this->belongsTo(Reservation::class);
+    }
+
+    public function waiter()
+    {
+        return $this->belongsTo(User::class, 'waiter_id');
     }
 }

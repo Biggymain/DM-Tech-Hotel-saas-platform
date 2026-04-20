@@ -29,7 +29,7 @@ class GuestRequestController extends Controller
         // For guests filtering by session_token
         if ($request->has('session_token')) {
             $session = GuestPortalSession::where('session_token', $request->session_token)
-                ->where('is_active', true)
+                ->where('status', '!=', 'revoked')
                 ->where('expires_at', '>', now())
                 ->firstOrFail();
 
@@ -53,7 +53,7 @@ class GuestRequestController extends Controller
         ]);
 
         $session = GuestPortalSession::where('session_token', $request->session_token)
-            ->where('is_active', true)
+            ->where('status', '!=', 'revoked')
             ->where('expires_at', '>', now())
             ->firstOrFail();
 

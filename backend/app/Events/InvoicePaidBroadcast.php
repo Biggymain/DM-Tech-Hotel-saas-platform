@@ -15,14 +15,16 @@ class InvoicePaidBroadcast implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $hotelId;
+    public $branchId;
     public $invoiceData;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(int $hotelId, array $invoiceData)
+    public function __construct(int $hotelId, int $branchId, array $invoiceData)
     {
         $this->hotelId = $hotelId;
+        $this->branchId = $branchId;
         $this->invoiceData = $invoiceData;
     }
 
@@ -34,8 +36,8 @@ class InvoicePaidBroadcast implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel("hotel.{$this->hotelId}.billing"),
-            new PresenceChannel("presence-hotel.{$this->hotelId}.staff")
+            new PrivateChannel("hotel.{$this->hotelId}.branch.{$this->branchId}.billing"),
+            new PresenceChannel("presence-hotel.{$this->hotelId}.branch.{$this->branchId}.staff")
         ];
     }
 }

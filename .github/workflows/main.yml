@@ -65,7 +65,7 @@ jobs:
         SUPABASE_KEY: mock-key-for-ci
         DEV_PASSPHRASE: mock-passphrase-for-ci
         APP_SUPER_ADMIN_EMAIL: admin@dmtech.ng
-        APP_SUPER_ADMIN_PASSWORD: [REDACTED_BY_SECURITY_SCRUB]
+        APP_SUPER_ADMIN_PASSWORD: ${{ secrets.APP_SUPER_ADMIN_PASSWORD }}
       run: |
         php artisan migrate --force
         php artisan optimize:clear

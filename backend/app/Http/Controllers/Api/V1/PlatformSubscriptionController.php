@@ -66,10 +66,19 @@ class PlatformSubscriptionController extends Controller
             $subscription = $this->subscriptionService->createSubscription($hotel, $plan);
         }
 
+        // Group Licensing Checkout Logic
+        $group = $hotel->group;
+        $amountToCharge = $plan->price;
+        if ($group && !$group->is_licensed) {
+            $licensingFee = \App\Models\SystemSetting::getSetting('group_licensing_fee', 1000.00);
+            $amountToCharge += $licensingFee;
+            $group->update(['is_licensed' => true]);
+        }
+
         // Simulate successful payment record
         $invoice = $this->subscriptionService->recordPayment(
             $subscription,
-            $plan->price,
+            $amountToCharge,
             $validated['gateway'],
             'SUBS_' . uniqid()
         );

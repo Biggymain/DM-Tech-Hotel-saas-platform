@@ -13,10 +13,10 @@ return new class extends Migration
                 $table->enum('billing_cycle', ['monthly', 'yearly'])->default('monthly')->after('price');
             }
             if (!Schema::hasColumn('subscription_plans', 'max_rooms')) {
-                $table->integer('max_rooms')->default(0)->after('billing_cycle');
+                $table->integer('max_rooms')->nullable()->default(0)->after('billing_cycle');
             }
             if (!Schema::hasColumn('subscription_plans', 'max_staff')) {
-                $table->integer('max_staff')->default(0)->after('max_rooms');
+                $table->integer('max_staff')->nullable()->default(0)->after('max_rooms');
             }
             if (!Schema::hasColumn('subscription_plans', 'is_active')) {
                 $table->boolean('is_active')->default(true)->after('features');

@@ -50,6 +50,6 @@ class HardwareMarriageService
             ]);
         });
 
-        Log::info("🔒 Hardware Marriage Successful for User: {$user->email} (Hash: {$newHash})");
+
     }
 }

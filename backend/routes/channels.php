@@ -21,16 +21,24 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 // ── Station KDS channels ──────────────────────────────────────────────────────
-// Only authenticated users in the same branch can subscribe.
+// Only authenticated users in the same branch OR the Group Owner can subscribe.
 Broadcast::channel('hotel.{hotelId}.branch.{branchId}.station.{stationId}', function ($user, $hotelId, $branchId, $stationId) {
-    if (!$user->is_super_admin) {
-        if ((int) $user->hotel_id !== (int) $hotelId) return false;
-        if ((int) ($user->branch_id ?? $user->hotel_id) !== (int) $branchId) return false;
-        
-        // If they have a station assigned, they must match it (unless manager)
-        if ($user->kitchen_station_id && (int) $user->kitchen_station_id !== (int) $stationId && !$user->isBranchManager()) {
-            return false;
-        }
+    if ($user->is_super_admin) return true;
+
+    // Support for Group Owners (bypass branch check if they own the hotel)
+    if (!empty($user->hotel_group_id) && !$user->hotel_id) {
+        $ownsHotel = \App\Models\Hotel::where('id', $hotelId)
+            ->where('hotel_group_id', $user->hotel_group_id)
+            ->exists();
+        if ($ownsHotel) return ['id' => $user->id, 'name' => $user->name, 'station_id' => $stationId];
+    }
+
+    if ((int) $user->hotel_id !== (int) $hotelId) return false;
+    if ((int) ($user->branch_id ?? $user->hotel_id) !== (int) $branchId) return false;
+    
+    // If they have a station assigned, they must match it (unless manager)
+    if ($user->kitchen_station_id && (int) $user->kitchen_station_id !== (int) $stationId && !$user->isBranchManager()) {
+        return false;
     }
 
     return ['id' => $user->id, 'name' => $user->name, 'station_id' => $stationId];
@@ -38,10 +46,19 @@ Broadcast::channel('hotel.{hotelId}.branch.{branchId}.station.{stationId}', func
 
 // ── Kitchen Display System (KDS) common channel ──────────────────────────────
 Broadcast::channel('hotel.{hotelId}.branch.{branchId}.kds', function ($user, $hotelId, $branchId) {
-    if (!$user->is_super_admin) {
-        if ((int) $user->hotel_id !== (int) $hotelId) return false;
-        if ((int) ($user->branch_id ?? $user->hotel_id) !== (int) $branchId) return false;
+    if ($user->is_super_admin) return true;
+
+    // Support for Group Owners
+    if (!empty($user->hotel_group_id) && !$user->hotel_id) {
+        $ownsHotel = \App\Models\Hotel::where('id', $hotelId)
+            ->where('hotel_group_id', $user->hotel_group_id)
+            ->exists();
+        if ($ownsHotel) return ['id' => $user->id, 'name' => $user->name];
     }
+
+    if ((int) $user->hotel_id !== (int) $hotelId) return false;
+    if ((int) ($user->branch_id ?? $user->hotel_id) !== (int) $branchId) return false;
+
     return ['id' => $user->id, 'name' => $user->name];
 });
 

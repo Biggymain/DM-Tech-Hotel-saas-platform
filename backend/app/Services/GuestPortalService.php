@@ -45,7 +45,7 @@ class GuestPortalService
             'pin_code' => $pinCode,
             'device_info' => $deviceInfo,
             'expires_at' => now()->addHours(24),
-            'is_active' => true,
+            'status' => 'pending_activation',
         ]);
 
         return $session;
@@ -57,7 +57,7 @@ class GuestPortalService
     public function authenticateWithPin(string $sessionToken, ?string $pin, ?string $fingerprint = null)
     {
         $session = GuestPortalSession::where('session_token', $sessionToken)
-            ->where('is_active', true)
+            ->where('status', '!=', 'revoked')
             ->where('expires_at', '>', now())
             ->first();
 

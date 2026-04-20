@@ -15,14 +15,16 @@ class OrderCreatedBroadcast implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $hotelId;
+    public $branchId;
     public $orderData;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(int $hotelId, array $orderData)
+    public function __construct(int $hotelId, int $branchId, array $orderData)
     {
         $this->hotelId = $hotelId;
+        $this->branchId = $branchId;
         $this->orderData = $orderData;
     }
 
@@ -34,9 +36,9 @@ class OrderCreatedBroadcast implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel("hotel.{$this->hotelId}.orders"),
-            new PrivateChannel("hotel.{$this->hotelId}.kitchen"),
-            new PresenceChannel("presence-hotel.{$this->hotelId}.staff")
+            new PrivateChannel("hotel.{$this->hotelId}.branch.{$this->branchId}.orders"),
+            new PrivateChannel("hotel.{$this->hotelId}.branch.{$this->branchId}.kitchen"),
+            new PresenceChannel("presence-hotel.{$this->hotelId}.branch.{$this->branchId}.staff")
         ];
     }
 }

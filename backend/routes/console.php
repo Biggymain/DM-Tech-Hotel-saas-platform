@@ -43,3 +43,7 @@ Artisan::command('pms:night-audit', function () {
 \Illuminate\Support\Facades\Schedule::job(new \App\Jobs\BatchSyncToCloudJob)->everyMinute()->withoutOverlapping();
 
 \Illuminate\Support\Facades\Schedule::command('reports:monthly-stakeholder')->monthlyOn(1, '01:00');
+
+\Illuminate\Support\Facades\Schedule::call(function () {
+    app(\App\Services\SessionSentryService::class)->reapPendingSessions();
+})->everyFiveMinutes()->name('guest-session-reaper');

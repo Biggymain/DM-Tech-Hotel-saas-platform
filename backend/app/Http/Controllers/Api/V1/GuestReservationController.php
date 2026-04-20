@@ -97,7 +97,7 @@ class GuestReservationController extends Controller
         $token = $request->header('X-Guest-Session') ?? $request->session_token ?? $request->bearerToken();
         
         $session = GuestPortalSession::where('session_token', $token)
-            ->where('is_active', true)
+            ->where('status', '!=', 'revoked')
             ->where('expires_at', '>', now())
             ->firstOrFail();
 

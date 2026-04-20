@@ -15,6 +15,7 @@ class TableSession extends Model
         'status',
         'opened_at',
         'closed_at',
+        'opened_by_id',
     ];
 
     protected $casts = [
@@ -25,5 +26,10 @@ class TableSession extends Model
     public function guests()
     {
         return $this->hasMany(TableSessionGuest::class);
+    }
+
+    public function openedBy()
+    {
+        return $this->belongsTo(User::class, 'opened_by_id');
     }
 }

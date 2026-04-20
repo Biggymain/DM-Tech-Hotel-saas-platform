@@ -69,7 +69,7 @@ class InventoryHandshakeTest extends TestCase
             'to_location_id' => $this->barOutlet->id,
             'quantity_requested' => 10,
             'requested_by' => $this->barman->id,
-            'status' => 'requested',
+            'status' => 'pending',
         ]);
 
         $this->postJson("/api/v1/inventory/transfers/{$transfer->id}/dispatch", [
@@ -80,7 +80,7 @@ class InventoryHandshakeTest extends TestCase
         $this->assertEquals(90, $this->sourceItem->current_stock);
         
         $transfer->refresh();
-        $this->assertEquals('dispatched', $transfer->status);
+        $this->assertEquals('in_transit', $transfer->status);
     }
 
     #[Test]
@@ -96,7 +96,7 @@ class InventoryHandshakeTest extends TestCase
             'quantity_requested' => 10,
             'quantity_dispatched' => 10,
             'requested_by' => $this->barman->id,
-            'status' => 'dispatched',
+            'status' => 'in_transit',
         ]);
 
         $this->barman->refresh();
@@ -132,7 +132,7 @@ class InventoryHandshakeTest extends TestCase
             'quantity_requested' => 10,
             'quantity_dispatched' => 10,
             'requested_by' => $this->barman->id,
-            'status' => 'dispatched',
+            'status' => 'in_transit',
         ]);
 
         $this->postJson("/api/v1/inventory/transfers/{$transfer->id}/receive", [
@@ -141,7 +141,7 @@ class InventoryHandshakeTest extends TestCase
         ])->assertStatus(200);
 
         $transfer->refresh();
-        $this->assertEquals('received', $transfer->status);
+        $this->assertEquals('completed', $transfer->status);
 
         // Check destination stock
         $destItem = InventoryItem::where('sku', 'BEER-001')

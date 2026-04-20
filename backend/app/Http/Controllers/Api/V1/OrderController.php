@@ -70,7 +70,8 @@ class OrderController extends Controller
             'order_number' => 'nullable|string|unique:orders,order_number',
         ]);
 
-        $waitressId = $validated['waiter_id'] ?? $request->user()->id;
+        $guestSession = $request->attributes->get('guest_session');
+        $waitressId = $guestSession && $guestSession->waiter_id ? $guestSession->waiter_id : ($validated['waiter_id'] ?? $request->user()->id);
 
         // Verify waitress is on duty and belongs to the outlet
         $waiter = \App\Models\User::withoutGlobalScopes()->find($request->input('waiter_id'));
@@ -239,6 +240,82 @@ class OrderController extends Controller
 
         $order->delete();
         return response()->json(['message' => 'Order deleted successfully']);
+    }
+
+    /**
+     * POST /api/v1/pos/orders/{order}/void
+     */
+    public function void(Request $request, Order $order)
+    {
+        $validated = $request->validate([
+            'reason' => 'required|string|min:5'
+        ]);
+
+        $order = $this->orderService->voidOrder($order, $validated['reason'], $request->user()->id);
+
+        return response()->json([
+            'message' => 'Order voided successfully',
+            'data'    => $order
+        ]);
+    }
+
+    /**
+     * POST /api/v1/pos/orders/transfer-items
+     * Handshake Protocol for transferring liability of items to another staff member.
+     */
+    public function transferItems(Request $request)
+    {
+        $validated = $request->validate([
+            'item_ids' => 'required|array',
+            'item_ids.*' => 'exists:order_items,id',
+            'target_staff_id' => 'required|exists:users,id',
+            'target_staff_pin' => 'required|string|size:4',
+            'target_session_id' => 'nullable|exists:table_sessions,id',
+            'reason' => 'nullable|string'
+        ]);
+
+        try {
+            $transferredItems = app(\App\Services\TransferService::class)->transferItems(
+                $validated['item_ids'],
+                $request->user()->id,
+                $validated['target_staff_id'],
+                $validated['target_staff_pin'],
+                $validated['target_session_id'] ?? null,
+                $validated['reason'] ?? null
+            );
+
+            return response()->json([
+                'message' => 'Items successfully transferred.',
+                'data' => $transferredItems
+            ]);
+        } catch (\Exception $e) {
+            $status = $e->getCode() >= 400 && $e->getCode() < 600 ? $e->getCode() : 500;
+            return response()->json(['message' => $e->getMessage()], $status);
+        }
+    }
+
+    /**
+     * POST /api/v1/pos/orders/activate-session
+     */
+    public function activateSession(Request $request)
+    {
+        $validated = $request->validate([
+            'session_token' => 'required|string',
+            'waiter_id' => 'required|integer|exists:users,id',
+            'waiter_pin' => 'required|string'
+        ]);
+
+        try {
+            $session = app(\App\Services\SessionSentryService::class)->activate(
+                $validated['session_token'],
+                $validated['waiter_id'],
+                $validated['waiter_pin']
+            );
+            return response()->json(['message' => 'Session activated successfully.', 'data' => $session]);
+        } catch (\Exception $e) {
+            $status = $e->getCode() >= 400 && $e->getCode() < 600 ? $e->getCode() : 500;
+            return response()->json(['message' => $e->getMessage()], $status);
+        }
     }
 
     /**

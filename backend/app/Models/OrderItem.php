@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class OrderItem extends BaseModel
 {
+    use HasFactory;
     protected $fillable = [
         'hotel_id',
         'order_id',
@@ -13,6 +16,9 @@ class OrderItem extends BaseModel
         'subtotal',
         'notes',
         'kitchen_section',
+        'status',
+        'waiter_id',
+        'table_session_id',
     ];
 
     protected $casts = [
@@ -37,5 +43,15 @@ class OrderItem extends BaseModel
     public function menuItem()
     {
         return $this->belongsTo(MenuItem::class);
+    }
+
+    public function waiter()
+    {
+        return $this->belongsTo(User::class, 'waiter_id');
+    }
+
+    public function tableSession()
+    {
+        return $this->belongsTo(TableSession::class);
     }
 }

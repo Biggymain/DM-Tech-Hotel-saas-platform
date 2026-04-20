@@ -31,6 +31,13 @@ class GuestPortalController extends Controller
             'device_info' => 'nullable|string',
         ]);
 
+        $hotel = \App\Models\Hotel::with('activeSubscription')->find($request->hotel_id);
+        if ($hotel && $hotel->activeSubscription && $hotel->activeSubscription->status === 'suspended') {
+            return response()->json([
+                'message' => 'Account Suspended: Please renew your subscription to perform this action.',
+            ], 403);
+        }
+
         $session = $this->portalService->createSessionFromContext(
             $request->hotel_id,
             $request->context_type,
@@ -76,7 +83,7 @@ class GuestPortalController extends Controller
         ]);
 
         $session = GuestPortalSession::where('session_token', $request->session_token)
-            ->where('is_active', true)
+            ->where('status', '!=', 'revoked')
             ->where('expires_at', '>', now())
             ->firstOrFail();
 
@@ -101,7 +108,7 @@ class GuestPortalController extends Controller
                 $q->where('hotel_id', $request->user()->hotel_id);
             })
             ->where(function($q) {
-                $q->where('is_active', true);
+                $q->where('status', '!=', 'revoked');
             })
             ->where(function($q) {
                 $q->where('expires_at', '>', now());

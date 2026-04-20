@@ -20,7 +20,7 @@ class GuestRequestService
 
     public function createRequest(GuestPortalSession $session, array $data)
     {
-        if (!$session->is_active || $session->expires_at < now()) {
+        if ($session->status === 'revoked' || $session->expires_at < now()) {
             throw ValidationException::withMessages(['session' => 'Session is expired or inactive.']);
         }
 

@@ -24,17 +24,25 @@ class SubscriptionSystemTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
-        // Seed plans
-        $this->artisan('db:seed --class=SubscriptionPlanSeeder');
-        
-        $this->plan = SubscriptionPlan::where('slug', 'professional')->first();
+
+        // Use a factory-created plan so the test is decoupled from seeder slugs.
+        $this->plan = SubscriptionPlan::factory()->create([
+            'name'          => 'Professional',
+            'slug'          => 'professional',
+            'price'         => 99900,
+            'billing_cycle' => 'monthly',
+            'max_rooms'     => null,
+            'max_staff'     => null,
+            'features'      => ['pms', 'pos', 'analytics'],
+            'is_active'     => true,
+        ]);
+
         $this->hotel = Hotel::factory()->create();
         $this->user = User::factory()->create([
-            'hotel_id' => $this->hotel->id,
+            'hotel_id'       => $this->hotel->id,
             'is_super_admin' => false,
         ]);
-        
+
         $this->subscriptionService = app(SubscriptionService::class);
     }
 
@@ -132,7 +140,12 @@ class SubscriptionSystemTest extends TestCase
     public function test_platform_analytics_returns_data()
     {
         $this->subscriptionService->createSubscription($this->hotel, $this->plan);
-        
+
+        // OwnerAnalyticsController requires hotel_group_id on the user
+        $group = \App\Models\HotelGroup::factory()->create();
+        $this->hotel->update(['hotel_group_id' => $group->id]);
+        $this->user->update(['hotel_group_id' => $group->id]);
+
         $response = $this->actingAs($this->user, 'sanctum')
             ->getJson('/api/v1/admin/platform/analytics');
 

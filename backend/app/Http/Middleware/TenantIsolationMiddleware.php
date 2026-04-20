@@ -49,13 +49,13 @@ class TenantIsolationMiddleware
                       ?? $request->query('hotel_id')
                       ?? $request->input('hotel_id');
 
-        \Illuminate\Support\Facades\Log::info("TenantIsolationMiddleware: targetHotelId=" . ($targetHotelId ?? 'NULL') . " Headers: " . json_encode($request->headers->all()));
+
 
         // ── 3. SUPER_ADMIN passes without any tenant context (unless specified) ──
         if ($user->is_super_admin) {
             $effectiveId = $targetHotelId ?? $user->hotel_id;
             if ($effectiveId) {
-                \Illuminate\Support\Facades\Log::info("Binding tenant_id for SuperAdmin: " . $effectiveId);
+
                 app()->instance('tenant_id', (int)$effectiveId);
                 app()->instance('active_hotel_id', (int)$effectiveId);
             }
@@ -92,6 +92,11 @@ class TenantIsolationMiddleware
         // Bind the tenant ID into the service container for TenantScope usage
         app()->instance('tenant_id', $user->hotel_id);
         app()->instance('active_hotel_id', $user->hotel_id);
+
+        $branchId = $request->header('X-Branch-ID') ?? $request->header('X-Outlet-ID');
+        if ($branchId) {
+            app()->instance('current_branch_id', (int)$branchId);
+        }
 
         return $next($request);
     }

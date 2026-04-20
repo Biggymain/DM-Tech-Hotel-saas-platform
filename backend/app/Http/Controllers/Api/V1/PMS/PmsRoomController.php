@@ -59,6 +59,14 @@ class PmsRoomController extends Controller
         $data = $request->all();
         $data['hotel_id'] = $hotelId;
 
+        $branch = \App\Models\Hotel::with('tier')->find($hotelId);
+        if ($branch && $branch->tier) {
+            $currentRoomCount = $branch->rooms()->count();
+            if ($branch->tier->room_limit !== null && $currentRoomCount >= $branch->tier->room_limit) {
+                return response()->json(['success' => false, 'message' => 'Upgrade Required: Room limit reached for current tier.'], 403);
+            }
+        }
+
         $room = $this->roomService->createRoom($data);
 
         return response()->json([

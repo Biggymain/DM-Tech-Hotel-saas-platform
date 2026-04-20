@@ -15,8 +15,8 @@ class CleanExpiredGuestSessionsJob implements ShouldQueue
 
     public function handle()
     {
-        GuestPortalSession::where('is_active', true)
+        GuestPortalSession::where('status', '!=', 'revoked')
             ->where('expires_at', '<', now())
-            ->update(['is_active' => false]);
+            ->update(['status' => 'revoked']);
     }
 }

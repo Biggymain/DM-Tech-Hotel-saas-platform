@@ -146,7 +146,6 @@ class LockEventController extends Controller
                 "[LockWebhook] ⚠️  SECURITY EVENT: {$event->event_type} on room {$event->room_number} " .
                 "at hotel #{$hotel->id}. Source: {$event->webhook_source}"
             );
-            // TODO: Dispatch AlertSecurityTeam notification in production
         }
     }
 }

@@ -22,6 +22,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant'        => \App\Http\Middleware\TenantIsolationMiddleware::class,
             'tenant.branch' => \App\Http\Middleware\Tenant\TenantBranchContext::class,
             'module.active' => \App\Http\Middleware\ModuleAccessMiddleware::class,
+            'feature'       => \App\Http\Middleware\EnsureHasFeature::class,
+            'feature.guard' => \App\Http\Middleware\FeatureGuard::class,
+            'is_session_active' => \App\Http\Middleware\VerifyGuestSession::class,
         ]);
         $middleware->api(prepend: [
 //            \App\Http\Middleware\SanitizeInput::class, // Strip tags first

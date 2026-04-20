@@ -39,7 +39,7 @@ class AuditLogService
             'hotel_id' => $tenantId,
             'user_id' => $logUserId,
             'entity_type' => $entityType,
-            'entity_id' => $entityId,
+            'entity_id' => $entityId ?? 0,
             'change_type' => $changeType,
             'old_values' => $oldValues,
             'new_values' => $newValues,

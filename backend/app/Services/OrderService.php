@@ -79,10 +79,10 @@ class OrderService
     public function updateStatus(Order $order, string $newStatus, string $station): Order
     {
         $validTransitions = [
-            'pending'   => ['cooking', 'confirmed', 'served'],
-            'confirmed' => ['cooking', 'served'],
-            'cooking'   => ['ready'],
-            'ready'     => ['served'],
+            'pending'   => ['cooking', 'confirmed', 'served', 'voided'],
+            'confirmed' => ['cooking', 'served', 'voided'],
+            'cooking'   => ['ready', 'voided'],
+            'ready'     => ['served', 'voided'],
         ];
 
         $currentStatus = $order->order_status ?: 'pending';
@@ -142,6 +142,64 @@ class OrderService
         }
 
         Log::info("[OrderService] Workflow stepping to: {$newStatus} for order #{$order->id} (station: {$station})");
+
+        return $order->fresh();
+    }
+
+    /**
+     * Void an order and notify relevant systems (KDS, Audit, Inventory).
+     */
+    public function voidOrder(Order $order, string $reason, ?int $userId = null): Order
+    {
+        $currentStatus = $order->order_status ?: 'pending';
+        $hotelId = $order->hotel_id;
+        $userId = $userId ?? auth()->id() ?? $order->created_by;
+
+        DB::transaction(function () use ($order, $reason, $currentStatus, $hotelId, $userId) {
+            $order->update([
+                'order_status' => 'voided',
+                'void_reason'  => $reason
+            ]);
+
+            // 1. SIEM High-Severity Audit Log
+            // Triggers Score 12 automatically in AuditLogObserver
+            \App\Services\AuditLogService::log(
+                get_class($order), $order->id, 'order_voided',
+                ['status' => $currentStatus], ['status' => 'voided', 'reason' => $reason],
+                $reason, 'api', $hotelId, $userId
+            );
+
+            // 2. KDS Notification
+            // If ticket exists and is being prepared, notify stations to stop
+            $tickets = \App\Models\KitchenTicket::where('order_id', $order->id)
+                ->whereIn('status', ['pending', 'preparing', 'cooking'])
+                ->get();
+
+            foreach ($tickets as $ticket) {
+                $ticket->update(['status' => 'voided']);
+                
+                // Get station name from relationship or fallback
+                $stationName = $ticket->kitchenStation?->name ?? 'main';
+                
+                broadcast(new \App\Events\OrderStatusUpdated($order, 'voided', $stationName))->toOthers();
+            }
+
+            // 3. Security Kill-Switch
+            if (stripos($reason, 'Security') !== false) {
+                $sessionToken = request()->cookie('guest_session') ?? request()->header('X-Guest-Session');
+                if ($sessionToken) {
+                    app(\App\Services\SessionSentryService::class)->revoke($sessionToken);
+                } else {
+                    $session = \App\Models\GuestPortalSession::where('context_type', 'order')
+                        ->where('context_id', $order->id)
+                        ->where('status', '!=', 'revoked')
+                        ->first();
+                    if ($session) {
+                        app(\App\Services\SessionSentryService::class)->revoke($session->id);
+                    }
+                }
+            }
+        });
 
         return $order->fresh();
     }

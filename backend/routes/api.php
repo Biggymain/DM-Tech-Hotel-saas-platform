@@ -104,6 +104,11 @@ Route::prefix('v1')->group(function () {
     Route::post('guest/verify-pin', [GuestSessionController::class, 'verifyPin']);
 
     // Organization Management (GROUP_ADMIN + SUPER_ADMIN only — no single-hotel tenant scope needed)
+    Route::prefix('owner')->middleware('auth:sanctum')->group(function () {
+        Route::get('/analytics/master-summary', [\App\Http\Controllers\Api\V1\OwnerAnalyticsController::class, 'masterSummary']);
+        Route::get('/analytics/export', [\App\Http\Controllers\Api\V1\OwnerAnalyticsController::class, 'exportMasterSummary']);
+    });
+
     Route::prefix('organization')->middleware('auth:sanctum')->group(function () {
         Route::get('/overview', [OrganizationController::class, 'overview']);
         Route::get('/branches', [OrganizationController::class, 'branches']);
@@ -186,12 +191,12 @@ Route::prefix('v1')->group(function () {
         Route::post('/reservations', [GuestReservationController::class, 'store']);
     });
 
-    Route::middleware(['auth:sanctum', \App\Http\Middleware\TenantMiddleware::class])->group(function () {
+    Route::middleware(['auth:sanctum', \App\Http\Middleware\TenantMiddleware::class, 'feature.guard'])->group(function () {
         Route::apiResource('departments', DepartmentController::class)->middleware('role.verify:hotel.manage');
         Route::apiResource('hotels', Controller::class)->only(['index'])->middleware('role.verify:hotel.manage');
 
         // PMS Routes
-        Route::prefix('pms')->group(function () {
+        Route::prefix('pms')->middleware('feature:pms')->group(function () {
             // Availability
             Route::get('/availability', [PmsAvailabilityController::class, 'index']);
 
@@ -205,7 +210,8 @@ Route::prefix('v1')->group(function () {
             // Rooms
             Route::get('/rooms/map', [PmsRoomController::class, 'roomMap'])->middleware('role.verify:pms.rooms.view');
             Route::get('/rooms', [PmsRoomController::class, 'index'])->middleware('role.verify:pms.rooms.view');
-            Route::post('/rooms', [PmsRoomController::class, 'store'])->middleware('role.verify:pms.rooms.manage');
+            Route::post('/rooms', [PmsRoomController::class, 'store'])
+                ->middleware(['role.verify:pms.rooms.manage', 'feature:rooms.create']);
             Route::put('/rooms/{room}/status', [PmsRoomController::class, 'updateStatus'])->middleware('role.verify:pms.rooms.manage');
             Route::put('/rooms/{room}/housekeeping', [PmsRoomController::class, 'updateHousekeeping'])->middleware('role.verify:pms.rooms.manage');
 
@@ -265,11 +271,19 @@ Route::prefix('v1')->group(function () {
             Route::get('/', [OrderController::class, 'index'])->middleware('role.verify:orders.view');
             Route::get('/velocity', [OrderController::class, 'velocityMetrics'])->middleware('role.verify:orders.view');
             Route::post('/', [OrderController::class, 'store'])->middleware('role.verify:pos.manage');
+            Route::post('/activate-session', [OrderController::class, 'activateSession'])->middleware('role.verify:pos.manage');
+            Route::post('/transfer-items', [OrderController::class, 'transferItems'])->middleware('role.verify:orders.update');
             Route::get('/{order}', [OrderController::class, 'show'])->middleware('role.verify:orders.view');
             Route::put('/{order}/status', [OrderController::class, 'updateStatus'])->middleware('role.verify:orders.update');
             Route::post('/{order}/claim', [OrderController::class, 'claim'])->middleware('role.verify:orders.update');
+            Route::post('/{order}/void', [OrderController::class, 'void'])->middleware('role.verify:orders.update');
             Route::delete('/{order}', [OrderController::class, 'destroy'])->middleware('role.verify:orders.delete');
             Route::get('/kds', [OrderController::class, 'kds'])->middleware('role.verify:kds.view');
+        });
+        
+        // Alignment Alias for Phase 6.3 - Waitress Handshake
+        Route::prefix('pos')->group(function() {
+            Route::post('/activate-session', [OrderController::class, 'activateSession'])->middleware('role.verify:pos.manage');
         });
 
         // Menu Management
@@ -342,7 +356,8 @@ Route::prefix('v1')->group(function () {
             Route::get('transfers', [StockTransferController::class, 'index'])->middleware('role.verify:inventory.view');
             Route::post('transfers/request', [StockTransferController::class, 'request'])->middleware('role.verify:inventory.manage');
             Route::post('transfers/{transfer}/dispatch', [StockTransferController::class, 'dispatch'])->middleware('role.verify:inventory.manage');
-            Route::post('transfers/{transfer}/receive', [StockTransferController::class, 'receive'])->middleware('role.verify:inventory.manage');
+            Route::post('transfers/{transfer}/receive', [StockTransferController::class, 'receive'])
+                ->middleware(['role.verify:inventory.manage', 'feature.guard']);
         });
 
         // Billing & Payments
@@ -385,6 +400,11 @@ Route::prefix('v1')->group(function () {
                 Route::get('daily-sales', [ReportController::class, 'exportDailySales'])->middleware('role.verify:reports.export');
                 Route::get('outlet-performance', [ReportController::class, 'exportOutletPerformance'])->middleware('role.verify:reports.export');
             });
+        });
+
+        // Financial Analytics (Phase 6.1)
+        Route::prefix('analytics')->middleware('feature:financial_analytics')->group(function () {
+            Route::get('/revenue-summary', [\App\Http\Controllers\Api\V1\AnalyticsController::class, 'revenueSummary']);
         });
 
         // Notifications
@@ -466,6 +486,9 @@ Route::prefix('v1')->group(function () {
                 Route::get('/invoices', [PlatformSubscriptionController::class, 'invoices']);
             });
 
+            // Platform Analytics (accessible to any authenticated hotel admin)
+            Route::get('/platform/analytics', [\App\Http\Controllers\Api\V1\OwnerAnalyticsController::class, 'platformAnalytics']);
+
             // Leisure Hub (Port 3003)
             Route::prefix('leisure')->group(function() {
                 Route::get('/metrics', [DashboardController::class, 'leisureMetrics'])->middleware('role.verify:manager.view');
@@ -476,9 +499,18 @@ Route::prefix('v1')->group(function () {
                 Route::apiResource('memberships', LeisureController::class)->only(['index', 'store', 'show']);
             });
 
-            // Platform owner analytics (Usually restricted to super-admin)
-            Route::get('/platform/analytics', [PlatformSubscriptionController::class, 'analytics']);
         });
     });
+
+    // Super Admin Billing & Platform Lifecycle (Exempt from Tenant Scope)
+    Route::middleware(['auth:sanctum'])->group(function() {
+        if (request()->user() && !request()->user()->is_super_admin) {
+            // Optional: abort if accessed by non-admins if not protected by another layer
+        }
+        Route::patch('/super-admin/plans', [\App\Http\Controllers\Api\V1\SuperAdminBillingController::class, 'updatePlans']);
+        Route::get('/super-admin/billing/health', [\App\Http\Controllers\Api\V1\SuperAdminBillingController::class, 'health']);
+    });
 });
+
+Route::post('v1/monnify/webhook', [\App\Http\Controllers\Api\V1\MonnifyWebhookController::class, 'handle']);
 

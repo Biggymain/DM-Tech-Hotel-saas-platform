@@ -26,7 +26,7 @@ class GuestReservationFromPortalTest extends TestCase
             'context_id' => 1,
             'session_token' => Str::random(64),
             'expires_at' => now()->addHours(24),
-            'is_active' => true,
+            'status' => 'active',
         ]);
 
         $roomType = RoomType::create([
@@ -68,7 +68,7 @@ class GuestReservationFromPortalTest extends TestCase
             'context_id' => 1,
             'session_token' => Str::random(64),
             'expires_at' => now()->addHours(24),
-            'is_active' => true,
+            'status' => 'active',
         ]);
 
         $roomType = RoomType::create([

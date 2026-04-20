@@ -23,7 +23,7 @@ class TransactionContextService
 
         if ($sessionToken) {
             $session = GuestPortalSession::where('session_token', $sessionToken)
-                ->where('is_active', true)
+                ->where('status', '!=', 'revoked')
                 ->first();
             
             if ($session) {

@@ -61,7 +61,7 @@ class GuestExperienceEnhancementTest extends TestCase
             'room_id' => $this->room->id,
             'session_token' => 'test-token-123',
             'expires_at' => now()->addHours(24),
-            'is_active' => true,
+            'status' => 'active',
         ]);
     }
 

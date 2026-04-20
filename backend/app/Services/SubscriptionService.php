@@ -136,6 +136,7 @@ class SubscriptionService
             ->where('current_period_end', '<', now())
             ->get();
 
+        /** @var HotelSubscription $sub */
         foreach ($expiring as $sub) {
             $this->handlePaymentFailure($sub);
         }
@@ -145,8 +146,56 @@ class SubscriptionService
             ->where('grace_period_ends_at', '<', now())
             ->get();
 
+        /** @var HotelSubscription $sub */
         foreach ($toSuspend as $sub) {
             $this->suspendSubscription($sub);
         }
+    }
+
+    /**
+     * Calculate monthly dynamic rate for a group and its branches.
+     */
+    public function calculateDynamicRate(int $groupId): float
+    {
+        // 1. Fetch group branches with their tier
+        $group = \App\Models\HotelGroup::with(['branches' => function ($query) {
+            $query->withoutGlobalScopes()->with('tier');
+        }])->find($groupId);
+
+        if (!$group) return 0.0;
+
+        $totalMonthly = 0.0;
+        $activeBranches = 0;
+
+        foreach ($group->branches as $branch) {
+            if ($branch->tier) {
+                $totalMonthly += (float)$branch->tier->price;
+                $activeBranches++;
+            } else {
+                $subscription = HotelSubscription::where('hotel_id', $branch->id)
+                    ->whereIn('status', ['active', 'trial', 'grace_period'])
+                    ->latest()
+                    ->first();
+
+                if ($subscription && $subscription->plan) {
+                    $totalMonthly += (float)$subscription->plan->price;
+                    $activeBranches++;
+                }
+            }
+        }
+
+        // 2. Multi-Branch Limit Reward
+        if ($activeBranches > 1) {
+            $discount = \App\Models\SystemSetting::getSetting('multi_branch_discount_rate', 0.10);
+            $totalMonthly -= ($totalMonthly * $discount);
+        }
+
+        // 3. One-Time Licensing Fee
+        if (!$group->is_licensed) {
+            $licensingFee = \App\Models\SystemSetting::getSetting('group_licensing_fee', 1000.00); // 1000 or whatever default
+            $totalMonthly += (float)$licensingFee;
+        }
+
+        return (float) $totalMonthly;
     }
 }
