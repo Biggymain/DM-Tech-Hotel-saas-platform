@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
         Schema::table('hotel_groups', function (Blueprint $table) {
-            $table->timestamp('license_fee_paid_at')->nullable()->after('is_licensed');
+            $table->timestamp('license_fee_paid_at')->nullable();
         });
         Schema::enableForeignKeyConstraints();
     }
