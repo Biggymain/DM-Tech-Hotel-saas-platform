@@ -19,6 +19,7 @@ class MenuItem extends BaseModel
         'image_url',
         'is_available',
         'is_active',
+        'status',
         'display_order',
         'station_id',
         'station_name',
