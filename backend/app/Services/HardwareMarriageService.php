@@ -22,6 +22,15 @@ class HardwareMarriageService
             return;
         }
 
+        // 7.5: One-Out, One-In Logic for Managers
+        if ($oldHash && $user->isBranchManager()) {
+            DB::connection('supabase')->table('devices')
+                ->where('hardware_hash', $oldHash)
+                ->delete();
+                
+            Log::info("Manager {$user->id} relinking: Old hardware signature {$oldHash} purged from Supabase.");
+        }
+
         DB::transaction(function () use ($user, $oldHash, $newHash) {
             // 1. Finalize the marriage
             $user->hardware_hash = $newHash;

@@ -371,4 +371,54 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Password has been reset successfully.']);
     }
+
+    /**
+     * Request Hardware Relink (Request Access)
+     * POST /api/v1/auth/request-hardware-access
+     */
+    public function requestHardwareAccess(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $user = User::with('roles')->where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
+        // 7.5: Staff Lockdown
+        // Roles: Waitress (waitress), Kitchen (kitchen/kitchenmanager), Bartender (bartender)
+        $isStaff = $user->roles()->whereIn('slug', ['waitress', 'kitchen', 'bartender'])->exists();
+        
+        if ($isStaff) {
+            return response()->json([
+                'message' => 'Self-service access link restricted for staff. Please contact Support.',
+                'error_code' => 'staff_lockdown'
+            ], 403);
+        }
+
+        // Enable relinking state
+        $user->update([
+            'is_relinking' => true,
+            'is_approved' => false
+        ]);
+
+        // Audit Log
+        AuditLog::create([
+            'hotel_id' => $user->hotel_id,
+            'user_id' => $user->id,
+            'entity_type' => 'user',
+            'entity_id' => $user->id,
+            'change_type' => 'hardware_relink_requested',
+            'reason' => 'User requested hardware access link',
+            'source' => 'api'
+        ]);
+
+        // Notify user (simulated)
+        Log::info("🔐 Hardware Relink Token for {$user->email}: Link ready. User set to is_relinking=true.");
+
+        return response()->json([
+            'message' => 'Hardware access link has been sent to your email. Please login from your new device.'
+        ]);
+    }
 }

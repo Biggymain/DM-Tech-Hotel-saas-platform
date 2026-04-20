@@ -63,7 +63,8 @@ abstract class TestCase extends BaseTestCase
         $pdo = $conn->getPdo();
         
         // Create necessary tables for licensing sync mocks
-        $pdo->exec("CREATE TABLE branches (id TEXT PRIMARY KEY, group_id TEXT, expires_at DATETIME, manager_email TEXT, owner_email TEXT, created_at DATETIME)");
+        $pdo->exec("CREATE TABLE branches (id TEXT PRIMARY KEY, branch_token TEXT, group_id TEXT, expires_at DATETIME, manager_email TEXT, owner_email TEXT, is_active INTEGER, created_at DATETIME)");
+        $pdo->exec("CREATE TABLE devices (id INTEGER PRIMARY KEY AUTOINCREMENT, branch_id TEXT, hardware_hash TEXT, is_active INTEGER, is_manually_locked INTEGER, expires_at DATETIME, last_sync DATETIME, updated_at DATETIME)");
         
         $pdo->sqliteCreateFunction('encrypt_sensitive_data', fn($d, $p) => "encrypted_{$d}");
         $pdo->sqliteCreateFunction('decrypt_sensitive_data', fn($d, $p) => strtr($d, ['encrypted_' => '']));

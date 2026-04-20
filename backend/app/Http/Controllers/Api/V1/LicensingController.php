@@ -35,6 +35,23 @@ class LicensingController extends Controller
             return response()->json(['message' => 'Invalid branch token.'], 404);
         }
 
+        // 7.5: Slot Enforcement
+        $hotel = \App\Models\Hotel::find($branch->id);
+        $slots = $hotel ? $hotel->device_slots : 5;
+        
+        $activeCount = DB::connection('supabase')->table('devices')
+            ->where('branch_id', $branch->id)
+            ->where('is_active', true)
+            ->count();
+            
+        if ($activeCount >= $slots) {
+            return response()->json([
+                'message' => 'Branch device limit reached.',
+                'slots' => $slots,
+                'active_count' => $activeCount
+            ], 403);
+        }
+
         $hardwareHash = $request->hardware_id ?? $this->fingerprintService->generateHash();
 
         // Register or Reactivate the device

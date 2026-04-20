@@ -55,7 +55,9 @@ class SiemJsonFormatter extends JsonFormatter
         $context = $this->redactPII($record->context);
 
         $siemRecord = [
-            'timestamp'           => $record->datetime->format('Y-m-d H:i:s'),
+            'timestamp'           => ($record->datetime instanceof \DateTimeInterface) 
+                                     ? $record->datetime->format('Y-m-d H:i:s') 
+                                     : (is_string($record->datetime) ? $record->datetime : now()->toDateTimeString()),
             'level'               => $record->level->getName(),
             'message'             => $record->message,
             'request_ip'          => $context['request_ip'] ?? null,

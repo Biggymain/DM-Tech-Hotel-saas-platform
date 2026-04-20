@@ -84,7 +84,7 @@ Route::prefix('v1')->group(function () {
         Route::post('forgot-password', [AuthController::class, 'forgotPassword']); // Kept existing route
         Route::post('reset-password', [AuthController::class, 'resetPassword']);
         Route::post('activate-branch', [\App\Http\Controllers\Api\V1\LicensingController::class, 'activate']); 
-
+        Route::post('request-hardware-access', [AuthController::class, 'requestHardwareAccess']);
         // Staff Setup (PIN & Password Activation)
         Route::middleware('auth:sanctum')->post('staff/setup', [AuthController::class, 'setupStaff']);
 
