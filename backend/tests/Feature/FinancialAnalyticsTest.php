@@ -59,7 +59,11 @@ class FinancialAnalyticsTest extends TestCase
     #[Test]
     public function bistro_plan_can_access_single_outlet_analytics()
     {
-        $hotel = Hotel::factory()->create(['hotel_group_id' => $this->group->id, 'slug' => 'peters-bistro']);
+        $hotel = Hotel::factory()->create([
+            'hotel_group_id' => $this->group->id,
+            'slug' => 'peters-bistro',
+            'domain' => 'test-' . uniqid() . '.com'
+        ]);
         
         HotelSubscription::create([
             'hotel_id' => $hotel->id,
@@ -91,7 +95,11 @@ class FinancialAnalyticsTest extends TestCase
     #[Test]
     public function hotel_basic_plan_is_gatekept_and_requires_upgrade()
     {
-        $hotel = Hotel::factory()->create(['hotel_group_id' => $this->group->id, 'slug' => 'budget-inn']);
+        $hotel = Hotel::factory()->create([
+            'hotel_group_id' => $this->group->id,
+            'slug' => 'budget-inn',
+            'domain' => 'test-' . uniqid() . '.com'
+        ]);
         
         HotelSubscription::create([
             'hotel_id' => $hotel->id,
@@ -113,7 +121,11 @@ class FinancialAnalyticsTest extends TestCase
     #[Test]
     public function hotel_pro_plan_can_aggregate_multiple_outlets()
     {
-        $hotel = Hotel::factory()->create(['hotel_group_id' => $this->group->id, 'slug' => 'grand-resort']);
+        $hotel = Hotel::factory()->create([
+            'hotel_group_id' => $this->group->id,
+            'slug' => 'grand-resort',
+            'domain' => 'test-' . uniqid() . '.com'
+        ]);
         
         HotelSubscription::create([
             'hotel_id' => $hotel->id,
@@ -146,7 +158,7 @@ class FinancialAnalyticsTest extends TestCase
     #[Test]
     public function accrued_vs_cash_on_hand_distinction()
     {
-        $hotel = Hotel::factory()->create();
+        $hotel = Hotel::factory()->create(['domain' => 'test-' . uniqid() . '.com']);
         $plan = SubscriptionPlan::create([
             'name' => 'Pro',
             'slug' => 'pro',
@@ -215,7 +227,7 @@ class FinancialAnalyticsTest extends TestCase
     #[Test]
     public function cancellation_triggers_high_severity_audit_trail()
     {
-        $hotel = Hotel::factory()->create();
+        $hotel = Hotel::factory()->create(['domain' => 'test-' . uniqid() . '.com']);
         $user = User::factory()->create(['hotel_id' => $hotel->id, 'is_super_admin' => true]);
         $outlet = Outlet::factory()->create(['hotel_id' => $hotel->id]);
 
