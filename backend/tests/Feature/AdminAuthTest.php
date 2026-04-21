@@ -27,7 +27,7 @@ class AdminAuthTest extends TestCase
             'email' => 'admin@hotel.com',
             'password' => 'password123',
             'password_changed_at' => now(),
-            'hardware_hash' => 'valid-hardware-hash', // satisfy SentryMiddleware requirement
+            'hardware_hash' => \Tests\TestCase::generateMockHardwareHash(), // satisfy SentryMiddleware requirement
             'is_approved' => true,
         ]);
 
@@ -44,7 +44,7 @@ class AdminAuthTest extends TestCase
         $managerRole = \App\Models\Role::withoutGlobalScopes()->where('slug', 'generalmanager')->first();
         $this->user->roles()->attach($managerRole->id, ['hotel_id' => $this->hotel->id]);
 
-        $response = $this->withHeaders(['X-Hardware-Id' => 'valid-hardware-hash'])
+        $response = $this->withHeaders(['X-Hardware-Id' => \Tests\TestCase::generateMockHardwareHash()])
             ->withPort(3002)
             ->postJson('/api/v1/auth/login', [
             'email' => 'admin@hotel.com',

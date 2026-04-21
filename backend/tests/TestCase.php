@@ -11,64 +11,111 @@ use Mockery;
 
 abstract class TestCase extends BaseTestCase
 {
+    public static ?string $virtualTwinHash = null;
+
+    /**
+     * Virtual Twin: Standardized System-Wide Test Hash (Argon2id statically cached)
+     */
+    public static function generateMockHardwareHash(): string
+    {
+        if (self::$virtualTwinHash === null) {
+            self::$virtualTwinHash = \Illuminate\Support\Facades\Hash::make('virtual_twin_v1');
+        }
+        return self::$virtualTwinHash;
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Ensure fresh instances for every test to prevent shared state contamination
+        // 1. Clear stateful instances
         $this->app->forgetInstance(\App\Http\Middleware\SentryMiddleware::class);
         $this->app->forgetInstance(\App\Services\HardwareValidationService::class);
         $this->app->forgetInstance(\App\Services\HardwareFingerprintService::class);
         $this->app->forgetInstance(\App\Services\FortressLockService::class);
 
-        // 1. Service-Level Mocking for Hardware Validation
-        $this->mock(HardwareValidationService::class, function ($mock) {
-            $mock->shouldReceive('validate')->andReturnUsing(function($hash) {
-                if ($hash === 'locked-hardware-hash') {
-                    return [
-                        'id' => 'dev-locked',
-                        'is_manually_locked' => true,
-                        'is_approved' => true,
-                        'expires_at' => \Carbon\Carbon::now()->addYear()->toDateTimeString(),
-                        'device_active' => true,
-                    ];
-                }
-                if ($hash === 'unknown-hardware-hash') {
-                    return null;
-                }
-                return [
-                    'id' => 'dev-valid',
-                    'is_manually_locked' => false,
-                    'is_approved' => true,
-                    'expires_at' => \Carbon\Carbon::now()->addYear()->toDateTimeString(),
-                    'device_active' => true,
-                    'manager_email' => 'manager@hotel.com',
-                    'owner_email' => 'owner@hotel.com'
-                ];
-            });
-        });
+        // 2. Global Header Injection
+        $this->withHeaders([
+            'X-Hardware-Id' => self::generateMockHardwareHash()
+        ]);
 
-        // Global Mock for Hardware Fingerprint Capture
-        $this->mock(\App\Services\HardwareFingerprintService::class, function ($mock) {
-            $mock->shouldReceive('generateHash')->andReturn('valid-hardware-hash')->byDefault();
-        });
-
-        // 2. Functional Mock for Supabase PGP functions
+        // 3. Functional Mock for Supabase Connection
         Config::set('database.connections.supabase', [
             'driver' => 'sqlite',
             'database' => ':memory:',
         ]);
         
-        $conn = DB::connection('supabase');
-        $pdo = $conn->getPdo();
+        $schema = \Illuminate\Support\Facades\Schema::connection('supabase');
         
-        // Create necessary tables for licensing sync mocks
-        $pdo->exec("CREATE TABLE branches (id TEXT PRIMARY KEY, branch_token TEXT, group_id TEXT, expires_at DATETIME, manager_email TEXT, owner_email TEXT, is_active INTEGER, created_at DATETIME)");
-        $pdo->exec("CREATE TABLE devices (id INTEGER PRIMARY KEY AUTOINCREMENT, branch_id TEXT, hardware_hash TEXT, is_active INTEGER, is_manually_locked INTEGER, expires_at DATETIME, last_sync DATETIME, updated_at DATETIME)");
-        
-        $pdo->sqliteCreateFunction('encrypt_sensitive_data', fn($d, $p) => "encrypted_{$d}");
-        $pdo->sqliteCreateFunction('decrypt_sensitive_data', fn($d, $p) => strtr($d, ['encrypted_' => '']));
+        if (!$schema->hasTable('branches')) {
+            // Strict Schema: NO NULLABLES except for auditing/optional manager emails where sensible
+            $schema->create('branches', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->string('id')->primary();
+                $table->string('branch_token');
+                $table->string('group_id');
+                $table->dateTime('expires_at');
+                $table->string('manager_email');
+                $table->string('owner_email');
+                $table->integer('is_active')->default(1);
+                $table->dateTime('created_at');
+            });
 
+            $schema->create('devices', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->id();
+                $table->string('branch_id');
+                $table->string('hardware_hash');
+                $table->string('device_uuid'); // Mandatory Forensic Field
+                $table->integer('is_active')->default(1);
+                $table->integer('is_manually_locked')->default(0);
+                $table->dateTime('expires_at');
+                $table->dateTime('last_sync');
+                $table->dateTime('updated_at');
+            });
+
+            // 4. Seeding the Virtual Twin
+            $hash = self::generateMockHardwareHash();
+            
+            DB::connection('supabase')->table('branches')->insert([
+                'id' => 'branch-1',
+                'branch_token' => 'virtual-token-v1',
+                'group_id' => 'group-1',
+                'expires_at' => now()->addYear(),
+                'manager_email' => 'manager@dmtech.local',
+                'owner_email' => 'owner@dmtech.local',
+                'is_active' => 1,
+                'created_at' => now()
+            ]);
+
+            DB::connection('supabase')->table('devices')->insert([
+                'branch_id' => 'branch-1',
+                'hardware_hash' => $hash,
+                'device_uuid' => 'virtual_twin_v1',
+                'is_active' => 1,
+                'is_manually_locked' => 0,
+                'expires_at' => now()->addYear(),
+                'last_sync' => now(),
+                'updated_at' => now()
+            ]);
+
+            // Add forensic scenarios for existing test expectations
+            DB::connection('supabase')->table('devices')->insert([
+                'branch_id' => 'branch-1',
+                'hardware_hash' => 'locked-hardware-hash',
+                'device_uuid' => 'locked-v1',
+                'is_active' => 1,
+                'is_manually_locked' => 1,
+                'expires_at' => now()->addYear(),
+                'last_sync' => now(),
+                'updated_at' => now()
+            ]);
+        }
+        
+        $pdo = \DB::connection('supabase')->getPdo();
+        
+        if (!$pdo->inTransaction()) {
+            $pdo->sqliteCreateFunction('encrypt_sensitive_data', fn($d, $p) => "encrypted_{$d}");
+            $pdo->sqliteCreateFunction('decrypt_sensitive_data', fn($d, $p) => strtr($d, ['encrypted_' => '']));
+        }
     }
 
     public function actingAs($user, $guard = null)
@@ -76,7 +123,7 @@ abstract class TestCase extends BaseTestCase
         if ($user instanceof \App\Models\User) {
             // Force persistence of security states to satisfy SentryMiddleware Gates (503/403)
             $user->forceFill([
-                'hardware_hash' => 'valid-hardware-hash',
+                'hardware_hash' => self::generateMockHardwareHash(),
                 'is_approved' => true,
                 'is_on_duty' => true,
             ])->save();
@@ -96,7 +143,7 @@ abstract class TestCase extends BaseTestCase
         }
 
         // 1. Hardware ID Injection (Default to valid test hash)
-        $server['HTTP_X_HARDWARE_ID'] = $server['HTTP_X_HARDWARE_ID'] ?? $this->defaultHeaders['X-Hardware-Id'] ?? 'valid-hardware-hash';
+        $server['HTTP_X_HARDWARE_ID'] = $server['HTTP_X_HARDWARE_ID'] ?? $this->defaultHeaders['X-Hardware-Id'] ?? self::generateMockHardwareHash();
         
         // 2. Late-Bound Port Detection
         // This supports tests that dynamically attach roles AFTER calling actingAs()
@@ -165,7 +212,7 @@ abstract class TestCase extends BaseTestCase
      */
     protected function parentActingAs($user, $guard = null)
     {
-        $this->defaultHeaders['X-Hardware-Id'] = 'valid-hardware-hash';
+        $this->defaultHeaders['X-Hardware-Id'] = self::generateMockHardwareHash();
         return parent::actingAs($user, $guard);
     }
 

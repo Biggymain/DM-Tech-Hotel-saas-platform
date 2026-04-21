@@ -43,6 +43,13 @@ class SetupSeeder extends Seeder
                 ]
             );
 
+            \App\Models\HotelSetting::create([
+                'hotel_id' => $mainHotel->id,
+                'setting_key' => 'loyalty_conversion_rate',
+                'setting_value' => '5000',
+                'type' => 'integer'
+            ]);
+
             // Step 3: Create a second branch/hotel
             $branch = Hotel::firstOrCreate(
                 ['domain' => 'abuja.royalspring.com'],
@@ -54,6 +61,13 @@ class SetupSeeder extends Seeder
                     'is_active' => true,
                 ]
             );
+
+            \App\Models\HotelSetting::create([
+                'hotel_id' => $branch->id,
+                'setting_key' => 'loyalty_conversion_rate',
+                'setting_value' => '5000',
+                'type' => 'integer'
+            ]);
 
             // Step 4: Create Super Admin (not scoped to one hotel — is_super_admin grants cross-hotel access)
             $superAdmin = User::firstOrCreate(

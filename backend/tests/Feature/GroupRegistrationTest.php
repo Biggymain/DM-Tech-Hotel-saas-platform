@@ -14,14 +14,14 @@ class GroupRegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
-    #[Test]
     public function test_group_registration_creates_group_branch_and_admin_successfully(): void
     {
+        $email = 'test-' . uniqid() . '@dmtech.local';
         $payload = [
             'group_name' => 'DM Tech Hotels Group',
             'hotel_name' => 'Royal Spring Hotel',
             'owner_name' => 'Micky Doe',
-            'email'      => 'micky@dmtech.local',
+            'email'      => $email,
             'password'   => 'Password123!',
             'password_confirmation' => 'Password123!',
         ];
@@ -40,7 +40,7 @@ class GroupRegistrationTest extends TestCase
         // Verify HotelGroup created
         $this->assertDatabaseHas('hotel_groups', [
             'name' => 'DM Tech Hotels Group',
-            'contact_email' => 'micky@dmtech.local'
+            'contact_email' => $email
         ]);
 
         $group = HotelGroup::where('name', 'DM Tech Hotels Group')->first();
@@ -55,13 +55,13 @@ class GroupRegistrationTest extends TestCase
 
         // Verify User formed and attached to group
         $this->assertDatabaseHas('users', [
-            'email' => 'micky@dmtech.local',
+            'email' => $email,
             'hotel_group_id' => $group->id,
             'hotel_id' => null,
             'is_super_admin' => false
         ]);
 
-        $user = User::where('email', 'micky@dmtech.local')->first();
+        $user = User::where('email', $email)->first();
 
         // Verify Role Assignment
         $this->assertTrue($user->roles()->withoutGlobalScopes()->where('slug', 'groupadmin')->exists());

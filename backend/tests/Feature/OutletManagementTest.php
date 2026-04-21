@@ -29,7 +29,7 @@ class OutletManagementTest extends TestCase
         $this->manager = User::factory()->create([
             'hotel_id' => $this->hotel->id,
             'is_approved' => true,
-            'hardware_hash' => 'valid-hardware-hash',
+            'hardware_hash' => \Tests\TestCase::generateMockHardwareHash(),
         ]);
         
         $role = \App\Models\Role::create([

@@ -32,6 +32,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'is_on_duty' => true,
             'is_approved' => true,
+            'hardware_hash' => \Tests\TestCase::generateMockHardwareHash(),
         ];
     }
 

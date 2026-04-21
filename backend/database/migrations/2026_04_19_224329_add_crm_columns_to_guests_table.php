@@ -26,6 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('guests', function (Blueprint $table) {
+            $table->dropIndex(['status']);
             $table->dropColumn(['is_vip', 'loyalty_points', 'status']);
         });
     }

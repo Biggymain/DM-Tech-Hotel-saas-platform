@@ -147,6 +147,7 @@ class GroupRegistrationService
 
         DB::connection('supabase')->table('branches')->insert([
             'id' => $branch->getAttribute('id'), // Robust UUID access
+            'branch_token' => (string) \Illuminate\Support\Str::uuid(),
             'group_id' => $groupId,
             'expires_at' => now()->addDays($expiryDays),
             'manager_email' => $branch->getAttribute('email'), // Mapped for licensing alerts

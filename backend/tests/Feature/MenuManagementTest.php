@@ -71,7 +71,7 @@ class MenuManagementTest extends TestCase
             'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'is_super_admin' => false,
             'is_approved' => true,
-            'hardware_hash' => 'valid-hardware-hash',
+            'hardware_hash' => \Tests\TestCase::generateMockHardwareHash(),
         ]);
 
         $this->user->roles()->attach($role->id, ['hotel_id' => $this->hotel->id]);

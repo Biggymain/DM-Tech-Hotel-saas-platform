@@ -15,6 +15,9 @@ class Guest extends Model
         'last_name',
         'email',
         'phone',
+        'username',
+        'is_onboarded',
+        'loyalty_points',
         'identification_type',
         'identification_number',
         'id_scan_url',
@@ -25,6 +28,9 @@ class Guest extends Model
         'last_name' => 'encrypted',
         'email' => 'encrypted',
         'phone' => 'encrypted',
+        'username' => 'encrypted',
+        'is_onboarded' => 'boolean',
+        'loyalty_points' => 'integer',
         'identification_type' => 'encrypted',
         'identification_number' => 'encrypted',
         'id_scan_url' => 'encrypted',
@@ -39,6 +45,9 @@ class Guest extends Model
             }
             if (!empty($guest->phone)) {
                 $guest->phone_bidx = hash_hmac('sha256', trim($guest->phone), $secret);
+            }
+            if (!empty($guest->username)) {
+                $guest->username_bindex = hash_hmac('sha256', trim($guest->username), $secret);
             }
         });
     }

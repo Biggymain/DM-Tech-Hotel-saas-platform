@@ -20,7 +20,7 @@ class InventoryItemFactory extends Factory
             'hotel_id' => \App\Models\Hotel::factory(),
             'outlet_id' => \App\Models\Outlet::factory(),
             'name' => $this->faker->word . ' Drink',
-            'sku' => $this->faker->unique()->bothify('SKU-####'),
+            'sku' => 'SKU-' . \Illuminate\Support\Str::uuid(),
             'category' => 'beverage',
             'unit_of_measurement' => 'bottle',
             'current_stock' => 100,

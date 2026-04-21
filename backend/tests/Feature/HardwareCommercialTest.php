@@ -43,20 +43,24 @@ class HardwareCommercialTest extends TestCase
         DB::connection('supabase')->table('branches')->insert([
             'id' => $this->hotel->id,
             'branch_token' => (string) Str::uuid(),
+            'group_id' => 'group-1',
+            'manager_email' => 'manager@hotel.com',
+            'owner_email' => 'owner@hotel.com',
             'is_active' => 1,
-            'expires_at' => now()->addYear()
+            'expires_at' => now()->addYear(),
+            'created_at' => now()
         ]);
     }
 
     #[Test]
     public function test_branch_activation_respects_device_slots()
     {
-        $branchToken = DB::connection('supabase')->table('branches')->first()->branch_token;
+        $branchToken = DB::connection('supabase')->table('branches')->where('id', $this->hotel->id)->first()->branch_token;
 
         // Fill up slots (2 slots)
         DB::connection('supabase')->table('devices')->insert([
-            ['branch_id' => $this->hotel->id, 'hardware_hash' => 'hash1', 'is_active' => 1],
-            ['branch_id' => $this->hotel->id, 'hardware_hash' => 'hash2', 'is_active' => 1],
+            ['branch_id' => $this->hotel->id, 'hardware_hash' => 'hash1', 'device_uuid' => 'uuid1', 'is_active' => 1, 'is_manually_locked' => 0, 'expires_at' => now()->addYear(), 'last_sync' => now(), 'updated_at' => now()],
+            ['branch_id' => $this->hotel->id, 'hardware_hash' => 'hash2', 'device_uuid' => 'uuid2', 'is_active' => 1, 'is_manually_locked' => 0, 'expires_at' => now()->addYear(), 'last_sync' => now(), 'updated_at' => now()],
         ]);
 
         // Try to activate a 3rd device
@@ -90,7 +94,12 @@ class HardwareCommercialTest extends TestCase
         DB::connection('supabase')->table('devices')->insert([
             'branch_id' => $this->hotel->id,
             'hardware_hash' => $oldHash,
-            'is_active' => 1
+            'device_uuid' => 'uuid3',
+            'is_active' => 1,
+            'is_manually_locked' => 0,
+            'expires_at' => now()->addYear(),
+            'last_sync' => now(),
+            'updated_at' => now()
         ]);
 
         $this->assertEquals(1, DB::connection('supabase')->table('devices')->where('hardware_hash', $oldHash)->count());

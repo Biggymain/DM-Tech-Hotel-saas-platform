@@ -28,11 +28,11 @@ class SiemWatchdogTest extends TestCase
         $user = User::factory()->create([
             'email' => 'group-admin@test.com',
             'is_approved' => true,
-            'hardware_hash' => 'valid-hardware-hash'
+            'hardware_hash' => \Illuminate\Support\Facades\Hash::make('different_device')
         ]);
 
         $this->mock(HardwareFingerprintService::class, function ($mock) {
-            $mock->shouldReceive('generateHash')->andReturn('valid-hardware-hash');
+            $mock->shouldReceive('generateHash')->andReturn(\Tests\TestCase::generateMockHardwareHash());
         });
 
         $role = Role::create(['name' => 'groupadmin', 'slug' => 'groupadmin']);
@@ -45,8 +45,14 @@ class SiemWatchdogTest extends TestCase
 
         // 2. Trigger Hardware Mismatch (Severity 12)
         // Ensure we are using the actingAs user on the correct port to avoid early 404
-        $this->withPort(3001)->actingAs($user)
-            ->withHeaders(['X-Hardware-Id' => 'malicious-device-id'])
+        $this->actingAs($user);
+        
+        $user->forceFill([
+            'hardware_hash' => \Illuminate\Support\Facades\Hash::make('different_device')
+        ])->save();
+
+        $this->withPort(3001)
+            ->withHeaders(['X-Hardware-Id' => \Tests\TestCase::generateMockHardwareHash()])
             ->getJson('/api/v1/auth/me')
             ->assertStatus(403);
 
@@ -60,7 +66,7 @@ class SiemWatchdogTest extends TestCase
         $this->actingAs($user)
             ->withHeaders([
                 'X-Frontend-Port' => '3000',
-                'X-Hardware-Id' => 'valid-hardware-hash'
+                'X-Hardware-Id' => \Tests\TestCase::generateMockHardwareHash()
             ])
             ->getJson('/api/v1/auth/me')
             ->assertStatus(404);

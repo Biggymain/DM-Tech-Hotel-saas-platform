@@ -108,6 +108,11 @@ class Hotel extends BaseModel
         return $this->hasMany(Department::class);
     }
 
+    public function outlets()
+    {
+        return $this->hasMany(Outlet::class);
+    }
+
     public function tier()
     {
         return $this->belongsTo(SubscriptionTier::class, 'subscription_tier_id');

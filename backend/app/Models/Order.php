@@ -99,4 +99,9 @@ class Order extends BaseModel
     {
         return $this->hasMany(OrderStatusHistory::class);
     }
+
+    public function guest()
+    {
+        return $this->belongsTo(Guest::class);
+    }
 }

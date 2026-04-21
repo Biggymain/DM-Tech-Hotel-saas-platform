@@ -39,6 +39,8 @@ Artisan::command('pms:night-audit', function () {
   ->dailyAt('02:00');
 
 \Illuminate\Support\Facades\Schedule::command('sync:cleanup')->daily();
+\Illuminate\Support\Facades\Schedule::command('subscriptions:reap')->daily();
+\Illuminate\Support\Facades\Schedule::command('reservations:auto-checkout')->dailyAt('12:00');
 
 \Illuminate\Support\Facades\Schedule::job(new \App\Jobs\BatchSyncToCloudJob)->everyMinute()->withoutOverlapping();
 

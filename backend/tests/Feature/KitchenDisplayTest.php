@@ -76,7 +76,7 @@ class KitchenDisplayTest extends TestCase
             'is_super_admin' => false,
             'is_approved' => true,
             'is_on_duty' => true,
-            'hardware_hash' => 'valid-hardware-hash',
+            'hardware_hash' => \Tests\TestCase::generateMockHardwareHash(),
         ]);
 
         $this->user->roles()->attach($role->id, ['hotel_id' => $this->hotel->id]);

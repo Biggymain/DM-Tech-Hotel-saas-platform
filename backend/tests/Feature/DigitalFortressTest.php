@@ -63,7 +63,7 @@ class DigitalFortressTest extends TestCase
     #[Test]
     public function test_sentry_middleware_scenario_active()
     {
-        $hash = 'valid-hardware-hash';
+        $hash = \Tests\TestCase::generateMockHardwareHash();
         $request = new Request();
         $request->headers->set('X-Hardware-Id', $hash);
         $request->headers->set('X-Frontend-Port', '3000'); // SuperAdmin port
@@ -141,13 +141,13 @@ class DigitalFortressTest extends TestCase
         config(['fortress.port_mapping' => ['branchmanager' => 3001]]);
 
         $this->mock(HardwareFingerprintService::class, function ($mock) {
-            $mock->shouldReceive('generateHash')->andReturn('valid-hardware-hash');
+            $mock->shouldReceive('generateHash')->andReturn(\Tests\TestCase::generateMockHardwareHash());
         });
 
         $request = Request::create('/api/dashboard', 'GET');
         $request->setUserResolver(fn() => $user);
         $request->headers->set('X-Frontend-Port', '3000');
-        $request->headers->set('X-Hardware-Id', 'valid-hardware-hash');
+        $request->headers->set('X-Hardware-Id', \Tests\TestCase::generateMockHardwareHash());
 
         $middleware = $this->app->make(SentryMiddleware::class);
         
@@ -192,7 +192,7 @@ class DigitalFortressTest extends TestCase
         ]);
 
         $this->mock(HardwareFingerprintService::class, function ($mock) {
-            $mock->shouldReceive('generateHash')->andReturn('malicious-device-id');
+            $mock->shouldReceive('generateHash')->andReturn(\Tests\TestCase::generateMockHardwareHash());
         });
 
         $response = $this->postJson('/api/v1/auth/login', [
