@@ -15,7 +15,9 @@ class PaymentFactory extends Factory
         return [
             'hotel_id' => Hotel::factory(),
             'invoice_id' => Invoice::factory(),
-            'payment_method_id' => PaymentMethod::create(['name' => 'Cash', 'hotel_id' => 1])->id, // Simple link
+            'payment_method_id' => function (array $attributes) {
+                return \App\Models\PaymentMethod::factory()->create(['hotel_id' => $attributes['hotel_id']])->id;
+            },
             'type' => 'payment',
             'amount' => 1000,
             'status' => 'completed',

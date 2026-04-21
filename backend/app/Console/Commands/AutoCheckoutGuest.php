@@ -60,8 +60,9 @@ class AutoCheckoutGuest extends Command
                     $this->logRevenueRisk($reservation, $e->getMessage());
                 }
             } else {
-                $this->warn("Reservation #{$reservation->id} has outstanding balance: {$totalBalance}. Skipping auto-checkout.");
-                $this->logRevenueRisk($reservation, "Outstanding balance: {$totalBalance}");
+                $displayBalance = (round($totalBalance, 2) == round($totalBalance, 0)) ? number_format($totalBalance, 0) : number_format($totalBalance, 2);
+                $this->warn("Reservation #{$reservation->id} has outstanding balance: {$displayBalance}. Skipping auto-checkout.");
+                $this->logRevenueRisk($reservation, "Outstanding balance: {$displayBalance}");
             }
         }
     }
