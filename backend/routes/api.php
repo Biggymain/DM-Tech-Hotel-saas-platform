@@ -59,6 +59,7 @@ use App\Http\Controllers\Api\V1\SystemLogController;
 use App\Http\Controllers\Api\V1\ThemeController;
 use App\Http\Controllers\Auth\HotelRegistrationController;
 use App\Http\Controllers\Api\V1\HardwareController;
+use App\Http\Controllers\Api\V1\DeveloperController;
 use App\Http\Controllers\Api\V1\LeisureController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -96,6 +97,10 @@ Route::prefix('v1')->group(function () {
             Route::post('logout', [AuthController::class, 'logout']);
             Route::post('staff/set-pin', [StaffPinController::class, 'setPin']);
         });
+
+        // ── PHOENIX MASTER MARRIAGE (Local Registration) ────────────────────────
+        Route::post('developer/register-terminal', [DeveloperController::class, 'registerTerminal'])
+            ->middleware(\App\Http\Middleware\DeveloperAccessMiddleware::class);
     });
 
     // Alignment Routes

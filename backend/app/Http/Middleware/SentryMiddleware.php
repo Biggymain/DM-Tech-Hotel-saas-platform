@@ -42,6 +42,11 @@ class SentryMiddleware
             return $next($request);
         }
 
+        // 0. Bypass: Allow developer registration to proceed through the sentry (Phoenix Master Marriage)
+        if ($request->is('api/v1/auth/developer/register-terminal') && (app()->isLocal() || app()->runningUnitTests())) {
+            return $next($request);
+        }
+
         // 0. System Integrity: Kill-Switch Gate (Global Lockdown)
         if ($this->lockService->isLocked()) {
             return response()->json([
@@ -134,32 +139,43 @@ class SentryMiddleware
 
         // 5. Digital Fortress: Strict Port Enforcement (SIEM Logic)
         if ($user && !$user->is_super_admin) {
-            $portMapping = config('fortress.port_mapping', []);
-            $assignedPort = null;
+            $device = $request->attributes->get('hardware_device_record');
+            $isMasterBypass = false;
 
-            foreach ($user->roles()->withoutGlobalScopes()->get() as $role) {
-                if (isset($portMapping[$role->slug])) {
-                    $assignedPort = $portMapping[$role->slug];
-                    break;
-                }
+            // Phoenix Master Marriage: Only allow development-level port bypass in local environments.
+            // This is strictly forbidden in testing/production to maintain architectural integrity.
+            if (app()->isLocal() && $device && ($device['access_level'] ?? null) === 'master') {
+                $isMasterBypass = true;
             }
 
+            if (!$isMasterBypass) {
+                $portMapping = config('fortress.port_mapping', []);
+                $assignedPort = null;
 
-            if ($assignedPort && (int)$currentPort !== (int)$assignedPort) {
-                // Log Port Violation for SIEM (Severity 12)
-                Log::channel('siem')->critical('Port Violation: Unauthorized Access Attempt', [
-                    'severity_score' => 12,
-                    'assigned_port'  => $assignedPort,
-                ]);
+                foreach ($user->roles()->withoutGlobalScopes()->get() as $role) {
+                    if (isset($portMapping[$role->slug])) {
+                        $assignedPort = $portMapping[$role->slug];
+                        break;
+                    }
+                }
 
-                AuditLogService::log(
-                    'user', $user->id, 'port_violation',
-                    ['port' => $assignedPort], ['attempted' => $currentPort],
-                    'Unauthorized port access attempt', 'api', null, $user->id
-                );
 
-                // Ghost the port (404 instead of 403)
-                abort(404);
+                if ($assignedPort && (int)$currentPort !== (int)$assignedPort) {
+                    // Log Port Violation for SIEM (Severity 12)
+                    Log::channel('siem')->critical('Port Violation: Unauthorized Access Attempt', [
+                        'severity_score' => 12,
+                        'assigned_port'  => $assignedPort,
+                    ]);
+
+                    AuditLogService::log(
+                        'user', $user->id, 'port_violation',
+                        ['port' => $assignedPort], ['attempted' => $currentPort],
+                        'Unauthorized port access attempt', 'api', null, $user->id
+                    );
+
+                    // Ghost the port (404 instead of 403)
+                    abort(404);
+                }
             }
         }
 
@@ -181,10 +197,12 @@ class SentryMiddleware
 
         $device = $this->validationService->validate($hash);
         
-
         if (!$device) {
             abort(403, 'Hardware Not Registered');
         }
+
+        // Share the device data for port-level bypass checks
+        $request->attributes->set('hardware_device_record', $device);
 
         // Handle both object (from direct DB) and array (from cache/mock) formats
         $isLocked = is_array($device) ? $device['is_manually_locked'] : $device->is_manually_locked;

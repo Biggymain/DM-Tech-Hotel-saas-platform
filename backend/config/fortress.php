@@ -18,6 +18,16 @@ return [
     'dev_passphrase' => env('DEV_PASSPHRASE'),
 
     /**
+     * Argon2id hash of the developer passphrase for Master terminal registration.
+     */
+    'dev_passphrase_hash' => env('DEV_PASSPHRASE_HASH'),
+
+    /**
+     * Secret key for developer-level Supabase operations.
+     */
+    'supabase_dev_key' => env('X_SUPABASE_DEV_KEY'),
+
+    /**
      * Role-to-Port mapping for the 6-port architecture.
      * Used for strict SIEM-ready port enforcement.
      */

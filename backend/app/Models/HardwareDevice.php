@@ -11,6 +11,8 @@ class HardwareDevice extends BaseModel
         'branch_id',
         'device_name',
         'hardware_uuid',
+        'hardware_hash',
+        'access_level',
         'zone_type',
         'is_verified',
         'status',
