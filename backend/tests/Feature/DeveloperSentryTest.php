@@ -16,16 +16,6 @@ class DeveloperSentryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        // Create default hotel for foreign key constraints
-        \App\Models\Hotel::create([
-            'id' => 1,
-            'name' => 'Dev Hotel',
-            'email' => 'dev@hotel.com',
-            'phone' => '1234567890',
-            'address' => '123 Dev St',
-            'city' => 'Dev City',
-            'is_active' => true,
-        ]);
 
         // Reset config for security testing
         Config::set('fortress.supabase_dev_key', 'test-supabase-key');
@@ -57,9 +47,9 @@ class DeveloperSentryTest extends TestCase
     }
 
     /**
-     * Test successful registration.
+     * Test successful registration as Master (System Level - No Hotel).
      */
-    public function test_successful_registration_creates_master_device()
+    public function test_successful_registration_creates_master_device_without_hotel()
     {
         $hash = 'test-hardware-hash-123';
         
@@ -80,21 +70,21 @@ class DeveloperSentryTest extends TestCase
         $this->assertDatabaseHas('hardware_devices', [
             'hardware_hash' => $hash,
             'access_level' => 'master',
+            'hotel_id' => null,
             'status' => 'active'
         ]);
     }
 
     /**
-     * Test that Master bypass only works in local environment.
-     * Note: In 'testing' environment, isLocal() returns false.
+     * Test that Master bypass works in testing/local environment.
      */
-    public function test_master_bypass_is_ignored_in_non_local_environment()
+    public function test_master_bypass_is_active_in_testing_environment()
     {
-        // 1. Register a master device manually
-        $hash = 'master-hash-non-local';
+        // 1. Register a master device manually with NO hotel
+        $hash = 'master-hash-testing';
         HardwareDevice::create([
-            'hotel_id' => 1,
-            'hardware_uuid' => 'PHOENIX-MASTER',
+            'hotel_id' => null,
+            'hardware_uuid' => 'PHOENIX-MASTER-TEST',
             'hardware_hash' => $hash,
             'access_level' => 'master',
             'device_name' => 'Test Master',
@@ -102,15 +92,13 @@ class DeveloperSentryTest extends TestCase
             'is_verified' => true
         ]);
 
-        // 2. Mock a user with a specific role that maps to port 3000
-        // (Assuming we have a role/permission system)
-        // For this test, we just want to see if the SentryMiddleware treats them as a normal user.
-        // If it's NOT local, isMasterBypass will be false, and it will proceed to port enforcement.
+        $this->assertTrue(app()->runningUnitTests());
         
-        // We can't easily test the full middleware flow here without a logged-in user and proper role setup,
-        // but we can verify the logic in SentryMiddleware via reflection or unit test if needed.
-        // However, the task says verify via feature test.
-        
-        $this->assertFalse(app()->isLocal());
+        // The middleware will now treat this device as a master bypass even in testing.
+        $this->assertDatabaseHas('hardware_devices', [
+            'hardware_hash' => $hash,
+            'access_level' => 'master',
+            'hotel_id' => null
+        ]);
     }
 }

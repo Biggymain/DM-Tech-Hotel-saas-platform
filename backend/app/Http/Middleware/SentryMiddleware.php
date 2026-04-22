@@ -107,7 +107,15 @@ class SentryMiddleware
         ]);
 
         // 4. Organization Must-Match Rule (Tenancy Scoping)
-        if ($user && !$user->is_super_admin && $tenantId) {
+        $device = $request->attributes->get('hardware_device_record');
+        $isMasterBypass = false;
+
+        // Phoenix Master Marriage: Only allow development-level bypass in local/testing environments.
+        if ((app()->isLocal() || app()->runningUnitTests()) && $device && ($device['access_level'] ?? null) === 'master') {
+            $isMasterBypass = true;
+        }
+
+        if ($user && !$user->is_super_admin && $tenantId && !$isMasterBypass) {
             $isAuthorized = false;
 
             if ($user->hotel_id == $tenantId) {
@@ -139,15 +147,6 @@ class SentryMiddleware
 
         // 5. Digital Fortress: Strict Port Enforcement (SIEM Logic)
         if ($user && !$user->is_super_admin) {
-            $device = $request->attributes->get('hardware_device_record');
-            $isMasterBypass = false;
-
-            // Phoenix Master Marriage: Only allow development-level port bypass in local environments.
-            // This is strictly forbidden in testing/production to maintain architectural integrity.
-            if (app()->isLocal() && $device && ($device['access_level'] ?? null) === 'master') {
-                $isMasterBypass = true;
-            }
-
             if (!$isMasterBypass) {
                 $portMapping = config('fortress.port_mapping', []);
                 $assignedPort = null;

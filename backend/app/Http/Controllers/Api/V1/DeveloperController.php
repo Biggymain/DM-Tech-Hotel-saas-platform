@@ -36,7 +36,7 @@ class DeveloperController extends Controller
         \App\Models\HardwareDevice::updateOrCreate(
             ['hardware_hash' => $hash],
             [
-                'hotel_id' => 1, // Default local dev hotel
+                'hotel_id' => null, // Master terminals exist at system level
                 'hardware_uuid' => 'PHOENIX-' . substr($hash, 0, 8),
                 'device_name' => 'Developer Master Terminal (' . ($request->header('User-Agent') ?? 'Unknown') . ')',
                 'access_level' => 'master',

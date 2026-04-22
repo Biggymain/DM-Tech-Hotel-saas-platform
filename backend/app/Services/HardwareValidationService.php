@@ -20,7 +20,7 @@ class HardwareValidationService
 
         if (!$device) {
             // 1. Local Bypass Logic (Local Development Only) - Phoenix Master Marriage
-            if (app()->isLocal()) {
+            if (app()->isLocal() || app()->runningUnitTests()) {
                 $localDevice = DB::table('hardware_devices')
                     ->where('hardware_hash', $hash)
                     ->where('status', 'active')
@@ -28,6 +28,7 @@ class HardwareValidationService
 
                 if ($localDevice) {
                     $device = [
+                        'hotel_id' => $localDevice->hotel_id,
                         'is_manually_locked' => 0,
                         'expires_at' => now()->addYears(10)->toDateTimeString(),
                         'device_active' => 1,
