@@ -61,7 +61,7 @@ class SentryMiddleware
         $user = $request->user() ?? auth('sanctum')->user();
         
         // 2. Identity Moderation: Approval Bridge (Highest Priority User Gate)
-        if ($user && isset($user->is_approved) && !$user->is_approved && !$user->is_super_admin) {
+        if ($user && !$user->is_approved && !$user->is_super_admin) {
              return response()->json([
                 'error' => 'Identity Pending Moderation',
                 'message' => 'Your hardware marriage is pending Super Admin approval.'
@@ -174,6 +174,25 @@ class SentryMiddleware
 
                     // Ghost the port (404 instead of 403)
                     abort(404);
+                }
+            }
+        }
+
+        // 6. Sovereign Bridge: Port 3005 Internal Website Check
+        if ($currentPort === 3005 && $tenantId) {
+            $useInternal = \App\Models\HotelSetting::where('hotel_id', $tenantId)
+                ->orderBy('id', 'desc')
+                ->value('use_internal_website') ?? true;
+
+            if (!$useInternal) {
+                // Check if this is an API request (should not be blocked)
+                $isApi = $request->expectsJson() || $request->is('api/*') || str_starts_with($request->path(), 'api/');
+                
+                if (!$isApi) {
+                    return response()->json([
+                        'error' => 'Maintenance Mode',
+                        'message' => 'The internal booking engine is disabled. Please use our official partner links.'
+                    ], 503);
                 }
             }
         }

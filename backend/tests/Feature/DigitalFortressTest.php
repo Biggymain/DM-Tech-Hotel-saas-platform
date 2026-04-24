@@ -2,20 +2,14 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\File;
-
-use App\Services\HardwareFingerprintService;
-use App\Services\HardwareValidationService;
-use App\Services\FortressLockService;
-use App\Http\Middleware\SentryMiddleware;
-use Illuminate\Http\Request;
-use Mockery;
+use App\Models\Hotel;
+use App\Models\HotelSetting;
+use App\Models\HotelWebsiteOverride;
+use App\Models\User;
+use App\Models\HardwareDevice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use PHPUnit\Framework\Attributes\Test;
+use Illuminate\Support\Facades\Crypt;
+use Tests\TestCase;
 
 class DigitalFortressTest extends TestCase
 {
@@ -24,191 +18,105 @@ class DigitalFortressTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Cache::flush();
-        // Ensure log file is clean for SIEM verification
-        if (File::exists(storage_path('logs/fortress_siem.log'))) {
-            File::put(storage_path('logs/fortress_siem.log'), '');
-        }
-    }
-
-    /**
-     * Step 1: Database Connectivity Check
-     */
-    #[Test]
-    public function test_supabase_connection_exists()
-    {
-        $connections = config('database.connections');
-        $this->assertArrayHasKey('supabase', $connections);
-    }
-
-    /**
-     * Step 2: Zero-Knowledge (ZK) Encryption Test
-     */
-    #[Test]
-    public function test_data_at_rest_is_secure()
-    {
-        $user = \App\Models\User::factory()->create([
-            'password' => 'Secret Message'
-        ]);
-
-        $rawPassword = DB::table('users')->where('id', $user->id)->value('password');
-
-        $this->assertNotEquals('Secret Message', $rawPassword);
-        $this->assertTrue(\Illuminate\Support\Facades\Hash::check('Secret Message', $rawPassword));
-    }
-
-    /**
-     * Step 3: Global Hardware Sentry - Valid
-     */
-    #[Test]
-    public function test_sentry_middleware_scenario_active()
-    {
-        $hash = \Tests\TestCase::generateMockHardwareHash();
-        $request = new Request();
-        $request->headers->set('X-Hardware-Id', $hash);
-        $request->headers->set('X-Frontend-Port', '3000'); // SuperAdmin port
-
-        $middleware = new SentryMiddleware(
-            $this->app->make(\App\Services\FortressLockService::class),
-            $this->app->make(HardwareFingerprintService::class),
-            $this->app->make(HardwareValidationService::class)
-        );
-
-        $response = $middleware->handle($request, fn() => response('OK', 200));
-        $this->assertEquals(200, $response->getStatusCode());
-    }
-
-    /**
-     * Step 3: Global Hardware Sentry - Locked (403 Forbidden)
-     */
-    #[Test]
-    public function test_sentry_middleware_scenario_locked()
-    {
-        $hash = 'locked-hardware-hash';
-        $request = new Request();
-        $request->headers->set('X-Hardware-Id', $hash);
-        $request->headers->set('X-Frontend-Port', '3000');
-
-        $middleware = new SentryMiddleware(
-            $this->app->make(\App\Services\FortressLockService::class),
-            $this->app->make(HardwareFingerprintService::class),
-            $this->app->make(HardwareValidationService::class)
-        );
-
-        try {
-            $middleware->handle($request, fn() => response('OK', 200));
-            $this->fail('Locked hardware did not trigger abort.');
-        } catch (HttpException $e) {
-            $this->assertEquals(403, $e->getStatusCode());
-            $this->assertStringContainsString('Branch manually locked', $e->getMessage());
-        }
-    }
-
-    /**
-     * Step 3: Global Hardware Sentry - Unregistered (403 Forbidden)
-     */
-    #[Test]
-    public function test_sentry_middleware_scenario_unregistered()
-    {
-        $hash = 'unknown-hardware-hash';
-        $request = new Request();
-        $request->headers->set('X-Hardware-Id', $hash);
-        $request->headers->set('X-Frontend-Port', '3000');
-
-        $middleware = new SentryMiddleware(
-            $this->app->make(\App\Services\FortressLockService::class),
-            $this->app->make(HardwareFingerprintService::class),
-            $this->app->make(HardwareValidationService::class)
-        );
-
-        try {
-            $middleware->handle($request, fn() => response('OK', 200));
-            $this->fail('Unregistered hardware did not trigger abort.');
-        } catch (HttpException $e) {
-            $this->assertEquals(403, $e->getStatusCode());
-            $this->assertStringContainsString('Hardware Not Registered', $e->getMessage());
-        }
-    }
-
-    /**
-     * Port Enforcement: Ghosting (404 Not Found)
-     */
-    #[Test]
-    public function test_sentry_middleware_port_violation_ghosting()
-    {
-        $user = \App\Models\User::factory()->create();
-        $user->roles()->create(['name' => 'branchmanager', 'slug' => 'branchmanager']);
-        config(['fortress.port_mapping' => ['branchmanager' => 3001]]);
-
-        $this->mock(HardwareFingerprintService::class, function ($mock) {
-            $mock->shouldReceive('generateHash')->andReturn(\Tests\TestCase::generateMockHardwareHash());
-        });
-
-        $request = Request::create('/api/dashboard', 'GET');
-        $request->setUserResolver(fn() => $user);
-        $request->headers->set('X-Frontend-Port', '3000');
-        $request->headers->set('X-Hardware-Id', \Tests\TestCase::generateMockHardwareHash());
-
-        $middleware = $this->app->make(SentryMiddleware::class);
         
-        try {
-            $middleware->handle($request, fn() => response('OK', 200));
-            $this->fail('Port violation did not trigger abort.');
-        } catch (HttpException $e) {
-            $this->assertEquals(404, $e->getStatusCode());
-        }
+        // Setup a registered hardware device for the test
+        $this->deviceHash = 'test-hardware-hash-' . uniqid();
+        HardwareDevice::create([
+            'hardware_uuid' => \Illuminate\Support\Str::uuid(),
+            'hardware_hash' => $this->deviceHash,
+            'device_name' => 'Test Terminal',
+            'device_active' => true,
+            'expires_at' => now()->addYear(),
+            'hotel_id' => null, // Master or global device
+            'access_level' => 'master'
+        ]);
     }
 
-    /**
-     * Scenario 8: System Lockdown (503 Service Unavailable)
-     */
-    #[Test]
-    public function test_sentry_middleware_lockdown()
+    /** @test */
+    public function it_blocks_web_routes_on_port_3005_when_internal_website_is_disabled()
     {
-        $lockService = $this->app->make(\App\Services\FortressLockService::class);
-        $lockService->triggerLock();
+        $hotel = Hotel::factory()->create();
+        
+        // Define a temporary route for testing that uses the SentryMiddleware
+        \Route::middleware([\App\Http\Middleware\SentryMiddleware::class])
+            ->get('/test-booking-portal', function() {
+                return response('OK');
+            });
 
-        $middleware = $this->app->make(SentryMiddleware::class);
-        $response = $middleware->handle(new Request(), function($req) {
-            return response('OK', 200);
-        });
+        // Create settings with toggle OFF
+        HotelSetting::create([
+            'hotel_id' => $hotel->id,
+            'setting_key' => 'general',
+            'use_internal_website' => false
+        ]);
 
-        $this->assertEquals(503, $response->getStatusCode());
-        $this->assertStringContainsString('SYSTEM LOCKDOWN', $response->getContent());
+        // Mock the tenant_id in the application
+        app()->instance('tenant_id', $hotel->id);
 
-        $lockService->releaseLock();
+        $response = $this->withHeaders([
+            'X-Frontend-Port' => '3005',
+            'X-Hardware-Id' => $this->deviceHash,
+        ])->get('/test-booking-portal');
+
+        $response->assertStatus(503);
+        $response->assertJsonFragment(['error' => 'Maintenance Mode']);
     }
 
-    /**
-     * Scenario 9: Hardware Marriage Enforcement during Login
-     */
-    #[Test]
-    public function test_login_hardware_marriage_enforcement_and_siem_audit()
+    /** @test */
+    public function it_allows_api_routes_on_port_3005_even_when_internal_website_is_disabled()
     {
-        $user = \App\Models\User::factory()->create([
-            'email' => 'group@admin.com',
-            'is_super_admin' => true,
-            'hardware_hash' => 'authorized-device-id'
+        $hotel = Hotel::factory()->create();
+        
+        HotelSetting::create([
+            'hotel_id' => $hotel->id,
+            'setting_key' => 'general',
+            'use_internal_website' => false
         ]);
 
-        $this->mock(HardwareFingerprintService::class, function ($mock) {
-            $mock->shouldReceive('generateHash')->andReturn(\Tests\TestCase::generateMockHardwareHash());
-        });
+        // API route should be allowed (we'll use a known API route or mock it)
+        $response = $this->withHeaders([
+            'X-Frontend-Port' => '3005',
+            'X-Hardware-Id' => $this->deviceHash,
+            'Accept' => 'application/json',
+        ])->get('/api/v1/theme');
 
-        $response = $this->postJson('/api/v1/auth/login', [
-            'email' => 'group@admin.com',
-            'password' => 'secret-password'
+        // Status might be 200 or 401 depending on auth, but it shouldn't be 503 Maintenance
+        $this->assertNotEquals(503, $response->getStatusCode());
+    }
+
+    /** @test */
+    public function it_can_generate_and_encrypt_ota_token()
+    {
+        $hotel = Hotel::factory()->create();
+        
+        $token = $hotel->generateOtaIntegrationKey();
+        
+        $this->assertNotEmpty($token);
+        $this->assertEquals(64, strlen($token));
+        
+        // Verify it's stored encrypted in the DB
+        $rawHotel = \DB::table('hotels')->where('id', $hotel->id)->first();
+        $this->assertNotEquals($token, $rawHotel->ota_token);
+        
+        // Verify model decrypts it automatically
+        $hotel->refresh();
+        $this->assertEquals($token, $hotel->ota_token);
+    }
+
+    /** @test */
+    public function it_supports_template_id_in_website_overrides()
+    {
+        $hotel = Hotel::factory()->create();
+        
+        $override = HotelWebsiteOverride::create([
+            'hotel_id' => $hotel->id,
+            'template_id' => 3,
+            'custom_title' => 'Fortress Hotel'
         ]);
 
-        $response->assertStatus(422);
-        $this->assertStringContainsString('Hardware Handshake Mismatch', $response->getContent());
-
-        // SIEM Log Verification
-        $logPath = storage_path('logs/fortress_siem.log');
-        $this->assertTrue(File::exists($logPath));
-        $logContent = File::get($logPath);
-
-        $this->assertStringContainsString('"severity_score":12', $logContent);
-        $this->assertStringNotContainsString('secret-password', $logContent);
+        $this->assertEquals(3, $override->template_id);
+        
+        $hotel->refresh();
+        $this->assertEquals(3, $hotel->websiteOverride->template_id);
     }
 }

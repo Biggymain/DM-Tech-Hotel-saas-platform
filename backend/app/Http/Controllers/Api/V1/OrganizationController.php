@@ -56,6 +56,7 @@ class OrganizationController extends Controller
             'phone'   => 'nullable|string',
             'address' => 'nullable|string',
             'tier'    => 'nullable|string|in:basic,standard,premium,enterprise',
+            'payment_reference' => 'nullable|string',
         ]);
 
         if (!$user->isGroupAdmin() && !$user->is_super_admin) {
@@ -189,6 +190,23 @@ class OrganizationController extends Controller
             'manager_email' => $manager->email,
             'temporary_password' => $generatedPassword,
             'branch_slug' => $branch->slug,
+        ]);
+    }
+
+    public function preflightBranch(Request $request)
+    {
+        $user = Auth::user();
+        $groupId = $user->hotel_group_id;
+
+        if (!$groupId) {
+            return response()->json(['error' => 'Group context required'], 400);
+        }
+
+        $fee = (new \App\Services\SubscriptionService())->calculateOnboardingFee($groupId);
+
+        return response()->json([
+            'fee_details' => $fee,
+            'can_proceed' => true
         ]);
     }
 }

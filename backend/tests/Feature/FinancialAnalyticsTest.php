@@ -252,7 +252,13 @@ class FinancialAnalyticsTest extends TestCase
             'entity_id' => $order->id,
             'change_type' => 'order_voided',
             'user_id' => $user->id,
-            'reason' => 'Customer changed mind'
         ]);
+        
+        $log = \App\Models\AuditLog::where('entity_type', get_class($order))
+            ->where('entity_id', $order->id)
+            ->where('change_type', 'order_voided')
+            ->first();
+            
+        $this->assertEquals('Customer changed mind', $log->reason);
     }
 }

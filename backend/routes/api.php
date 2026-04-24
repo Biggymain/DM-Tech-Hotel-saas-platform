@@ -61,6 +61,7 @@ use App\Http\Controllers\Auth\HotelRegistrationController;
 use App\Http\Controllers\Api\V1\HardwareController;
 use App\Http\Controllers\Api\V1\DeveloperController;
 use App\Http\Controllers\Api\V1\LeisureController;
+use App\Http\Controllers\Api\V1\MasterOrganizationController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -101,6 +102,21 @@ Route::prefix('v1')->group(function () {
         // ── PHOENIX MASTER MARRIAGE (Local Registration) ────────────────────────
         Route::post('developer/register-terminal', [DeveloperController::class, 'registerTerminal'])
             ->middleware(\App\Http\Middleware\DeveloperAccessMiddleware::class);
+        
+        // ── MASTER DASHBOARD FEEDS ───────────────────────────────────────────────
+        Route::middleware(['auth:sanctum', 'developer.sentry'])->group(function () {
+            Route::get('developer/status', [DeveloperController::class, 'status']);
+            Route::get('developer/users', [DeveloperController::class, 'listMasterUsers']);
+            Route::post('developer/users', [DeveloperController::class, 'storeMasterUser']);
+            Route::patch('developer/users/{id}/approve', [DeveloperController::class, 'approveUser']);
+            Route::delete('developer/users/{id}', [DeveloperController::class, 'destroyUser']);
+            
+            Route::get('siem/alerts', [SystemLogController::class, 'index']);
+            Route::post('siem/ban-hardware', [SystemLogController::class, 'banHardware']);
+
+            Route::get('organizations', [MasterOrganizationController::class, 'index']);
+            Route::post('organizations/{id}/toggle-status', [MasterOrganizationController::class, 'toggleStatus']);
+        });
     });
 
     // Alignment Routes
@@ -118,6 +134,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/overview', [OrganizationController::class, 'overview']);
         Route::get('/branches', [OrganizationController::class, 'branches']);
         Route::post('/branches', [OrganizationController::class, 'store']);
+        Route::get('/branches/preflight', [OrganizationController::class, 'preflightBranch']);
         Route::post('/branches/{id}/onboard', [OrganizationController::class, 'onboardManager']);
         Route::put('/settings', [OrganizationController::class, 'updateSettings']);
 

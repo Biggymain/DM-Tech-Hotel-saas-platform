@@ -11,18 +11,32 @@ use App\Services\GuestPortalService;
 use App\Models\Room;
 use App\Models\GuestPortalSession;
 use App\Events\GuestPortalSessionCreated;
+use App\Services\QrSignatureService;
 
 class GuestPortalController extends Controller
 {
     protected $portalService;
+    protected $qrSignatureService;
 
-    public function __construct(GuestPortalService $portalService)
+    public function __construct(GuestPortalService $portalService, QrSignatureService $qrSignatureService)
     {
         $this->portalService = $portalService;
+        $this->qrSignatureService = $qrSignatureService;
     }
 
     public function startSession(Request $request)
     {
+        // 1. Security Hardening: Explicit 403 check for signature parameters (bypass default 422 validator)
+        if (!$request->has(['signature', 'hotel_id', 'context_type', 'context_id'])) {
+            return response()->json(['message' => 'Security validation failed: Missing QR signature parameters.'], 403);
+        }
+
+        $payloadToVerify = $request->only(['hotel_id', 'context_type', 'context_id']);
+        if (!$this->qrSignatureService->validateSignature($payloadToVerify, (string)$request->signature)) {
+            return response()->json(['message' => 'Invalid or tampered QR signature.'], 403);
+        }
+
+        // 2. Normal validation for data integrity and existence
         $request->validate([
             'hotel_id' => 'required|exists:hotels,id',
             'context_type' => 'required|in:room,outlet,table',

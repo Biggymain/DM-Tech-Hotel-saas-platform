@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import api from '@/lib/api';
+import api, { startSession } from '@/lib/api';
 
 export default function GuestLandingPage() {
   const router = useRouter();
@@ -32,12 +32,51 @@ export default function GuestLandingPage() {
       const room = params.get('room_id');
       const outlet = params.get('outlet_id');
       const table = params.get('table');
+      const signature = params.get('signature');
+
+      // Security Gate: Missing signature implies an untrusted entry point
+      if (!signature) {
+        router.push('/error/unauthorized');
+        return;
+      }
 
       if (tenant) localStorage.setItem('tenant_id', tenant);
       if (branch) localStorage.setItem('branch_id', branch);
       if (room) localStorage.setItem('room_id', room);
       if (outlet) localStorage.setItem('outlet_id', outlet);
       if (table) localStorage.setItem('table_number', table);
+
+      // Initiation: Establish the secure session handshake with the backend
+      const initiateSession = async () => {
+        try {
+          const hotelId = tenant || branch || '';
+          let contextType: 'room' | 'outlet' | 'table' = 'room';
+          let contextId = room || '';
+
+          if (table) {
+            contextType = 'table';
+            contextId = table;
+          } else if (outlet && !room) {
+            contextType = 'outlet';
+            contextId = outlet;
+          }
+
+          if (hotelId && contextId && signature) {
+            await startSession({
+              hotel_id: hotelId,
+              context_type: contextType,
+              context_id: contextId,
+              signature: signature,
+              device_info: navigator.userAgent
+            });
+          }
+        } catch (e) {
+          console.error("Secure handshake failed:", e);
+          router.push('/error/unauthorized');
+        }
+      };
+
+      initiateSession();
     }
 
     const fetchRecs = async () => {

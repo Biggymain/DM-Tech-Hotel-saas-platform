@@ -60,12 +60,17 @@ class GuestPortalTest extends TestCase
     #[Test]
     public function test_guest_portal_session_creation()
     {
-        $response = $this->postJson('/api/v1/guest/session/start', [
+        $payload = [
             'hotel_id' => $this->hotel->id,
             'context_type' => 'room',
             'context_id' => $this->room->id,
-            'device_info' => 'iPhone 13'
-        ]);
+        ];
+        $signature = app(\App\Services\QrSignatureService::class)->generateSignature($payload);
+
+        $response = $this->postJson('/api/v1/guest/session/start', array_merge($payload, [
+            'device_info' => 'iPhone 13',
+            'signature' => $signature
+        ]));
 
         $response->assertStatus(201)
                  ->assertJsonStructure(['session_token', 'requires_pin']);

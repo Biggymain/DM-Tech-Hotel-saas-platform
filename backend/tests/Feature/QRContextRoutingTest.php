@@ -55,12 +55,20 @@ class QRContextRoutingTest extends TestCase
 
         $reservation->rooms()->attach($room->id, ['rate' => 100]);
 
-        $response = $this->postJson('/api/v1/guest/session/start', [
+        $payload = [
             'hotel_id' => $hotel->id,
             'context_type' => 'room',
             'context_id' => $room->id,
             'device_info' => 'iPhone 15',
+        ];
+        
+        $payload['signature'] = app(\App\Services\QrSignatureService::class)->generateSignature([
+            'hotel_id' => $hotel->id,
+            'context_type' => 'room',
+            'context_id' => $room->id,
         ]);
+
+        $response = $this->postJson('/api/v1/guest/session/start', $payload);
 
         $response->assertStatus(201)
             ->assertJsonStructure(['message', 'session_token', 'requires_pin', 'context_type'])
@@ -79,12 +87,20 @@ class QRContextRoutingTest extends TestCase
         $hotel = Hotel::factory()->create();
         
         // Simulating an outlet QR code (e.g., lobby bar)
-        $response = $this->postJson('/api/v1/guest/session/start', [
+        $payload = [
             'hotel_id' => $hotel->id,
             'context_type' => 'outlet',
-            'context_id' => 99, // Some outlet ID
+            'context_id' => 99,
             'device_info' => 'Android Tablet',
+        ];
+        
+        $payload['signature'] = app(\App\Services\QrSignatureService::class)->generateSignature([
+            'hotel_id' => $hotel->id,
+            'context_type' => 'outlet',
+            'context_id' => 99,
         ]);
+
+        $response = $this->postJson('/api/v1/guest/session/start', $payload);
 
         $response->assertStatus(201)
             ->assertJson(['context_type' => 'outlet', 'requires_pin' => false]); // Visitors don't need PIN
@@ -94,5 +110,73 @@ class QRContextRoutingTest extends TestCase
             'context_id' => 99,
             'guest_id' => null, // No guest associated yet
         ]);
+    }
+    #[Test]
+    public function test_valid_qr_signature_starts_session()
+    {
+        $hotel = Hotel::factory()->create();
+        
+        $payload = [
+            'hotel_id' => $hotel->id,
+            'context_type' => 'table',
+            'context_id' => 5,
+            'device_info' => 'iPhone',
+        ];
+        
+        $payload['signature'] = app(\App\Services\QrSignatureService::class)->generateSignature([
+            'hotel_id' => $hotel->id,
+            'context_type' => 'table',
+            'context_id' => 5,
+        ]);
+
+        $response = $this->postJson('/api/v1/guest/session/start', $payload);
+        $response->assertStatus(201);
+    }
+
+    #[Test]
+    public function test_tampered_qr_signature_returns_403()
+    {
+        $hotel = Hotel::factory()->create();
+        
+        // Original valid payload
+        $payload = [
+            'hotel_id' => $hotel->id,
+            'context_type' => 'table',
+            'context_id' => 1,
+            'device_info' => 'Android Tablet',
+        ];
+        
+        $payload['signature'] = app(\App\Services\QrSignatureService::class)->generateSignature([
+            'hotel_id' => $hotel->id,
+            'context_type' => 'table',
+            'context_id' => 1,
+        ]);
+
+        // Tamper with the payload after signature is generated
+        $payload['context_id'] = 2; // Guest tries to change table
+
+        $response = $this->postJson('/api/v1/guest/session/start', $payload);
+
+        $response->assertStatus(403)
+            ->assertJsonPath('message', 'Invalid or tampered QR signature.');
+    }
+
+    #[Test]
+    public function test_missing_qr_signature_returns_403()
+    {
+        $hotel = Hotel::factory()->create();
+
+        // Payload deliberately omits the 'signature' field
+        $payload = [
+            'hotel_id'    => $hotel->id,
+            'context_type' => 'table',
+            'context_id'  => 3,
+            'device_info' => 'Chrome Browser',
+        ];
+
+        $response = $this->postJson('/api/v1/guest/session/start', $payload);
+
+        $response->assertStatus(403)
+            ->assertJsonPath('message', 'Security validation failed: Missing QR signature parameters.');
     }
 }

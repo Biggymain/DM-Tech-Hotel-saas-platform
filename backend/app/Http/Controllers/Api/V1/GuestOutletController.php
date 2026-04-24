@@ -149,6 +149,7 @@ class GuestOutletController extends Controller
                 'order_number' => 'ORD-GUEST-' . strtoupper(uniqid()),
                 'order_source' => $orderSource,
                 'status' => 'pending',
+                'order_status' => 'pending_staff_approval',
                 'total_amount' => $totalAmount,
                 'payment_status' => 'unpaid',
                 'payment_method' => null, // Up to gateway
@@ -163,7 +164,7 @@ class GuestOutletController extends Controller
                 'order_id' => $order->id,
                 'hotel_id' => $order->hotel_id,
                 'previous_status' => null,
-                'new_status' => 'pending',
+                'new_status' => 'pending_staff_approval',
                 'changed_by' => null,
             ]);
 

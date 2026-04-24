@@ -23,6 +23,7 @@ class Hotel extends BaseModel
         'is_active', 'currency_id', 'reservation_deadline_hours_before_checkin',
         'reservation_grace_hours', 'no_show_penalty_type',
         'bank_name', 'account_number', 'account_name', 'pos_terminal_id', 'stakeholder_emails',
+        'ota_token',
     ];
 
     protected static function boot()
@@ -40,6 +41,7 @@ class Hotel extends BaseModel
         'phone' => 'encrypted',
         'address' => 'encrypted',
         'stakeholder_emails' => 'array',
+        'ota_token' => 'encrypted',
     ];
 
     /** The Organization (HotelGroup) this branch belongs to. */
@@ -137,5 +139,15 @@ class Hotel extends BaseModel
         }
 
         return false;
+    }
+
+    /**
+     * Generates a new OTA integration key for external booking engines.
+     */
+    public function generateOtaIntegrationKey(): string
+    {
+        $token = \Illuminate\Support\Str::random(64);
+        $this->update(['ota_token' => $token]);
+        return $token;
     }
 }

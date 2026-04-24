@@ -140,11 +140,16 @@ class Phase68StabilizationTest extends TestCase
             'status' => 'suspended',
         ]);
 
-        $response = $this->postJson('/api/v1/guest/session/start', [
+        $payload = [
             'hotel_id' => $hotel->id,
             'context_type' => 'outlet',
             'context_id' => 1,
-        ]);
+        ];
+        $signature = app(\App\Services\QrSignatureService::class)->generateSignature($payload);
+
+        $response = $this->postJson('/api/v1/guest/session/start', array_merge($payload, [
+            'signature' => $signature
+        ]));
 
         $response->assertStatus(403)
                  ->assertJson(['message' => 'Account Suspended: Please renew your subscription to perform this action.']);

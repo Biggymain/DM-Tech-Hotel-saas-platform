@@ -81,4 +81,35 @@ class SiemWatchdogTest extends TestCase
         $user->refresh();
         $this->assertFalse($user->is_approved, "User should be automatically suspended after correlated SIEM violations.");
     }
+
+    #[Test]
+    public function test_siem_logs_are_stored_encrypted_in_database()
+    {
+        $hash = \Tests\TestCase::generateMockHardwareHash();
+        
+        // Generate an audit log
+        AuditLogService::log(
+            'user', 1, 'security_event',
+            ['old' => 'data'],
+            ['attempted' => $hash, 'hash' => $hash],
+            'Testing encryption at rest',
+            'api'
+        );
+
+        // 1. Verify raw database storage is encrypted
+        $rawLog = \Illuminate\Support\Facades\DB::table('audit_logs')->first();
+        
+        $this->assertNotNull($rawLog);
+        $this->assertEquals($hash, $rawLog->hardware_id, "Hardware ID should be indexed as plain text.");
+        $this->assertStringStartsWith('eyJpdiI6', $rawLog->reason, "Reason should be an encrypted payload.");
+        $this->assertStringStartsWith('eyJpdiI6', $rawLog->new_values, "New Values should be an encrypted payload.");
+        $this->assertStringNotContainsString('Testing encryption at rest', $rawLog->reason);
+
+        // 2. Verify Eloquent automatically decrypts for the UI/Controllers
+        $modelLog = AuditLog::first();
+        
+        $this->assertEquals('Testing encryption at rest', $modelLog->reason);
+        $this->assertIsArray($modelLog->new_values);
+        $this->assertEquals($hash, $modelLog->new_values['attempted']);
+    }
 }

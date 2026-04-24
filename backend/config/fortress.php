@@ -58,6 +58,7 @@ return [
         'accountant'      => 3005,
         'auditor'         => 3005,
         'biadmin'         => 3005,
+        'master_admin'    => 3000,
         'terminal'        => 3003,
         'guest'           => 3004,
     ],

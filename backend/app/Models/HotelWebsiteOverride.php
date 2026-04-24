@@ -11,6 +11,7 @@ class HotelWebsiteOverride extends Model
 
     protected $fillable = [
         'hotel_id',
+        'template_id',
         'custom_title',
         'custom_description',
         'custom_about_text',
@@ -21,6 +22,7 @@ class HotelWebsiteOverride extends Model
     ];
 
     protected $casts = [
+        'template_id'        => 'integer',
         'use_group_branding' => 'boolean',
         'design_settings'    => 'array',
     ];

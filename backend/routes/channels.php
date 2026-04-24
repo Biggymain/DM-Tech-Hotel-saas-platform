@@ -67,3 +67,26 @@ Broadcast::channel('hotel.{hotelId}.waiter.{waiterId}', function ($user, $hotelI
     return (int) $user->hotel_id === (int) $hotelId
         && (int) $user->id === (int) $waiterId;
 });
+
+// ── POS / Outlet Manager channel ─────────────────────────────────────────────
+// Receives NewOrderClaimed events so Outlet Managers can see live waitress assignments.
+// Access is granted to hotel staff in the same hotel AND outlet (branch).
+Broadcast::channel('hotel.{hotelId}.branch.{branchId}.pos', function ($user, $hotelId, $branchId) {
+    if ($user->is_super_admin) return true;
+
+    // Group owners get access across their hotels
+    if (!empty($user->hotel_group_id) && !$user->hotel_id) {
+        $ownsHotel = \App\Models\Hotel::where('id', $hotelId)
+            ->where('hotel_group_id', $user->hotel_group_id)
+            ->exists();
+        if ($ownsHotel) return ['id' => $user->id, 'name' => $user->name];
+    }
+
+    if ((int) $user->hotel_id !== (int) $hotelId) return false;
+
+    // Outlet Managers must belong to the same outlet/branch
+    $userBranch = $user->outlet_id ?? $user->branch_id ?? $user->hotel_id;
+    if ((int) $userBranch !== (int) $branchId) return false;
+
+    return ['id' => $user->id, 'name' => $user->name];
+});

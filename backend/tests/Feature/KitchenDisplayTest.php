@@ -112,46 +112,67 @@ class KitchenDisplayTest extends TestCase
     }
 
     #[Test]
-    public function test_kitchen_ticket_automatically_created_when_order_placed()
+    public function test_order_awaits_staff_claim_before_kds_ticket()
     {
-        $payload = [
+        // First, create an order simulating a guest portal submission
+        // In GuestOutletController, it's created as pending_staff_approval
+        $order = Order::create([
+            'hotel_id' => $this->hotel->id,
             'outlet_id' => $this->outlet->id,
             'department_id' => $this->department->id,
-            'order_number' => 'ORD-1234',
-            'order_source' => 'pos',
-            'items' => [
-                [
-                    'menu_item_id' => $this->menuItem->id,
-                    'quantity' => 2,
-                    'price' => 15.00,
-                    'kitchen_section' => 'Grill'
-                ]
-            ]
-        ];
-
-        // This triggers OrderController@store which generates an Order -> triggers OrderCreated event -> generates KitchenTicket
-        $response = $this->postJson('/api/v1/orders', $payload);
-        $response->assertStatus(201);
-        
-        $orderId = $response->json('order.id');
-
-        // Check if KDS Ticket exists
-        $this->assertDatabaseHas('kitchen_tickets', [
-            'hotel_id' => $this->hotel->id,
-            'order_id' => $orderId,
-            'department_id' => $this->department->id,
-            'status' => 'queued',
+            'order_number' => 'ORD-GUEST-1234',
+            'order_source' => 'qr_room',
+            'status' => 'pending',
+            'order_status' => 'pending_staff_approval',
+            'total_amount' => 15.00,
         ]);
 
-        // Check KDS Ticket Item exists mapped properly
-        $ticket = KitchenTicket::where('order_id', $orderId)->first();
-        $this->assertNotNull($ticket);
-
-        $this->assertDatabaseHas('kitchen_ticket_items', [
-            'kitchen_ticket_id' => $ticket->id,
+        $order->items()->create([
             'menu_item_id' => $this->menuItem->id,
+            'quantity' => 1,
+            'price' => 15.00,
+            'subtotal' => 15.00,
             'kitchen_section' => 'Grill',
-            'quantity' => 2,
+        ]);
+
+        \App\Events\OrderCreated::dispatch($order);
+
+        // KDS tickets should NOT exist yet
+        $this->assertDatabaseMissing('kitchen_tickets', [
+            'order_id' => $order->id,
+        ]);
+    }
+
+    #[Test]
+    public function test_waitress_claim_triggers_kds_ticket_generation()
+    {
+        $order = Order::create([
+            'hotel_id' => $this->hotel->id,
+            'outlet_id' => $this->outlet->id,
+            'department_id' => $this->department->id,
+            'order_number' => 'ORD-GUEST-5678',
+            'order_source' => 'qr_room',
+            'status' => 'pending',
+            'order_status' => 'pending_staff_approval',
+            'total_amount' => 15.00,
+        ]);
+
+        $order->items()->create([
+            'menu_item_id' => $this->menuItem->id,
+            'quantity' => 1,
+            'price' => 15.00,
+            'subtotal' => 15.00,
+            'kitchen_section' => 'Grill',
+        ]);
+
+        // Manually dispatch OrderClaimed as the waitress claiming it would
+        \App\Events\OrderClaimed::dispatch($order->fresh(['items.menuItem']));
+
+        // KDS tickets SHOULD exist now
+        $this->assertDatabaseHas('kitchen_tickets', [
+            'order_id' => $order->id,
+            'hotel_id' => $this->hotel->id,
+            'status' => 'queued',
         ]);
     }
 
@@ -248,5 +269,46 @@ class KitchenDisplayTest extends TestCase
                  
         $failResponse = $this->getJson("/api/v1/kds/tickets/{$ticketH2->id}");
         $failResponse->assertStatus(404);
+    }
+
+    #[Test]
+    public function test_order_automatically_creates_kitchen_ticket()
+    {
+        // POS orders should generate KDS tickets immediately via
+        // OrderCreated → GenerateKitchenTickets (single-step POS pipeline).
+        $payload = [
+            'outlet_id'    => $this->outlet->id,
+            'department_id' => $this->department->id,
+            'order_number' => 'ORD-POS-AUTO-001',
+            'order_source' => 'pos',
+            'items' => [
+                [
+                    'menu_item_id' => $this->menuItem->id,
+                    'quantity'     => 2,
+                    'price'        => 15.00,
+                ]
+            ]
+        ];
+
+        $response = $this->postJson('/api/v1/orders', $payload);
+        $response->assertStatus(201);
+
+        // The KDS ticket must be generated automatically without a staff claim step
+        $this->assertDatabaseHas('kitchen_tickets', [
+            'hotel_id' => $this->hotel->id,
+            'status'   => 'queued',
+        ]);
+
+        // Ensure at least one ticket item was created for the order item
+        $ticket = KitchenTicket::where('hotel_id', $this->hotel->id)
+            ->where('status', 'queued')
+            ->latest()
+            ->first();
+
+        $this->assertNotNull($ticket);
+        $this->assertDatabaseHas('kitchen_ticket_items', [
+            'kitchen_ticket_id' => $ticket->id,
+            'quantity'          => 2,
+        ]);
     }
 }

@@ -28,6 +28,8 @@ class ImageUploadTest extends TestCase
             'name' => 'Admin User',
             'email' => 'admin@test.com',
             'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'is_approved' => true,
+            'hardware_hash' => \Tests\TestCase::generateMockHardwareHash(),
         ]);
 
         Sanctum::actingAs($this->user);

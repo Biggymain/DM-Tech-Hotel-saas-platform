@@ -53,22 +53,36 @@ api.interceptors.response.use(
     if ((error.response?.status === 401 || error.response?.status === 403) && typeof window !== 'undefined') {
         const port = window.location.port;
         
-        if (error.response?.status === 403) {
-             localStorage.removeItem(`guest_token_${port}`);
-        }
+        // Security Purge: Clear all session-specific data to prevent zombie sessions
+        localStorage.removeItem(`guest_token_${port}`);
+        localStorage.removeItem('tenant_id');
+        localStorage.removeItem('branch_id');
+        localStorage.removeItem('group_id');
+        localStorage.removeItem('hotel_id');
+        localStorage.removeItem('room_id');
+        localStorage.removeItem('outlet_id');
+        localStorage.removeItem('table_number');
 
-        // Port 3004 (In-Hotel tablet): Lost session implies tablet needs re-pairing
-        if (port === '3004') {
-             console.warn("Tablet disconnected from room context or forbidden!");
-             window.location.href = '/pairing-error';
-        }
-        // Port 3005 (Booking engine): Guest booking session expired or forbidden
-        else if (port === '3005') {
-             window.location.href = '/booking/timeout';
-        }
+        // Redirect to a professional session-end landing page
+        window.location.href = '/session-expired';
     }
     return Promise.reject(error);
   }
 );
+
+export const startSession = async (payload: {
+  hotel_id: string;
+  context_type: 'room' | 'outlet' | 'table';
+  context_id: string | number;
+  signature: string;
+  device_info?: string;
+}) => {
+  const response = await api.post('/api/v1/guest/session/start', payload);
+  if (response.data.session_token) {
+    const port = typeof window !== 'undefined' ? window.location.port : '3004';
+    localStorage.setItem(`guest_token_${port}`, response.data.session_token);
+  }
+  return response.data;
+};
 
 export default api;

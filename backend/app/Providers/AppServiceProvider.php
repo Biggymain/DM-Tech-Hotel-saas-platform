@@ -24,6 +24,12 @@ class AppServiceProvider extends ServiceProvider
             \App\Listeners\SendLoginAlert::class
         );
 
+        // Guest-portal QR orders: KDS ticket generated after waitress claims order
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\OrderClaimed::class,
+            \App\Listeners\GenerateKitchenTickets::class
+        );
+
         // Digital Fortress: SIEM Watchdog
         \App\Models\AuditLog::observe(\App\Observers\AuditLogObserver::class);
 

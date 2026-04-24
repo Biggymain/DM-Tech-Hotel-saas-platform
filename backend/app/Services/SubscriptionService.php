@@ -195,7 +195,32 @@ class SubscriptionService
             $licensingFee = \App\Models\SystemSetting::getSetting('group_licensing_fee', 1000.00); // 1000 or whatever default
             $totalMonthly += (float)$licensingFee;
         }
-
         return (float) $totalMonthly;
+    }
+
+    /**
+     * Calculate onboarding fee for a new branch.
+     * Base fee: $50.00. Apply 5% discount if organization already has branches.
+     */
+    public function calculateOnboardingFee(int $groupId): array
+    {
+        $existingCount = Hotel::where('hotel_group_id', $groupId)->count();
+        
+        $baseFee = 50.00;
+        $discount = 0.0;
+        $finalAmount = $baseFee;
+
+        if ($existingCount > 0) {
+            $discount = 0.05; // 5% discount for existing organizations
+            $finalAmount = $baseFee * (1 - $discount);
+        }
+
+        return [
+            'amount' => round($finalAmount, 2),
+            'currency' => 'USD',
+            'base_amount' => $baseFee,
+            'discount_percent' => $discount * 100,
+            'is_discounted' => $discount > 0,
+        ];
     }
 }

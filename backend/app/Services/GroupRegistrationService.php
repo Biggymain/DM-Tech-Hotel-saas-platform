@@ -20,6 +20,8 @@ use Illuminate\Support\Str;
  */
 class GroupRegistrationService
 {
+    public function __construct(private \App\Services\SubscriptionService $subscriptionService) {}
+
     public function registerGroup(array $data): array
     {
         return DB::transaction(function () use ($data) {
@@ -99,6 +101,18 @@ class GroupRegistrationService
      */
     public function createBranch(HotelGroup $group, array $data): Hotel
     {
+        // 0. Financial Validation Gate
+        if (!isset($data['payment_reference']) && !auth()->user()->is_super_admin) {
+            $fee = $this->subscriptionService->calculateOnboardingFee($group->id);
+            throw new \Illuminate\Http\Exceptions\HttpResponseException(
+                response()->json([
+                    'error' => 'Payment Required',
+                    'fee_details' => $fee,
+                    'status' => 'payment_required'
+                ], 402)
+            );
+        }
+
         return DB::transaction(function () use ($group, $data) {
             $branch = Hotel::create([
                 'hotel_group_id' => $group->id,
@@ -147,7 +161,7 @@ class GroupRegistrationService
 
         DB::connection('supabase')->table('branches')->insert([
             'id' => $branch->getAttribute('id'), // Robust UUID access
-            'branch_token' => (string) \Illuminate\Support\Str::uuid(),
+            'branch_token' => (string) Str::uuid(),
             'group_id' => $groupId,
             'expires_at' => now()->addDays($expiryDays),
             'manager_email' => $branch->getAttribute('email'), // Mapped for licensing alerts

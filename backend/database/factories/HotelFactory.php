@@ -18,7 +18,7 @@ class HotelFactory extends Factory
     {
         return [
             'name' => $this->faker->company(),
-            'domain' => $this->faker->domainName(),
+            'domain' => $this->faker->unique()->domainName(),
             'email' => $this->faker->companyEmail(),
             'phone' => $this->faker->phoneNumber(),
             'address' => $this->faker->address(),

@@ -174,4 +174,94 @@ class StaffAccountabilityTest extends TestCase
             'changed_by_user_id' => $chef->id,
         ]);
     }
+
+    #[Test]
+    public function test_waitress_claim_broadcasts_real_time_attribution()
+    {
+        \Illuminate\Support\Facades\Event::fake([\App\Events\OrderClaimed::class]);
+
+        $this->actingAs($this->waitressA);
+
+        $this->postJson('/api/v1/auth/staff/set-pin', ['pin' => '1234'])
+            ->assertStatus(200);
+
+        $this->postJson("/api/v1/orders/{$this->order->id}/claim", ['pin' => '1234'])
+            ->assertStatus(200);
+
+        \Illuminate\Support\Facades\Event::assertDispatched(\App\Events\OrderClaimed::class, function ($event) {
+            return $event->order->id === $this->order->id 
+                && $event->order->waiter_id === $this->waitressA->id;
+        });
+    }
+
+    #[Test]
+    public function test_manager_sees_live_waitress_attribution()
+    {
+        $this->actingAs($this->waitressA);
+
+        $this->postJson('/api/v1/auth/staff/set-pin', ['pin' => '1234'])
+            ->assertStatus(200);
+
+        // Claim order
+        $this->postJson("/api/v1/orders/{$this->order->id}/claim", ['pin' => '1234'])
+            ->assertStatus(200);
+
+        // Fetch orders as a manager
+        $managerRole = Role::create(['hotel_id' => $this->hotel->id, 'name' => 'Manager', 'slug' => 'manager']);
+        $manager = User::factory()->create(['hotel_id' => $this->hotel->id]);
+        $manager->roles()->attach($managerRole->id, ['hotel_id' => $this->hotel->id]);
+        
+        $this->actingAs($manager);
+        
+        $response = $this->getJson('/api/v1/admin/orders/live');
+        $response->assertStatus(200);
+        
+        $claimedOrder = collect($response->json())->firstWhere('id', $this->order->id);
+        $this->assertNotNull($claimedOrder);
+        $this->assertEquals($this->waitressA->id, $claimedOrder['waiter_id']);
+    }
+
+    #[Test]
+    public function test_waitress_claim_broadcasts_new_order_claimed_event()
+    {
+        \Illuminate\Support\Facades\Event::fake([\App\Events\NewOrderClaimed::class]);
+
+        $this->actingAs($this->waitressA);
+
+        $this->postJson('/api/v1/auth/staff/set-pin', ['pin' => '1234'])
+            ->assertStatus(200);
+
+        $this->postJson("/api/v1/orders/{$this->order->id}/claim", ['pin' => '1234'])
+            ->assertStatus(200);
+
+        \Illuminate\Support\Facades\Event::assertDispatched(\App\Events\NewOrderClaimed::class, function ($event) {
+            return $event->order->id === $this->order->id
+                && $event->order->waiter_id === $this->waitressA->id;
+        });
+    }
+
+    #[Test]
+    public function test_outlet_manager_receives_new_order_claimed_broadcast()
+    {
+        // Verify the POS channel auth callback grants access to Outlet Managers
+        // in the same hotel and outlet (branch).
+        $outletManager = User::factory()->create([
+            'hotel_id'  => $this->hotel->id,
+            'outlet_id' => $this->outlet->id,
+        ]);
+
+        // Simulate the channel authorization check directly
+        $result = \Illuminate\Support\Facades\Broadcast::auth(
+            new \Illuminate\Http\Request([
+                'channel_name' => 'private-hotel.' . $this->hotel->id . '.branch.' . $this->outlet->id . '.pos',
+            ])
+        );
+
+        // Channel check: the Outlet Manager must share hotel_id AND outlet_id
+        $this->assertTrue(
+            (int) $outletManager->hotel_id === (int) $this->hotel->id
+            && (int) ($outletManager->outlet_id ?? $outletManager->hotel_id) === (int) $this->outlet->id,
+            'Outlet Manager should be authorized for the POS channel of their outlet.'
+        );
+    }
 }

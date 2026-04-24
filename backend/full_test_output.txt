@@ -4,106 +4,474 @@ Runtime:       PHP 8.4.16
 Configuration: /home/micky/DM-Tech-Hotel-saas-platform/backend/phpunit.xml
 
 .MIGRATION_DEBUG: Running create_audit_logs_table migration
-.........................................SIEM Warning: Stripping non-whitelisted key 'dispatched' from telemetry.
+........................................SIEM Warning: Stripping non-whitelisted key 'dispatched' from telemetry.
 SIEM Warning: Stripping non-whitelisted key 'received' from telemetry.
 ..SIEM Warning: Stripping non-whitelisted key 'dispatched' from telemetry.
 SIEM Warning: Stripping non-whitelisted key 'received' from telemetry.
-...................  63 / 272 ( 23%)
-.......F.....................SIEM Warning: Stripping non-whitelisted key 'target_tenant' from telemetry.
-....EEE........................... 126 / 272 ( 46%)
-............................................................... 189 / 272 ( 69%)
-............................................................... 252 / 272 ( 92%)
-......S.............                                            272 / 272 (100%)
+....................  63 / 280 ( 22%)
+.............F..............SIEM Warning: Stripping non-whitelisted key 'target_tenant' from telemetry.
+................................... 126 / 280 ( 45%)
+.............................................................F. 189 / 280 ( 67%)
+............................................................... 252 / 280 ( 90%)
+..............S.............                                    280 / 280 (100%)
 
-Time: 03:35.125, Memory: 104.50 MB
+Time: 07:12.729, Memory: 106.50 MB
 
-There were 3 errors:
+Active Response (Tests\Feature\ActiveResponse)
+ ✔ Detects correlated attack within 60 seconds
+ ✔ Neutrality gate ignores low severity events
+ ✔ Recursion protection prevents infinite loops
+ ✔ Does not correlate events outside 60 second window
+ ✔ Attacker is automatically suspended
 
-1) Tests\Feature\HardwareCommercialTest::test_branch_activation_respects_device_slots
-Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: branches.group_id (Connection: supabase, Database: :memory:, SQL: insert into "branches" ("id", "branch_token", "is_active", "expires_at") values (1, ae94fc00-6cf3-426a-9204-537d6b719d29, 1, 2027-04-21 02:33:24))
+Admin Auth (Tests\Feature\AdminAuth)
+ ✔ User can login with correct credentials
+ ✔ User cannot login with incorrect password
+ ✔ User can request password reset link
+ ✔ User can reset password with valid token
+ ✔ Reset password fails with invalid token
+ ✔ Login alert logs activity
+ ✔ Admin access on wrong port ghosts
 
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
-/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareCommercialTest.php:43
+Auto Checkout (Tests\Feature\AutoCheckout)
+ ✔ Auto checkout completes for zero balance
+ ✔ Auto checkout skips guests with balance
 
-Caused by
-PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: branches.group_id
+Billing Engine (Tests\Feature\BillingEngine)
+ ✔ Invoice creation on order served
+ ✔ Payment processing and partial payments
+ ✔ Refund workflow
 
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
-/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareCommercialTest.php:43
+Branch Management (Tests\Feature\BranchManagement)
+ ✔ Hotel generates slug on creation
+ ✔ Can onboard manager for branch
 
-2) Tests\Feature\HardwareCommercialTest::test_staff_roles_cannot_request_hardware_access
-Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: branches.group_id (Connection: supabase, Database: :memory:, SQL: insert into "branches" ("id", "branch_token", "is_active", "expires_at") values (1, 7fe07028-036d-4164-830b-78e6b05bb58e, 1, 2027-04-21 02:33:24))
+Channel Manager (Tests\Feature\ChannelManager)
+ ✔ Channel integration creation
+ ✔ Room and rate mapping to channel
+ ✔ Sync jobs dispatched and log created
+ ✔ Webhook signature validation
+ ✔ Channel reservation creates pms reservation
+ ✔ Duplicate reservation rejected
+ ✔ Channel sync toggle disabled
 
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
-/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareCommercialTest.php:43
+Command Center Dashboard (Tests\Feature\CommandCenterDashboard)
+ ✔ Admin can access occupancy summary with isolation
+ ✔ Admin can access revenue summary with isolation
 
-Caused by
-PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: branches.group_id
+Department Management (Tests\Feature\DepartmentManagement)
+ ✔ Can create department with automatic permissions
+ ✔ Can list departments isolated by tenant
+ ✔ Can update department
 
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
-/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareCommercialTest.php:43
+Developer Sentry (Tests\Feature\DeveloperSentry)
+ ✔ Registration requires valid key and passphrase
+ ✔ Successful registration creates master device without hotel
+ ✔ Master bypass is active in testing environment
 
-3) Tests\Feature\HardwareCommercialTest::test_manager_relink_purges_old_supabase_signature
-Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: branches.group_id (Connection: supabase, Database: :memory:, SQL: insert into "branches" ("id", "branch_token", "is_active", "expires_at") values (1, 3b25111c-b837-4831-8e72-a0b37768564f, 1, 2027-04-21 02:33:24))
+Digital Fortress (Tests\Feature\DigitalFortress)
+ ✔ It blocks web routes on port 3005 when internal website is disabled
+ ✔ It allows api routes on port 3005 even when internal website is disabled
+ ✔ It can generate and encrypt ota token
+ ✔ It supports template id in website overrides
 
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
-/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareCommercialTest.php:43
+Digital Inventory Bridge (Tests\Feature\DigitalInventoryBridge)
+ ✔ Scenario p honest handshake updates counts
+ ✔ Scenario q pin failure denies transfer
+ ✔ Scenario r shortage triggers dispute and high severity log
+ ✔ Api dispatch flow v1
+ ✔ Api receive dispute flow v1
 
-Caused by
-PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: branches.group_id
+Drink Check (Tests\Feature\DrinkCheck)
+ ✔ Mandatory drink deduction on served
+ ✔ Order fails to serve if inventory insufficient
 
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
-/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareCommercialTest.php:43
+Dynamic Pricing (Tests\Feature\DynamicPricing)
+ ✔ Rate plan creation
+ ✔ Rate plan validity window
+ ✔ Seasonal price modifier
+ ✔ Weekend seasonal pricing
+ ✔ Occupancy pricing rule
+ ✔ Price guard limits
+ ✔ Pricing cache returns same value
+ ✔ Reservation uses dynamic price
+ ✔ Tenant isolation between hotels
 
---
+Elite Lodger (Tests\Feature\EliteLodger)
+ ✔ Awards points based on truncated conversion rate
+ ✔ Awards large points correctly
+ ✔ Finds guest by blind index
+ ✔ Enforces 500 point 30 day manual cap
+ ✔ Rolls back points on inventory failure
+ ✔ Late checkout hidden on back to back booking
 
-There was 1 failure:
+Example (Tests\Feature\Example)
+ ✔ The application returns a successful response
 
-1) Tests\Feature\GroupRegistrationTest::test_group_registration_creates_group_branch_and_admin_successfully
-Expected response status code [201] but received 422.
-Failed asserting that 422 is identical to 201.
+Example (Tests\Unit\Example)
+ ✔ That true is true
 
-The following errors occurred during the last request:
+Financial Analytics (Tests\Feature\FinancialAnalytics)
+ ✔ Bistro plan can access single outlet analytics
+ ✔ Hotel basic plan is gatekept and requires upgrade
+ ✔ Hotel pro plan can aggregate multiple outlets
+ ✔ Accrued vs cash on hand distinction
+ ✔ Cancellation triggers high severity audit trail
 
-{
-    "message": "Registration failed",
-    "errors": {
-        "email": [
-            "This email is already registered."
-        ]
-    }
-}
+Fix Staff And Room (Tests\Feature\FixStaffAndRoom)
+ ✔ Staff onboarding permission
+ ✔ Room creation
 
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
-/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
-/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/GroupRegistrationTest.php:31
+Group Registration (Tests\Feature\GroupRegistration)
+ ✔ Group registration creates group branch and admin successfully
+ ✔ Group registration fails missing fields
 
-ERRORS!
-Tests: 272, Assertions: 829, Errors: 3, Failures: 1, PHPUnit Deprecations: 8, Skipped: 1.
+Guest Experience Enhancement (Tests\Feature\GuestExperienceEnhancement)
+ ✔ Guest can track order
+ ✔ Guest can get recommendations
+ ✔ Guest can create service request
+
+Guest Portal (Tests\Feature\GuestPortal)
+ ✘ Guest portal session creation
+   │
+   │ Expected response status code [201] but received 422.
+   │ Failed asserting that 422 is identical to 201.
+   │
+   │ The following errors occurred during the last request:
+   │
+   │ {
+   │     "message": "The signature field is required.",
+   │     "errors": {
+   │         "signature": [
+   │             "The signature field is required."
+   │         ]
+   │     }
+   │ }
+   │
+   │ /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+   │ /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+   │ /home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/GuestPortalTest.php:70
+   │
+ ✔ Guest pin authentication
+ ✔ Device fingerprint trust
+ ✔ Trusted device skips pin
+ ✔ Guest dashboard returns reservation
+ ✔ Guest service request creation
+ ✔ Maintenance request routes correctly
+ ✔ Late checkout request flow
+ ✔ Session terminated on checkout
+ ✔ Expired sessions cleanup
+
+Guest Portal Ordering (Tests\Feature\GuestPortalOrdering)
+ ✔ Guest can fetch outlet menu
+ ✔ Guest can place order
+
+Guest Reservation From Portal (Tests\Feature\GuestReservationFromPortal)
+ ✔ Guest can search availability
+ ✔ Guest can create reservation
+
+Handshake Protocol (Tests\Feature\HandshakeProtocol)
+ ✔ Handshake fails with invalid pin and logs security event on three failures
+ ✔ Revenue attribution shifts after successful handshake
+ ✔ Chairman logic table merge
+
+Hardware And Analytics Isolation (Tests\Feature\HardwareAndAnalyticsIsolation)
+ ✔ Scenario s branch isolation enforcement
+ ✔ Scenario s real time event routing
+ ✔ Scenario t owner master analytics summation
+ ✔ Hardware device registry isolation
+
+Hardware Commercial (Tests\Feature\HardwareCommercial)
+ ✔ Branch activation respects device slots
+ ✔ Staff roles cannot request hardware access
+ ✔ Manager relink purges old supabase signature
+
+Hotel Operational Workflow (Tests\Feature\HotelOperationalWorkflow)
+ ✔ Full pos lifecycle and event bus
+ ✔ Event replay protection
+ ✔ Load simulation concurrent orders
+
+Hotel Registration (Tests\Feature\HotelRegistration)
+ ✔ Hotel registration creates tenant and owner successfully
+
+Housekeeping Management (Tests\Feature\HousekeepingManagement)
+ ✔ Can generate tasks automatically
+ ✔ Prevents duplicate daily tasks
+ ✔ Manager can assign task
+ ✔ Housekeeper can complete task which updates room status
+
+Image Upload (Tests\Feature\ImageUpload)
+ ✔ Can upload image successfully
+ ✔ Private upload is secured
+ ✔ Upload fails if not an image
+ ✔ Upload fails if size is exceeded
+
+Inventory Handshake (Tests\Feature\InventoryHandshake)
+ ✔ Dispatch deducts from source immediately
+ ✔ Receive fails without valid daily pin
+ ✔ Receive handshake shifts liability to destination
+
+Inventory Management (Tests\Feature\InventoryManagement)
+ ✔ Can view inventory items scoped to hotel
+ ✔ Stock reservation and deduction workflow
+ ✔ Reservation throws insufficient stock exception
+
+Kitchen Display (Tests\Feature\KitchenDisplay)
+ ✔ Order awaits staff claim before kds ticket
+ ✔ Waitress claim triggers kds ticket generation
+ ✔ Kds status transitions and history logging
+ ✔ Tenant isolation prevents unauthorized kds access
+ ✔ Order automatically creates kitchen ticket
+
+Leisure Access (Tests\Feature\LeisureAccess)
+ ✔ Hardware verify with membership
+ ✔ Hardware verify with paid pass
+ ✔ Hardware verify denied
+ ✔ Leisure provisioning
+
+Lifecycle Engine (Tests\Feature\LifecycleEngine)
+ ✔ T3 warning threshold
+ ✔ T1 warning threshold
+ ✔ Automated suspension after grace period
+ ✔ Grace period no action
+
+Live Orders Feed (Tests\Feature\LiveOrdersFeed)
+ ✔ Admin can see live guest orders
+
+Maintenance Workflow (Tests\Feature\MaintenanceWorkflow)
+ ✔ Can create maintenance request
+ ✔ Starting maintenance blocks room
+ ✔ Resolving maintenance unblocks room and sets dirty
+
+Menu Management (Tests\Feature\MenuManagement)
+ ✔ Can create menu category
+ ✔ Can create menu item with department routing
+ ✔ Can create modifier and attach to menu item
+ ✔ Menu items are isolated by tenant
+ ✔ Tenant isolation prevents unauthorized updates
+
+Monitoring System (Tests\Feature\MonitoringSystem)
+ ✔ Activity log service creates records with outlet and severity
+ ✔ Audit log service creates records with source tracking
+ ✔ Api endpoints support filtering
+ ✔ Tenant isolation prevents cross hotel log access
+ ✔ Clean old logs job properly deletes expired logs
+
+Monnify Security (Tests\Feature\MonnifySecurity)
+ ✔ Scenario x gateway secrets are encrypted in database
+ ✔ Scenario y write block on suspended branch
+ ✔ Scenario z webhook spoofing triggers severity 15 audit
+
+Multi Branch Pn L (Tests\Feature\MultiBranchPnL)
+ ✔ Scenario u multi branch pnl export
+
+Notification System (Tests\Feature\NotificationSystem)
+ ✔ User can fetch own tenant notifications
+ ✔ User can mark notification as read
+ ✔ User can bulk read notifications
+ ✔ Clean expired notifications job removes old data
+
+Offline Module (Tests\Feature\OfflineModule)
+ ✔ Offline mode reads from json snapshot securely
+ ✔ Disabled module blocks endpoint with safe 403
+
+Offline Sync Engine (Tests\Feature\OfflineSyncEngine)
+ ✔ Deletion captures payload and multi tenancy
+ ✔ Batch sends in chunks of 50
+ ✔ Cloud controller rejects invalid signature
+ ✔ Cloud controller accepts valid signature
+
+Order Engine (Tests\Feature\OrderEngine)
+ ✔ Can create pos order with items
+ ✔ Can update order status with audit trail
+ ✔ Cannot update closed order
+ ✔ List orders is tenant isolated
+
+Ota Channel Manager (Tests\Feature\OtaChannelManager)
+ ✔ Hotel can connect to ota channel
+ ✔ Api credentials are encrypted in database
+ ✔ Connections endpoint returns sync status
+ ✔ Admin can map room type to ota
+ ✔ Can import ota reservation via webhook
+ ✔ Duplicate ota reservation is skipped
+ ✔ Sync logs are accessible
+ ✔ Manual sync can be triggered
+ ✔ Overbooking is prevented when no rooms available
+
+Outlet Management (Tests\Feature\OutletManagement)
+ ✔ Can create outlet
+ ✔ Can duplicate item to outlet
+
+Payment System (Tests\Feature\PaymentSystem)
+ ✔ Payment intent creation
+ ✔ Payment capture
+ ✔ Payment refund
+ ✔ Transaction context recorded
+ ✔ Guest portal payment flow
+ ✔ Payment webhook processing
+ ✔ Tenant isolation between hotels
+ ✔ Monnify gateway payment intent
+ ✔ Manual payment confirmation
+ ✔ Payment mode online only
+ ✔ Payment mode manual only
+ ✔ Duplicate webhook transaction rejected
+ ✔ Payment source tracking
+
+Phase68Stabilization (Tests\Feature\Phase68Stabilization)
+ ✔ Scenario x encryption at rest
+ ✔ Scenario y passive guard enforcement
+ ✘ Sentry lock guest sessions
+   │
+   │ Expected response status code [403] but received 422.
+   │ Failed asserting that 422 is identical to 403.
+   │
+   │ The following errors occurred during the last request:
+   │
+   │ {
+   │     "message": "The signature field is required.",
+   │     "errors": {
+   │         "signature": [
+   │             "The signature field is required."
+   │         ]
+   │     }
+   │ }
+   │
+   │ /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+   │ /home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+   │ /home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/Phase68StabilizationTest.php:149
+   │
+ ✔ Inventory lock stock transfer accept
+ ✔ Scenario z subscription alerts
+
+Pms Reservation (Tests\Feature\PmsReservation)
+ ✔ Can create reservation with automatic folio
+ ✔ Prevents overlapping reservations in availability
+ ✔ Check in opens folio and sets room occupied
+ ✔ Check out requires zero balance folio
+ ✔ Cannot modify reservation after deadline
+ ✔ Admin can modify reservation after deadline
+ ✔ No show job marks reservation and adds penalty
+ ✔ No show respects grace period
+ ✔ No show penalty deposit type
+ ✔ Qr session invalidated after no show
+
+QRContext Routing (Tests\Feature\QRContextRouting)
+ ✔ Can start session with room context
+ ✔ Can start session with outlet context
+ ✔ Valid qr signature starts session
+ ✔ Tampered qr signature returns 403
+ ✔ Missing qr signature returns 403
+
+Queue Integration (Tests\Feature\QueueIntegration)
+ ✔ Booking dispatches job
+ ✔ Confirm payment chains jobs
+ ✔ Payment dispatches high priority job
+ ✔ Model change dispatches sync job
+
+Real Time Events (Tests\Feature\RealTimeEvents)
+ ✔ Order created broadcasts to correct tenant channels
+ ✔ Kitchen status updated broadcasts correctly
+ ✔ Invoice paid broadcasts correctly
+ ✔ Low inventory broadcasts correctly
+
+Reporting Engine (Tests\Feature\ReportingEngine)
+ ✔ Dashboard aggregates today revenue
+ ✔ Exports daily sales csv
+ ✔ Api tenant isolation prevents fetching external data
+
+Revenue Intelligence (Tests\Feature\RevenueIntelligence)
+ ✔ Occupancy trend calculation
+ ✔ Revenue prediction and demand score
+ ✔ Pricing recommendation generation
+ ✔ Api endpoints return insights
+ ✔ Event impact on demand score
+
+Role Api (Tests\Feature\RoleApi)
+ ✔ Can fetch roles for hotel
+ ✔ Cannot fetch other hotel roles
+
+Role Permission (Tests\Feature\RolePermission)
+ ✔ Unauthenticated users are rejected
+ ✔ User without permission receives 403
+ ✔ User with permission can access route
+ ✔ Super admin bypasses permission checks
+ ✔ Tenant module toggle blocks access
+
+Service Request Feed (Tests\Feature\ServiceRequestFeed)
+ ✔ Example
+
+Session Sentry (Tests\Feature\SessionSentry)
+ ✔ Post payment lockdown kills session and starts fresh on rescan
+ ✔ Handshake double lock prevents ordering until activated
+ ✔ Manager kill switch revokes session on security void
+ ✔ Reaper deletes old pending sessions
+ ✔ Reaper preserves new pending sessions
+ ✔ Middleware updates last activity at
+ ✔ Activate session route alias works
+ ✔ Activate session sets last activity at
+ ✔ Revocation on payment via header token
+ ✔ Revocation on security void via header token
+ ✔ Unactivated session allows get requests
+
+Siem Watchdog (Tests\Feature\SiemWatchdog)
+ ✔ Watchdog suspends user on severity threshold
+
+Staff Accountability (Tests\Feature\StaffAccountability)
+ ✔ Pin expires after 12 hours
+ ✔ Waitress can claim unclaimed order
+ ✔ Unauthorized order claim by another staff
+ ✔ Claimed order lockout enforcement
+ ✔ Print automatically sets preparing status
+ ✔ Waitress claim broadcasts real time attribution
+ ✔ Manager sees live waitress attribution
+ ✔ Waitress claim broadcasts new order claimed event
+ ✔ Outlet manager receives new order claimed broadcast
+
+Subscription Billing And Gating (Tests\Feature\SubscriptionBillingAndGating)
+ ✔ Scenario v mixed tiers with 10 percent discount
+ ✔ Scenario w dynamic upgrade room limit enforcement
+
+Subscription System (Tests\Feature\SubscriptionSystem)
+ ✔ New hotel can start trial
+ ✔ Active subscription allows admin access
+ ✔ Expired subscription blocks admin access
+ ✔ Grace period allows temporary access
+ ✔ Checkout upgrades subscription
+ ✔ Invoice generation on payment
+ ✔ Platform analytics returns data
+
+Super Admin Billing Health (Tests\Feature\SuperAdminBillingHealth)
+ ✔ Health dashboard active branches
+ ✔ Health dashboard grace branches
+ ✔ Health dashboard suspended branches
+
+Super Admin Tenant (Tests\Feature\SuperAdminTenant)
+ ✔ Super admin can switch hotel context via header
+ ✔ Super admin without context allowed by middleware
+
+System Health (Tests\Feature\SystemHealth)
+ ✔ Database connection is healthy
+ ✔ Cache is working
+ ↩ Redis connection is healthy
+
+Tenant Isolation (Tests\Feature\TenantIsolation)
+ ✔ Branch user cannot see other hotels
+ ✔ Group admin cannot see other groups hotels
+ ✔ Super admin can see everything
+ ✔ Cross tenant is blocked on basemodel
+ ✔ Cross branch is blocked on basemodel
+ ✔ Exceptional roles bypass branch but respect tenant on basemodel
+
+Tenant Isolation Stress (Tests\Feature\TenantIsolationStress)
+ ✔ Tenant cannot access other tenant orders
+ ✔ Tenant cannot access other tenant inventory
+ ✔ Tenant cannot access other tenant billing
+ ✔ Tenant cannot access other tenant reports
+
+Terminal Identity (Tests\Feature\TerminalIdentity)
+ ✔ Order attribution to waitress id
+ ✔ Cannot attribute to off duty staff
+ ✔ Filtering orders by waiter id
+
+FAILURES!
+Tests: 280, Assertions: 866, Failures: 2, PHPUnit Deprecations: 4, Skipped: 1.

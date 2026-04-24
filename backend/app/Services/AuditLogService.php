@@ -35,9 +35,18 @@ class AuditLogService
 
         $logUserId = $userId ?? Auth::id();
 
+        $hardwareId = null;
+        if (is_array($newValues)) {
+            $hardwareId = $newValues['attempted'] ?? ($newValues['hash'] ?? null);
+        }
+        if (!$hardwareId && request()->hasHeader('X-Hardware-Id')) {
+            $hardwareId = request()->header('X-Hardware-Id');
+        }
+
         return AuditLog::create([
             'hotel_id' => $tenantId,
             'user_id' => $logUserId,
+            'hardware_id' => $hardwareId,
             'entity_type' => $entityType,
             'entity_id' => $entityId ?? 0,
             'change_type' => $changeType,

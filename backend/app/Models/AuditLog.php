@@ -10,7 +10,7 @@ class AuditLog extends Model
     use HasFactory;
 
     protected $fillable = [
-        'hotel_id', 'user_id', 'entity_type', 'entity_id',
+        'hotel_id', 'user_id', 'hardware_id', 'entity_type', 'entity_id',
         'change_type', 'old_values', 'new_values', 'reason', 'source',
         'ip_address', 'user_agent', 'severity_score'
     ];
@@ -24,8 +24,9 @@ class AuditLog extends Model
     }
 
     protected $casts = [
-        'old_values' => 'array',
-        'new_values' => 'array',
+        'reason' => 'encrypted',
+        'old_values' => 'encrypted:array',
+        'new_values' => 'encrypted:array',
     ];
 
     public function hotel()

@@ -17,6 +17,9 @@ import {
 import { useAuth } from '@/context/AuthProvider';
 import api from '@/lib/api';
 import { toast } from 'sonner';
+import { Modal } from '@/components/TailAdmin/ui/modal';
+import TailButton from '@/components/TailAdmin/ui/button';
+import TailInput from '@/components/TailAdmin/ui/input';
 
 interface Branch {
   id: number;
@@ -45,6 +48,8 @@ export default function OrganizationPage() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [step, setStep] = useState<'details' | 'payment'>('details');
+  const [feeDetails, setFeeDetails] = useState<any>(null);
   const [form, setForm] = useState<BranchFormData>({ name: '', email: '', phone: '', address: '' });
 
   // Only GROUP_ADMIN and SUPER_ADMIN can access this page
@@ -65,16 +70,33 @@ export default function OrganizationPage() {
     enabled: canAccess,
   });
 
+  const handlePreflight = async () => {
+    try {
+      const { data } = await api.get('/api/v1/organization/branches/preflight');
+      setFeeDetails(data.fee_details);
+      setStep('payment');
+    } catch (err: any) {
+      toast.error('Failed to calculate branch fee.');
+    }
+  };
+
   const createBranch = useMutation({
-    mutationFn: (data: BranchFormData) => api.post('/api/v1/organization/branches', data),
+    mutationFn: (data: BranchFormData & { payment_reference?: string }) => 
+      api.post('/api/v1/organization/branches', { ...data, payment_reference: 'SIMULATED_PAYMENT_' + Date.now() }),
     onSuccess: () => {
-      toast.success('Branch created successfully!');
+      toast.success('Branch Minted Successfully!');
       queryClient.invalidateQueries({ queryKey: ['org-branches'] });
       setOpen(false);
+      setStep('details');
       setForm({ name: '', email: '', phone: '', address: '' });
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message ?? 'Failed to create branch.');
+      if (err.response?.status === 402) {
+        setFeeDetails(err.response.data.fee_details);
+        setStep('payment');
+      } else {
+        toast.error(err?.response?.data?.message ?? 'Failed to create branch.');
+      }
     },
   });
 
@@ -98,44 +120,94 @@ export default function OrganizationPage() {
             {overview?.group?.name ?? 'Your Hotel Group'} · Manage all hotel branches from one place.
           </p>
         </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger
-            nativeButton={true}
-            render={
-              <Button className="gap-2 shadow-lg shadow-primary/20">
-                <PlusIcon className="h-4 w-4" />
-                Add New Branch
-              </Button>
-            }
-          />
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Create a New Hotel Branch</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              {(['name', 'email', 'phone', 'address'] as const).map((field) => (
-                <div key={field} className="space-y-1.5">
-                  <label className="text-sm font-medium capitalize">{field}</label>
-                  <Input
-                    placeholder={field === 'name' ? 'Royal Spring - Lagos' : field === 'email' ? 'lagos@hotel.com' : ''}
-                    value={form[field]}
-                    onChange={(e) => setForm((f) => ({ ...f, [field]: e.target.value }))}
-                  />
+        <TailButton 
+          className="gap-2 shadow-lg shadow-primary/20"
+          onClick={() => setOpen(true)}
+        >
+          <PlusIcon className="h-4 w-4" />
+          Add New Branch
+        </TailButton>
+        <Modal
+          isOpen={open}
+          onClose={() => {
+            setOpen(false);
+            setStep('details');
+          }}
+          className="max-w-[500px] p-8"
+        >
+          {step === 'details' ? (
+            <>
+              <h3 className="text-xl font-bold text-black dark:text-white mb-4">
+                Branch Identity
+              </h3>
+              <p className="text-sm text-gray-500 mb-6">
+                Enter the core details for the new hotel property.
+              </p>
+              <div className="space-y-4">
+                {(['name', 'email', 'phone', 'address'] as const).map((field) => (
+                  <div key={field} className="space-y-1">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">{field}</label>
+                    <TailInput
+                      placeholder={`Enter branch ${field}...`}
+                      value={form[field]}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((f) => ({ ...f, [field]: e.target.value }))}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-end gap-3 mt-8">
+                <TailButton variant="outline" onClick={() => setOpen(false)}>Cancel</TailButton>
+                <TailButton 
+                  disabled={!form.name} 
+                  onClick={handlePreflight}
+                >
+                  Next: Financial Review
+                </TailButton>
+              </div>
+            </>
+          ) : (
+            <>
+              <h3 className="text-xl font-bold text-black dark:text-white mb-4">
+                Onboarding Payment
+              </h3>
+              <div className="rounded-xl bg-gray-50 dark:bg-meta-4 p-6 mb-6 border border-stroke dark:border-strokedark">
+                <div className="flex justify-between mb-4">
+                  <span className="text-sm font-medium">Standard Slot Fee</span>
+                  <span className="text-sm font-bold text-black dark:text-white">${feeDetails?.base_amount?.toFixed(2)}</span>
                 </div>
-              ))}
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button
-                disabled={!form.name || createBranch.isPending}
-                onClick={() => createBranch.mutate(form)}
-              >
-                {createBranch.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                Create Branch
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                {feeDetails?.is_discounted && (
+                  <div className="flex justify-between mb-4 text-meta-3">
+                    <span className="text-sm font-medium">Existing Org Discount (5%)</span>
+                    <span className="text-sm font-bold">-${(feeDetails.base_amount * 0.05).toFixed(2)}</span>
+                  </div>
+                )}
+                <hr className="border-stroke dark:border-strokedark mb-4" />
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-black dark:text-white">Total Due</span>
+                  <span className="text-2xl font-black text-primary">${feeDetails?.amount?.toFixed(2)}</span>
+                </div>
+              </div>
+              
+              <div className="mb-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
+                <p className="text-xs text-primary font-medium flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4" />
+                  Your branch will be minted instantly upon payment confirmation.
+                </p>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <TailButton variant="outline" onClick={() => setStep('details')}>Back</TailButton>
+                <TailButton 
+                  className="px-8"
+                  disabled={createBranch.isPending}
+                  onClick={() => createBranch.mutate(form)}
+                >
+                  {createBranch.isPending ? 'Minting...' : `Pay & Create Branch`}
+                </TailButton>
+              </div>
+            </>
+          )}
+        </Modal>
       </div>
 
       {/* Overview Cards */}

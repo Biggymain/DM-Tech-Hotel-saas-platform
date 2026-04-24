@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Events\NewOrderPlaced;
+use App\Events\NewOrderClaimed;
 
 
 
@@ -118,6 +119,12 @@ class OrderController extends Controller
         }
 
         \App\Events\OrderCreated::dispatch($order);
+        
+        // POS orders are implicitly claimed by the creator (waitress), triggering KDS immediately
+        if ($order->order_source === 'pos') {
+            \App\Events\OrderClaimed::dispatch($order->fresh(['items.menuItem']));
+        }
+
         NewOrderPlaced::dispatch($order->fresh(['items.menuItem']));
         \App\Jobs\SyncToCloudJob::dispatch((int) $order->outlet_id)->afterCommit();
 
@@ -352,6 +359,7 @@ class OrderController extends Controller
         $order->update([
             'waiter_id' => $request->user()->id,
             'claimed_at' => now(),
+            'order_status' => 'pending', // Moved out of pending_staff_approval
         ]);
 
         // Capture in status history for audit
@@ -359,10 +367,15 @@ class OrderController extends Controller
             'order_id' => $order->id,
             'hotel_id' => $order->hotel_id,
             'previous_status' => $order->order_status,
-            'new_status' => $order->order_status, // Status doesn't change, but ownership does
+            'new_status' => 'pending', 
             'changed_by' => $request->user()->id,
             'notes' => 'Order claimed via Daily PIN election.',
         ]);
+
+        \App\Events\OrderClaimed::dispatch($order->fresh(['items.menuItem']));
+
+        // Real-time handshake: notify the Outlet Manager's POS channel
+        NewOrderClaimed::dispatch($order->fresh());
 
         return response()->json([
             'message' => 'Order claimed successfully.',

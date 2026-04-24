@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'feature'       => \App\Http\Middleware\EnsureHasFeature::class,
             'feature.guard' => \App\Http\Middleware\FeatureGuard::class,
             'is_session_active' => \App\Http\Middleware\VerifyGuestSession::class,
+            'developer.sentry' => \App\Http\Middleware\DeveloperSentry::class,
         ]);
         $middleware->api(prepend: [
 //            \App\Http\Middleware\SanitizeInput::class, // Strip tags first
