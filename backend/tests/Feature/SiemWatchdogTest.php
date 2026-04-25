@@ -32,7 +32,7 @@ class SiemWatchdogTest extends TestCase
         ]);
 
         $this->mock(HardwareFingerprintService::class, function ($mock) {
-            $mock->shouldReceive('generateHash')->andReturn(\Tests\TestCase::generateMockHardwareHash());
+            $mock->shouldReceive('generateHash')->andReturn(TestCase::generateMockHardwareHash());
         });
 
         $role = Role::create(['name' => 'groupadmin', 'slug' => 'groupadmin']);
@@ -52,7 +52,7 @@ class SiemWatchdogTest extends TestCase
         ])->save();
 
         $this->withPort(3001)
-            ->withHeaders(['X-Hardware-Id' => \Tests\TestCase::generateMockHardwareHash()])
+            ->withHeaders(['X-Hardware-Id' => TestCase::generateMockHardwareHash()])
             ->getJson('/api/v1/auth/me')
             ->assertStatus(403);
 
@@ -66,7 +66,7 @@ class SiemWatchdogTest extends TestCase
         $this->actingAs($user)
             ->withHeaders([
                 'X-Frontend-Port' => '3000',
-                'X-Hardware-Id' => \Tests\TestCase::generateMockHardwareHash()
+                'X-Hardware-Id' => TestCase::generateMockHardwareHash()
             ])
             ->getJson('/api/v1/auth/me')
             ->assertStatus(404);
@@ -85,7 +85,7 @@ class SiemWatchdogTest extends TestCase
     #[Test]
     public function test_siem_logs_are_stored_encrypted_in_database()
     {
-        $hash = \Tests\TestCase::generateMockHardwareHash();
+        $hash = TestCase::generateMockHardwareHash();
         
         // Generate an audit log
         AuditLogService::log(

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ConnectivityWidget } from '@/components/master/ConnectivityWidget';
+import { ConnectivityWidget } from '@/src/components/master/ConnectivityWidget';
 import { 
   Shield, 
   AlertTriangle, 
@@ -11,7 +11,7 @@ import {
   Activity,
   Lock
 } from 'lucide-react';
-import { useAxios } from '@/hooks/useAxios';
+import { useAxios } from '@/src/hooks/useAxios';
 
 export default function MasterDashboardPage() {
   // SIEM Alerts Feed (Simulated via useAxios hitting /api/v1/siem/alerts)

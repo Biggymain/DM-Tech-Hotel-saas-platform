@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAxios } from '@/hooks/useAxios';
+import { useAxios } from '@/src/hooks/useAxios';
 import { ShieldCheck, ShieldAlert, Activity, RefreshCw } from 'lucide-react';
 
 export const ConnectivityWidget = () => {

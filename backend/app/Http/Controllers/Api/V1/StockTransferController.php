@@ -98,9 +98,10 @@ class StockTransferController extends Controller
                 'data'    => $transfer->fresh()
             ]);
         } catch (\Exception $e) {
-            $code = $e->getCode() ?: 422;
-            if ($code === 403) $code = 403;
-            return response()->json(['message' => $e->getMessage()], $code);
+            $code = $e->getCode();
+            $httpCode = (is_numeric($code) && $code >= 400 && $code <= 599) ? $code : 422;
+            if ($code === 403) $httpCode = 403;
+            return response()->json(['message' => $e->getMessage()], $httpCode);
         }
     }
 }
