@@ -1,0 +1,124 @@
+name: OmniStay CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: omnistay_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.4'
+        extensions: mbstring, xml, bcmath, mysql, intl, gd, redis
+        coverage: xdebug
+
+    - name: Install Dependencies
+      working-directory: ./backend
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Initialize Laravel Environment
+      run: |
+        cd backend
+        mkdir -p storage/framework/{sessions,views,cache,testing}
+        mkdir -p storage/logs
+        mkdir -p bootstrap/cache
+        chmod -R 777 storage bootstrap/cache
+        touch storage/logs/laravel.log
+
+    - name: Prepare Backend
+      working-directory: ./backend
+      run: |
+        touch .env
+        php artisan key:generate --env=testing --force
+
+    - name: Run Backend Tests
+      working-directory: ./backend
+      env:
+        DB_CONNECTION: mysql
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_DATABASE: omnistay_test
+        DB_USERNAME: root
+        REDIS_HOST: 127.0.0.1
+        # GRC Mock Keys
+        SUPABASE_URL: http://localhost:54321
+        SUPABASE_KEY: mock-key-for-ci
+        DEV_PASSPHRASE: mock-passphrase-for-ci
+        APP_SUPER_ADMIN_EMAIL: admin@dmtech.ng
+        APP_SUPER_ADMIN_PASSWORD: ${{ secrets.APP_SUPER_ADMIN_PASSWORD }}
+      run: |
+        php artisan migrate --force
+        php artisan optimize:clear
+        php artisan test
+
+  nextjs-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: './frontend/package-lock.json'
+
+    - name: Install Dependencies
+      working-directory: ./frontend
+      run: npm install
+
+    - name: Build Frontend
+      working-directory: ./frontend
+      env:
+        NEXT_PUBLIC_API_URL: http://localhost
+        SUPABASE_URL: http://localhost:54321
+        SUPABASE_ANON_KEY: mock-anon-key
+      run: |
+        rm -rf .next
+        npm run build
+
+  docker-build:
+    needs: [laravel-tests, nextjs-build, gitleaks]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker Images
+      run: |
+        docker compose build
+        # In a real scenario, you would push to a registry (Docker Hub, ECR, GCR)
+        # docker compose push
+
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Gitleaks Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,20 @@
+# Directories to ignore everywhere
+**/node_modules/
+**/vendor/
+**/.next/
+**/.next-*/
+**/dist/
+**/storage/*.key
+**/storage/framework/
+**/storage/logs/
+
+# Environment and Secrets
+**/.env
+**/.env.*
+**/database.sqlite
+**/*.log
+
+# Project specific
+/tmp/
+.vscode/
+.idea/

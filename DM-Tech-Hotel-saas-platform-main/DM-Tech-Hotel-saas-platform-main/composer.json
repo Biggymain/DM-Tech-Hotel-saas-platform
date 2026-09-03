@@ -1,0 +1,11 @@
+{
+    "require": {
+        "froiden/laravel-installer": "11.0.0",
+        "codedge/laravel-selfupdater": "^3.10"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    }
+}

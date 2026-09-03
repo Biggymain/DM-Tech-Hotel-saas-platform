@@ -1,0 +1,2609 @@
+PHPUnit 11.5.55 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.16
+Configuration: /home/micky/DM-Tech-Hotel-saas-platform/backend/phpunit.xml
+
+.MIGRATION_DEBUG: Running create_audit_logs_table migration
+.....F.........FF.F..............E..F....SIEM Warning: Stripping non-whitelisted key 'dispatched' from telemetry.
+SIEM Warning: Stripping non-whitelisted key 'received' from telemetry.
+.FF..F......FF.......  63 / 272 ( 23%)
+....FFFF..................FF.F.F.EEEF.F...FF....FFF...FFFFFFF.. 126 / 272 ( 46%)
+..FFFFFFFFF..FF....FFFF..F....FFFFF.FF..FF.FFFFFFFF.FFFFFF..... 189 / 272 ( 69%)
+FFFFFF........F.....FFF...F.FF.FFFF..F....FF...FFFF.F.F.F.FF.FF 252 / 272 ( 92%)
+FFFF..SFFFF......FFF                                            272 / 272 (100%)
+
+Time: 03:26.213, Memory: 102.50 MB
+
+There were 4 errors:
+
+1) Tests\Feature\DigitalFortressTest::test_sentry_middleware_scenario_active
+Symfony\Component\HttpKernel\Exception\HttpException: Hardware Not Registered
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php:1440
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php:67
+/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/SentryMiddleware.php:186
+/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/SentryMiddleware.php:54
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/DigitalFortressTest.php:77
+
+2) Tests\Feature\HardwareCommercialTest::test_branch_activation_respects_device_slots
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: branches.group_id (Connection: supabase, Database: :memory:, SQL: insert into "branches" ("id", "branch_token", "is_active", "expires_at") values (1, ccb42f6f-1ead-4a77-b1a3-7f241c2d3c65, 1, 2027-04-21 02:54:20))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareCommercialTest.php:43
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: branches.group_id
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareCommercialTest.php:43
+
+3) Tests\Feature\HardwareCommercialTest::test_staff_roles_cannot_request_hardware_access
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: branches.group_id (Connection: supabase, Database: :memory:, SQL: insert into "branches" ("id", "branch_token", "is_active", "expires_at") values (1, 25dbee1d-18c9-46d0-b316-a3873352d61e, 1, 2027-04-21 02:54:20))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareCommercialTest.php:43
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: branches.group_id
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareCommercialTest.php:43
+
+4) Tests\Feature\HardwareCommercialTest::test_manager_relink_purges_old_supabase_signature
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: branches.group_id (Connection: supabase, Database: :memory:, SQL: insert into "branches" ("id", "branch_token", "is_active", "expires_at") values (1, 86ac071a-de72-4466-a533-61fe5af479f8, 1, 2027-04-21 02:54:20))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareCommercialTest.php:43
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: branches.group_id
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4091
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareCommercialTest.php:43
+
+--
+
+There were 113 failures:
+
+1) Tests\Feature\AdminAuthTest::test_user_can_login_with_correct_credentials
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/AdminAuthTest.php:54
+
+2) Tests\Feature\BillingEngineTest::test_payment_processing_and_partial_payments
+Expected response status code [202] but received 403.
+Failed asserting that 403 is identical to 202.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/BillingEngineTest.php:159
+
+3) Tests\Feature\BillingEngineTest::test_refund_workflow
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/BillingEngineTest.php:218
+
+4) Tests\Feature\BranchManagementTest::test_can_onboard_manager_for_branch
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/BranchManagementTest.php:65
+
+5) Tests\Feature\DigitalFortressTest::test_sentry_middleware_port_violation_ghosting
+Failed asserting that 403 matches expected 404.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/DigitalFortressTest.php:158
+
+6) Tests\Feature\DigitalInventoryBridgeTest::test_api_dispatch_flow_v1
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/DigitalInventoryBridgeTest.php:169
+
+7) Tests\Feature\DigitalInventoryBridgeTest::test_api_receive_dispute_flow_v1
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/DigitalInventoryBridgeTest.php:201
+
+8) Tests\Feature\DynamicPricingTest::test_rate_plan_creation
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/DynamicPricingTest.php:74
+
+9) Tests\Feature\DynamicPricingTest::test_reservation_uses_dynamic_price
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/DynamicPricingTest.php:266
+
+10) Tests\Feature\DynamicPricingTest::test_tenant_isolation_between_hotels
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/DynamicPricingTest.php:295
+
+11) Tests\Feature\FinancialAnalyticsTest::cancellation_triggers_high_severity_audit_trail
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/FinancialAnalyticsTest.php:245
+
+12) Tests\Feature\FixStaffAndRoomTest::test_staff_onboarding_permission
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/FixStaffAndRoomTest.php:52
+
+13) Tests\Feature\FixStaffAndRoomTest::test_room_creation
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/FixStaffAndRoomTest.php:71
+
+14) Tests\Feature\GroupRegistrationTest::test_group_registration_creates_group_branch_and_admin_successfully
+Expected response status code [201] but received 422.
+Failed asserting that 422 is identical to 201.
+
+The following errors occurred during the last request:
+
+{
+    "message": "Registration failed",
+    "errors": {
+        "email": [
+            "This email is already registered."
+        ]
+    }
+}
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/GroupRegistrationTest.php:31
+
+15) Tests\Feature\HandshakeProtocolTest::handshake_fails_with_invalid_pin_and_logs_security_event_on_three_failures
+Failed asserting that a row in the table [audit_logs] matches the attributes {
+    "user_id": 2,
+    "change_type": "failed_handshake"
+}.
+
+The table is empty.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/InteractsWithDatabase.php:43
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HandshakeProtocolTest.php:80
+
+16) Tests\Feature\HandshakeProtocolTest::revenue_attribution_shifts_after_successful_handshake
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HandshakeProtocolTest.php:120
+
+17) Tests\Feature\HardwareAndAnalyticsIsolationTest::test_scenario_s_branch_isolation_enforcement
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareAndAnalyticsIsolationTest.php:71
+
+18) Tests\Feature\HardwareAndAnalyticsIsolationTest::test_scenario_t_owner_master_analytics_summation
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareAndAnalyticsIsolationTest.php:136
+
+19) Tests\Feature\HotelOperationalWorkflowTest::test_full_pos_lifecycle_and_event_bus
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HotelOperationalWorkflowTest.php:128
+
+20) Tests\Feature\HotelOperationalWorkflowTest::test_load_simulation_concurrent_orders
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HotelOperationalWorkflowTest.php:321
+
+21) Tests\Feature\HousekeepingManagementTest::test_manager_can_assign_task
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HousekeepingManagementTest.php:120
+
+22) Tests\Feature\HousekeepingManagementTest::test_housekeeper_can_complete_task_which_updates_room_status
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HousekeepingManagementTest.php:149
+
+23) Tests\Feature\InventoryHandshakeTest::test_dispatch_deducts_from_source_immediately
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/InventoryHandshakeTest.php:77
+
+24) Tests\Feature\InventoryHandshakeTest::test_receive_fails_without_valid_daily_pin
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/InventoryHandshakeTest.php:112
+
+25) Tests\Feature\InventoryHandshakeTest::test_receive_handshake_shifts_liability_to_destination
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/InventoryHandshakeTest.php:125
+
+26) Tests\Feature\KitchenDisplayTest::test_kitchen_ticket_automatically_created_when_order_placed
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/KitchenDisplayTest.php:134
+
+27) Tests\Feature\KitchenDisplayTest::test_kds_status_transitions_and_history_logging
+Failed asserting that null is not null.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/KitchenDisplayTest.php:192
+
+28) Tests\Feature\KitchenDisplayTest::test_tenant_isolation_prevents_unauthorized_kds_access
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/KitchenDisplayTest.php:246
+
+29) Tests\Feature\LeisureAccessTest::test_hardware_verify_with_membership
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/LeisureAccessTest.php:55
+
+30) Tests\Feature\LeisureAccessTest::test_hardware_verify_with_paid_pass
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/LeisureAccessTest.php:79
+
+31) Tests\Feature\LeisureAccessTest::test_hardware_verify_denied
+Unable to find JSON: 
+
+[{
+    "allow": false,
+    "message": "No active membership or pass"
+}]
+
+within response JSON:
+
+[{
+    "message": "Hardware Not Registered",
+    "exception": "Symfony\\Component\\HttpKernel\\Exception\\HttpException",
+    "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php",
+    "line": 1440,
+    "trace": [
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php",
+            "line": 67,
+            "function": "abort",
+            "class": "Illuminate\\Foundation\\Application",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/SentryMiddleware.php",
+            "line": 186,
+            "function": "abort"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/SentryMiddleware.php",
+            "line": 54,
+            "function": "enforceGlobalHardwareSentry",
+            "class": "App\\Http\\Middleware\\SentryMiddleware",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\SentryMiddleware",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/ForceJsonResponse.php",
+            "line": 19,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\ForceJsonResponse",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/Security/SecureHeadersMiddleware.php",
+            "line": 21,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\Security\\SecureHeadersMiddleware",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 137,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 821,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 800,
+            "function": "runRouteWithinStack",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 764,
+            "function": "runRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 753,
+            "function": "dispatchToRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+            "line": 200,
+            "function": "dispatch",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 180,
+            "function": "{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():197}",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php",
+            "line": 21,
+            "function": "{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():178}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php",
+            "line": 31,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php",
+            "line": 21,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php",
+            "line": 51,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TrimStrings",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php",
+            "line": 27,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\ValidatePostSize",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php",
+            "line": 109,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php",
+            "line": 74,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\HandleCors",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php",
+            "line": 58,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\TrustProxies",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php",
+            "line": 22,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php",
+            "line": 26,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\ValidatePathEncoding",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 137,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+            "line": 175,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+            "line": 144,
+            "function": "sendRequestThroughRouter",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php",
+            "line": 607,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/TestCase.php",
+            "line": 202,
+            "function": "call",
+            "class": "Illuminate\\Foundation\\Testing\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php",
+            "line": 573,
+            "function": "call",
+            "class": "Tests\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php",
+            "line": 381,
+            "function": "json",
+            "class": "Illuminate\\Foundation\\Testing\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/LeisureAccessTest.php",
+            "line": 87,
+            "function": "getJson",
+            "class": "Illuminate\\Foundation\\Testing\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php",
+            "line": 1667,
+            "function": "test_hardware_verify_denied",
+            "class": "Tests\\Feature\\LeisureAccessTest",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php",
+            "line": 519,
+            "function": "runTest",
+            "class": "PHPUnit\\Framework\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestRunner/TestRunner.php",
+            "line": 87,
+            "function": "runBare",
+            "class": "PHPUnit\\Framework\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php",
+            "line": 365,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestRunner",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php",
+            "line": 369,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php",
+            "line": 369,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestSuite",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php",
+            "line": 369,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestSuite",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/TestRunner.php",
+            "line": 64,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestSuite",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/Application.php",
+            "line": 211,
+            "function": "run",
+            "class": "PHPUnit\\TextUI\\TestRunner",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/phpunit",
+            "line": 104,
+            "function": "run",
+            "class": "PHPUnit\\TextUI\\Application",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/bin/phpunit",
+            "line": 122,
+            "function": "include"
+        }
+    ]
+}].
+
+
+Failed asserting that an array has the subset Array &0 [
+    'allow' => false,
+    'message' => 'No active membership or pass',
+].
+--- Expected
++++ Actual
+@@ @@
+ array (
+-  'message' => 'No active membership or pass',
++  'message' => 'Hardware Not Registered',
+   'exception' => 'Symfony\\Component\\HttpKernel\\Exception\\HttpException',
+   'file' => '/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php',
+   'line' => 1440,
+@@ @@
+       'function' => 'include',
+     ),
+   ),
+-  'allow' => false,
+ )
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/Constraints/ArraySubset.php:80
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/Assert.php:36
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/AssertableJsonString.php:319
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:856
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/LeisureAccessTest.php:90
+
+32) Tests\Feature\LeisureAccessTest::test_leisure_provisioning
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/LeisureAccessTest.php:103
+
+33) Tests\Feature\LiveOrdersFeedTest::test_admin_can_see_live_guest_orders
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/LiveOrdersFeedTest.php:67
+
+34) Tests\Feature\MaintenanceWorkflowTest::test_can_create_maintenance_request
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/MaintenanceWorkflowTest.php:77
+
+35) Tests\Feature\MaintenanceWorkflowTest::test_starting_maintenance_blocks_room
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/MaintenanceWorkflowTest.php:110
+
+36) Tests\Feature\MaintenanceWorkflowTest::test_resolving_maintenance_unblocks_room_and_sets_dirty
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/MaintenanceWorkflowTest.php:146
+
+37) Tests\Feature\MenuManagementTest::test_can_create_menu_category
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/MenuManagementTest.php:115
+
+38) Tests\Feature\MenuManagementTest::test_can_create_menu_item_with_department_routing
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/MenuManagementTest.php:147
+
+39) Tests\Feature\MenuManagementTest::test_can_create_modifier_and_attach_to_menu_item
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/MenuManagementTest.php:180
+
+40) Tests\Feature\MenuManagementTest::test_menu_items_are_isolated_by_tenant
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/MenuManagementTest.php:224
+
+41) Tests\Feature\MenuManagementTest::test_tenant_isolation_prevents_unauthorized_updates
+Expected response status code [404] but received 403.
+Failed asserting that 403 is identical to 404.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/MenuManagementTest.php:246
+
+42) Tests\Feature\MonitoringSystemTest::test_api_endpoints_support_filtering
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/MonitoringSystemTest.php:132
+
+43) Tests\Feature\MonitoringSystemTest::test_tenant_isolation_prevents_cross_hotel_log_access
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/MonitoringSystemTest.php:156
+
+44) Tests\Feature\MultiBranchPnLTest::test_scenario_u_multi_branch_pnl_export
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/MultiBranchPnLTest.php:110
+
+45) Tests\Feature\NotificationSystemTest::test_user_can_fetch_own_tenant_notifications
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/NotificationSystemTest.php:65
+
+46) Tests\Feature\NotificationSystemTest::test_user_can_mark_notification_as_read
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/NotificationSystemTest.php:90
+
+47) Tests\Feature\NotificationSystemTest::test_user_can_bulk_read_notifications
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/NotificationSystemTest.php:105
+
+48) Tests\Feature\OfflineModuleTest::test_disabled_module_blocks_endpoint_with_safe_403
+Unable to find JSON: 
+
+[{
+    "status": "error",
+    "message": "Module access unavailable in current mode"
+}]
+
+within response JSON:
+
+[{
+    "message": "Hardware Not Registered",
+    "exception": "Symfony\\Component\\HttpKernel\\Exception\\HttpException",
+    "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php",
+    "line": 1440,
+    "trace": [
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php",
+            "line": 67,
+            "function": "abort",
+            "class": "Illuminate\\Foundation\\Application",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/SentryMiddleware.php",
+            "line": 186,
+            "function": "abort"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/SentryMiddleware.php",
+            "line": 54,
+            "function": "enforceGlobalHardwareSentry",
+            "class": "App\\Http\\Middleware\\SentryMiddleware",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\SentryMiddleware",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/ForceJsonResponse.php",
+            "line": 19,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\ForceJsonResponse",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/Security/SecureHeadersMiddleware.php",
+            "line": 21,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\Security\\SecureHeadersMiddleware",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 137,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 821,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 800,
+            "function": "runRouteWithinStack",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 764,
+            "function": "runRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 753,
+            "function": "dispatchToRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+            "line": 200,
+            "function": "dispatch",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 180,
+            "function": "{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():197}",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php",
+            "line": 21,
+            "function": "{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():178}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php",
+            "line": 31,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php",
+            "line": 21,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php",
+            "line": 51,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TrimStrings",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php",
+            "line": 27,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\ValidatePostSize",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php",
+            "line": 109,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php",
+            "line": 74,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\HandleCors",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php",
+            "line": 58,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\TrustProxies",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php",
+            "line": 22,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php",
+            "line": 26,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\ValidatePathEncoding",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 137,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+            "line": 175,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+            "line": 144,
+            "function": "sendRequestThroughRouter",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php",
+            "line": 607,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/TestCase.php",
+            "line": 202,
+            "function": "call",
+            "class": "Illuminate\\Foundation\\Testing\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php",
+            "line": 573,
+            "function": "call",
+            "class": "Tests\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php",
+            "line": 381,
+            "function": "json",
+            "class": "Illuminate\\Foundation\\Testing\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OfflineModuleTest.php",
+            "line": 56,
+            "function": "getJson",
+            "class": "Illuminate\\Foundation\\Testing\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php",
+            "line": 1667,
+            "function": "test_disabled_module_blocks_endpoint_with_safe_403",
+            "class": "Tests\\Feature\\OfflineModuleTest",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php",
+            "line": 519,
+            "function": "runTest",
+            "class": "PHPUnit\\Framework\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestRunner/TestRunner.php",
+            "line": 87,
+            "function": "runBare",
+            "class": "PHPUnit\\Framework\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php",
+            "line": 365,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestRunner",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php",
+            "line": 369,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php",
+            "line": 369,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestSuite",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php",
+            "line": 369,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestSuite",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/TestRunner.php",
+            "line": 64,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestSuite",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/Application.php",
+            "line": 211,
+            "function": "run",
+            "class": "PHPUnit\\TextUI\\TestRunner",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/phpunit",
+            "line": 104,
+            "function": "run",
+            "class": "PHPUnit\\TextUI\\Application",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/bin/phpunit",
+            "line": 122,
+            "function": "include"
+        }
+    ]
+}].
+
+
+Failed asserting that an array has the subset Array &0 [
+    'status' => 'error',
+    'message' => 'Module access unavailable in current mode',
+].
+--- Expected
++++ Actual
+@@ @@
+ array (
+-  'message' => 'Module access unavailable in current mode',
++  'message' => 'Hardware Not Registered',
+   'exception' => 'Symfony\\Component\\HttpKernel\\Exception\\HttpException',
+   'file' => '/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php',
+   'line' => 1440,
+@@ @@
+       'function' => 'include',
+     ),
+   ),
+-  'status' => 'error',
+ )
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/Constraints/ArraySubset.php:80
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/Assert.php:36
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/AssertableJsonString.php:319
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:856
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OfflineModuleTest.php:59
+
+49) Tests\Feature\OrderEngineTest::test_can_create_pos_order_with_items
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OrderEngineTest.php:88
+
+50) Tests\Feature\OrderEngineTest::test_can_update_order_status_with_audit_trail
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OrderEngineTest.php:130
+
+51) Tests\Feature\OrderEngineTest::test_cannot_update_closed_order
+Expected response status code [400] but received 403.
+Failed asserting that 403 is identical to 400.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OrderEngineTest.php:162
+
+52) Tests\Feature\OrderEngineTest::test_list_orders_is_tenant_isolated
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OrderEngineTest.php:189
+
+53) Tests\Feature\OtaChannelManagerTest::test_hotel_can_connect_to_ota_channel
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OtaChannelManagerTest.php:62
+
+54) Tests\Feature\OtaChannelManagerTest::test_connections_endpoint_returns_sync_status
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/Concerns/AssertsStatusCodes.php:16
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OtaChannelManagerTest.php:103
+
+55) Tests\Feature\OtaChannelManagerTest::test_admin_can_map_room_type_to_ota
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OtaChannelManagerTest.php:120
+
+56) Tests\Feature\OtaChannelManagerTest::test_sync_logs_are_accessible
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/Concerns/AssertsStatusCodes.php:16
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OtaChannelManagerTest.php:205
+
+57) Tests\Feature\OtaChannelManagerTest::test_manual_sync_can_be_triggered
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/Concerns/AssertsStatusCodes.php:16
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OtaChannelManagerTest.php:223
+
+58) Tests\Feature\OutletManagementTest::test_can_create_outlet
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OutletManagementTest.php:64
+
+59) Tests\Feature\OutletManagementTest::test_can_duplicate_item_to_outlet
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/OutletManagementTest.php:104
+
+60) Tests\Feature\PaymentSystemTest::test_payment_intent_creation
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:83
+
+61) Tests\Feature\PaymentSystemTest::test_payment_capture
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:115
+
+62) Tests\Feature\PaymentSystemTest::test_payment_refund
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:146
+
+63) Tests\Feature\PaymentSystemTest::test_transaction_context_recorded
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:170
+
+64) Tests\Feature\PaymentSystemTest::test_guest_portal_payment_flow
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:203
+
+65) Tests\Feature\PaymentSystemTest::test_payment_webhook_processing
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:230
+
+66) Tests\Feature\PaymentSystemTest::test_monnify_gateway_payment_intent
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:275
+
+67) Tests\Feature\PaymentSystemTest::test_manual_payment_confirmation
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:311
+
+68) Tests\Feature\PaymentSystemTest::test_payment_mode_online_only
+Expected response status code [500] but received 403.
+Failed asserting that 403 is identical to 500.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:336
+
+69) Tests\Feature\PaymentSystemTest::test_payment_mode_manual_only
+Expected response status code [500] but received 403.
+Failed asserting that 403 is identical to 500.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:353
+
+70) Tests\Feature\PaymentSystemTest::test_duplicate_webhook_transaction_rejected
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:376
+
+71) Tests\Feature\PaymentSystemTest::test_payment_source_tracking
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PaymentSystemTest.php:396
+
+72) Tests\Feature\PmsReservationTest::test_can_create_reservation_with_automatic_folio
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PmsReservationTest.php:77
+
+73) Tests\Feature\PmsReservationTest::test_prevents_overlapping_reservations_in_availability
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PmsReservationTest.php:109
+
+74) Tests\Feature\PmsReservationTest::test_check_in_opens_folio_and_sets_room_occupied
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PmsReservationTest.php:129
+
+75) Tests\Feature\PmsReservationTest::test_check_out_requires_zero_balance_folio
+Expected response status code [422] but received 403.
+Failed asserting that 403 is identical to 422.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PmsReservationTest.php:161
+
+76) Tests\Feature\PmsReservationTest::test_cannot_modify_reservation_after_deadline
+Expected response status code [422] but received 403.
+Failed asserting that 403 is identical to 422.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PmsReservationTest.php:196
+
+77) Tests\Feature\PmsReservationTest::test_admin_can_modify_reservation_after_deadline
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/PmsReservationTest.php:220
+
+78) Tests\Feature\QueueIntegrationTest::test_payment_dispatches_high_priority_job
+Expected response status code [202] but received 403.
+Failed asserting that 403 is identical to 202.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/QueueIntegrationTest.php:170
+
+79) Tests\Feature\ReportingEngineTest::test_dashboard_aggregates_today_revenue
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/ReportingEngineTest.php:134
+
+80) Tests\Feature\ReportingEngineTest::test_exports_daily_sales_csv
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/ReportingEngineTest.php:150
+
+81) Tests\Feature\ReportingEngineTest::test_api_tenant_isolation_prevents_fetching_external_data
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/ReportingEngineTest.php:185
+
+82) Tests\Feature\RevenueIntelligenceTest::test_api_endpoints_return_insights
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/RevenueIntelligenceTest.php:117
+
+83) Tests\Feature\RoleApiTest::test_can_fetch_roles_for_hotel
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/RoleApiTest.php:28
+
+84) Tests\Feature\RoleApiTest::test_cannot_fetch_other_hotel_roles
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/RoleApiTest.php:47
+
+85) Tests\Feature\RolePermissionTest::test_user_without_permission_receives_403
+Unable to find JSON: 
+
+[{
+    "status": "error",
+    "message": "Permission denied"
+}]
+
+within response JSON:
+
+[{
+    "message": "Hardware Not Registered",
+    "exception": "Symfony\\Component\\HttpKernel\\Exception\\HttpException",
+    "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php",
+    "line": 1440,
+    "trace": [
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php",
+            "line": 67,
+            "function": "abort",
+            "class": "Illuminate\\Foundation\\Application",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/SentryMiddleware.php",
+            "line": 186,
+            "function": "abort"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/SentryMiddleware.php",
+            "line": 54,
+            "function": "enforceGlobalHardwareSentry",
+            "class": "App\\Http\\Middleware\\SentryMiddleware",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\SentryMiddleware",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/ForceJsonResponse.php",
+            "line": 19,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\ForceJsonResponse",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/Security/SecureHeadersMiddleware.php",
+            "line": 21,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\Security\\SecureHeadersMiddleware",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 137,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 821,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 800,
+            "function": "runRouteWithinStack",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 764,
+            "function": "runRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 753,
+            "function": "dispatchToRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+            "line": 200,
+            "function": "dispatch",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 180,
+            "function": "{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():197}",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php",
+            "line": 21,
+            "function": "{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():178}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php",
+            "line": 31,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php",
+            "line": 21,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php",
+            "line": 51,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TrimStrings",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php",
+            "line": 27,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\ValidatePostSize",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php",
+            "line": 109,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php",
+            "line": 74,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\HandleCors",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php",
+            "line": 58,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\TrustProxies",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php",
+            "line": 22,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php",
+            "line": 26,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\ValidatePathEncoding",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 137,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+            "line": 175,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+            "line": 144,
+            "function": "sendRequestThroughRouter",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php",
+            "line": 607,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/TestCase.php",
+            "line": 202,
+            "function": "call",
+            "class": "Illuminate\\Foundation\\Testing\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php",
+            "line": 573,
+            "function": "call",
+            "class": "Tests\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php",
+            "line": 381,
+            "function": "json",
+            "class": "Illuminate\\Foundation\\Testing\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/RolePermissionTest.php",
+            "line": 27,
+            "function": "getJson",
+            "class": "Illuminate\\Foundation\\Testing\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php",
+            "line": 1667,
+            "function": "test_user_without_permission_receives_403",
+            "class": "Tests\\Feature\\RolePermissionTest",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php",
+            "line": 519,
+            "function": "runTest",
+            "class": "PHPUnit\\Framework\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestRunner/TestRunner.php",
+            "line": 87,
+            "function": "runBare",
+            "class": "PHPUnit\\Framework\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php",
+            "line": 365,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestRunner",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php",
+            "line": 369,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php",
+            "line": 369,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestSuite",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php",
+            "line": 369,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestSuite",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/TestRunner.php",
+            "line": 64,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestSuite",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/Application.php",
+            "line": 211,
+            "function": "run",
+            "class": "PHPUnit\\TextUI\\TestRunner",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/phpunit",
+            "line": 104,
+            "function": "run",
+            "class": "PHPUnit\\TextUI\\Application",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/bin/phpunit",
+            "line": 122,
+            "function": "include"
+        }
+    ]
+}].
+
+
+Failed asserting that an array has the subset Array &0 [
+    'status' => 'error',
+    'message' => 'Permission denied',
+].
+--- Expected
++++ Actual
+@@ @@
+ array (
+-  'message' => 'Permission denied',
++  'message' => 'Hardware Not Registered',
+   'exception' => 'Symfony\\Component\\HttpKernel\\Exception\\HttpException',
+   'file' => '/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php',
+   'line' => 1440,
+@@ @@
+       'function' => 'include',
+     ),
+   ),
+-  'status' => 'error',
+ )
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/Constraints/ArraySubset.php:80
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/Assert.php:36
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/AssertableJsonString.php:319
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:856
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/RolePermissionTest.php:30
+
+86) Tests\Feature\RolePermissionTest::test_user_with_permission_can_access_route
+Failed asserting that 403 is not equal to 403.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/RolePermissionTest.php:51
+
+87) Tests\Feature\RolePermissionTest::test_super_admin_bypasses_permission_checks
+Failed asserting that 403 is not equal to 403.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/RolePermissionTest.php:62
+
+88) Tests\Feature\RolePermissionTest::test_tenant_module_toggle_blocks_access
+Unable to find JSON: 
+
+[{
+    "status": "error",
+    "message": "Module access unavailable in current mode"
+}]
+
+within response JSON:
+
+[{
+    "message": "Hardware Not Registered",
+    "exception": "Symfony\\Component\\HttpKernel\\Exception\\HttpException",
+    "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php",
+    "line": 1440,
+    "trace": [
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php",
+            "line": 67,
+            "function": "abort",
+            "class": "Illuminate\\Foundation\\Application",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/SentryMiddleware.php",
+            "line": 186,
+            "function": "abort"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/SentryMiddleware.php",
+            "line": 54,
+            "function": "enforceGlobalHardwareSentry",
+            "class": "App\\Http\\Middleware\\SentryMiddleware",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\SentryMiddleware",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/ForceJsonResponse.php",
+            "line": 19,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\ForceJsonResponse",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/app/Http/Middleware/Security/SecureHeadersMiddleware.php",
+            "line": 21,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "App\\Http\\Middleware\\Security\\SecureHeadersMiddleware",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 137,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 821,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 800,
+            "function": "runRouteWithinStack",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 764,
+            "function": "runRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+            "line": 753,
+            "function": "dispatchToRoute",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+            "line": 200,
+            "function": "dispatch",
+            "class": "Illuminate\\Routing\\Router",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 180,
+            "function": "{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():197}",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php",
+            "line": 21,
+            "function": "{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():178}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php",
+            "line": 31,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php",
+            "line": 21,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php",
+            "line": 51,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\TrimStrings",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php",
+            "line": 27,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\ValidatePostSize",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php",
+            "line": 109,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php",
+            "line": 74,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\HandleCors",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php",
+            "line": 58,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\TrustProxies",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php",
+            "line": 22,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php",
+            "line": 26,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 219,
+            "function": "handle",
+            "class": "Illuminate\\Http\\Middleware\\ValidatePathEncoding",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+            "line": 137,
+            "function": "{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+            "line": 175,
+            "function": "then",
+            "class": "Illuminate\\Pipeline\\Pipeline",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+            "line": 144,
+            "function": "sendRequestThroughRouter",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php",
+            "line": 607,
+            "function": "handle",
+            "class": "Illuminate\\Foundation\\Http\\Kernel",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/TestCase.php",
+            "line": 202,
+            "function": "call",
+            "class": "Illuminate\\Foundation\\Testing\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php",
+            "line": 573,
+            "function": "call",
+            "class": "Tests\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php",
+            "line": 381,
+            "function": "json",
+            "class": "Illuminate\\Foundation\\Testing\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/RolePermissionTest.php",
+            "line": 80,
+            "function": "getJson",
+            "class": "Illuminate\\Foundation\\Testing\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php",
+            "line": 1667,
+            "function": "test_tenant_module_toggle_blocks_access",
+            "class": "Tests\\Feature\\RolePermissionTest",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php",
+            "line": 519,
+            "function": "runTest",
+            "class": "PHPUnit\\Framework\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestRunner/TestRunner.php",
+            "line": 87,
+            "function": "runBare",
+            "class": "PHPUnit\\Framework\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestCase.php",
+            "line": 365,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestRunner",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php",
+            "line": 369,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestCase",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php",
+            "line": 369,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestSuite",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/Framework/TestSuite.php",
+            "line": 369,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestSuite",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/TestRunner.php",
+            "line": 64,
+            "function": "run",
+            "class": "PHPUnit\\Framework\\TestSuite",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/src/TextUI/Application.php",
+            "line": 211,
+            "function": "run",
+            "class": "PHPUnit\\TextUI\\TestRunner",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/phpunit/phpunit/phpunit",
+            "line": 104,
+            "function": "run",
+            "class": "PHPUnit\\TextUI\\Application",
+            "type": "->"
+        },
+        {
+            "file": "/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/bin/phpunit",
+            "line": 122,
+            "function": "include"
+        }
+    ]
+}].
+
+
+Failed asserting that an array has the subset Array &0 [
+    'status' => 'error',
+    'message' => 'Module access unavailable in current mode',
+].
+--- Expected
++++ Actual
+@@ @@
+ array (
+-  'message' => 'Module access unavailable in current mode',
++  'message' => 'Hardware Not Registered',
+   'exception' => 'Symfony\\Component\\HttpKernel\\Exception\\HttpException',
+   'file' => '/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php',
+   'line' => 1440,
+@@ @@
+       'function' => 'include',
+     ),
+   ),
+-  'status' => 'error',
+ )
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/Constraints/ArraySubset.php:80
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/Assert.php:36
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/AssertableJsonString.php:319
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:856
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/RolePermissionTest.php:83
+
+89) Tests\Feature\SessionSentryTest::handshake_double_lock_prevents_ordering_until_activated
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SessionSentryTest.php:111
+
+90) Tests\Feature\SessionSentryTest::activate_session_route_alias_works
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SessionSentryTest.php:240
+
+91) Tests\Feature\SessionSentryTest::activate_session_sets_last_activity_at
+Failed asserting that null is not null.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SessionSentryTest.php:269
+
+92) Tests\Feature\SiemWatchdogTest::test_watchdog_suspends_user_on_severity_threshold
+Failed asserting that a row in the table [audit_logs] matches the attributes {
+    "user_id": 1,
+    "change_type": "hardware_mismatch"
+}.
+
+The table is empty.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/InteractsWithDatabase.php:43
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SiemWatchdogTest.php:54
+
+93) Tests\Feature\StaffAccountabilityTest::test_pin_expires_after_12_hours
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/StaffAccountabilityTest.php:73
+
+94) Tests\Feature\StaffAccountabilityTest::test_waitress_can_claim_unclaimed_order
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/StaffAccountabilityTest.php:94
+
+95) Tests\Feature\StaffAccountabilityTest::test_unauthorized_order_claim_by_another_staff
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/StaffAccountabilityTest.php:116
+
+96) Tests\Feature\StaffAccountabilityTest::test_print_automatically_sets_preparing_status
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/StaffAccountabilityTest.php:164
+
+97) Tests\Feature\SubscriptionBillingAndGatingTest::test_scenario_w_dynamic_upgrade_room_limit_enforcement
+Unable to find JSON fragment: 
+
+[{"message":"Upgrade Required: Room limit reached for current tier."}]
+
+within
+
+[{"exception":"Symfony\\Component\\HttpKernel\\Exception\\HttpException","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Application.php","line":1440,"message":"Hardware Not Registered","trace":[{"file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/app\/Http\/Middleware\/SentryMiddleware.php","function":"abort","line":186},{"file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/bin\/phpunit","function":"include","line":122},{"class":"App\\Http\\Middleware\\ForceJsonResponse","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"App\\Http\\Middleware\\Security\\SecureHeadersMiddleware","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"App\\Http\\Middleware\\SentryMiddleware","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/app\/Http\/Middleware\/SentryMiddleware.php","function":"enforceGlobalHardwareSentry","line":54,"type":"->"},{"class":"App\\Http\\Middleware\\SentryMiddleware","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Foundation\\Application","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/helpers.php","function":"abort","line":67,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Kernel","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php","function":"sendRequestThroughRouter","line":144,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Kernel","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Testing\/Concerns\/MakesHttpRequests.php","function":"handle","line":607,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Kernel","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():197}","line":180,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/ConvertEmptyStringsToNull.php","function":"handle","line":31,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TrimStrings.php","function":"handle","line":51,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Middleware\\TrimStrings","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Foundation\\Testing\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/tests\/Feature\/SubscriptionBillingAndGatingTest.php","function":"postJson","line":87,"type":"->"},{"class":"Illuminate\\Foundation\\Testing\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/tests\/TestCase.php","function":"call","line":202,"type":"->"},{"class":"Illuminate\\Foundation\\Testing\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Testing\/Concerns\/MakesHttpRequests.php","function":"json","line":411,"type":"->"},{"class":"Illuminate\\Http\\Middleware\\HandleCors","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Http\\Middleware\\TrustProxies","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Http\\Middleware\\ValidatePathEncoding","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Http\\Middleware\\ValidatePostSize","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/app\/Http\/Middleware\/ForceJsonResponse.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":19,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/app\/Http\/Middleware\/Security\/SecureHeadersMiddleware.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":21,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php","function":"then","line":175,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/InvokeDeferredCallbacks.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":22,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/PreventRequestsDuringMaintenance.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":109,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php","function":"{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():178}","line":21,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":21,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Http\/Middleware\/HandleCors.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":74,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Http\/Middleware\/TrustProxies.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":58,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Http\/Middleware\/ValidatePathEncoding.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":26,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Http\/Middleware\/ValidatePostSize.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":27,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":137,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":137,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php","function":"then","line":821,"type":"->"},{"class":"Illuminate\\Routing\\Router","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php","function":"dispatch","line":200,"type":"->"},{"class":"Illuminate\\Routing\\Router","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php","function":"dispatchToRoute","line":753,"type":"->"},{"class":"Illuminate\\Routing\\Router","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php","function":"runRoute","line":764,"type":"->"},{"class":"Illuminate\\Routing\\Router","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php","function":"runRouteWithinStack","line":800,"type":"->"},{"class":"PHPUnit\\Framework\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestCase.php","function":"runTest","line":519,"type":"->"},{"class":"PHPUnit\\Framework\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestRunner\/TestRunner.php","function":"runBare","line":87,"type":"->"},{"class":"PHPUnit\\Framework\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestSuite.php","function":"run","line":369,"type":"->"},{"class":"PHPUnit\\Framework\\TestRunner","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestCase.php","function":"run","line":365,"type":"->"},{"class":"PHPUnit\\Framework\\TestSuite","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestSuite.php","function":"run","line":369,"type":"->"},{"class":"PHPUnit\\Framework\\TestSuite","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestSuite.php","function":"run","line":369,"type":"->"},{"class":"PHPUnit\\Framework\\TestSuite","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/TextUI\/TestRunner.php","function":"run","line":64,"type":"->"},{"class":"PHPUnit\\TextUI\\Application","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/phpunit","function":"run","line":104,"type":"->"},{"class":"PHPUnit\\TextUI\\TestRunner","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/TextUI\/Application.php","function":"run","line":211,"type":"->"},{"class":"Tests\\Feature\\SubscriptionBillingAndGatingTest","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestCase.php","function":"test_scenario_w_dynamic_upgrade_room_limit_enforcement","line":1667,"type":"->"},{"class":"Tests\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Testing\/Concerns\/MakesHttpRequests.php","function":"call","line":573,"type":"->"}]}].
+Failed asserting that false is true.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/AssertableJsonString.php:144
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:947
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SubscriptionBillingAndGatingTest.php:94
+
+98) Tests\Feature\SubscriptionSystemTest::test_active_subscription_allows_admin_access
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SubscriptionSystemTest.php:67
+
+99) Tests\Feature\SubscriptionSystemTest::test_grace_period_allows_temporary_access
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SubscriptionSystemTest.php:102
+
+100) Tests\Feature\SubscriptionSystemTest::test_checkout_upgrades_subscription
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SubscriptionSystemTest.php:114
+
+101) Tests\Feature\SubscriptionSystemTest::test_platform_analytics_returns_data
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SubscriptionSystemTest.php:152
+
+102) Tests\Feature\SuperAdminBillingHealthTest::test_health_dashboard_active_branches
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SuperAdminBillingHealthTest.php:48
+
+103) Tests\Feature\SuperAdminBillingHealthTest::test_health_dashboard_grace_branches
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SuperAdminBillingHealthTest.php:64
+
+104) Tests\Feature\SuperAdminBillingHealthTest::test_health_dashboard_suspended_branches
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SuperAdminBillingHealthTest.php:80
+
+105) Tests\Feature\SuperAdminTenantTest::test_super_admin_can_switch_hotel_context_via_header
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SuperAdminTenantTest.php:54
+
+106) Tests\Feature\SuperAdminTenantTest::test_super_admin_without_context_allowed_by_middleware
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/SuperAdminTenantTest.php:74
+
+107) Tests\Feature\TenantIsolationStressTest::test_tenant_cannot_access_other_tenant_orders
+Expected response status code [404] but received 403.
+Failed asserting that 403 is identical to 404.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/TenantIsolationStressTest.php:85
+
+108) Tests\Feature\TenantIsolationStressTest::test_tenant_cannot_access_other_tenant_inventory
+Expected response status code [404] but received 403.
+Failed asserting that 403 is identical to 404.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/TenantIsolationStressTest.php:106
+
+109) Tests\Feature\TenantIsolationStressTest::test_tenant_cannot_access_other_tenant_billing
+Expected response status code [404] but received 403.
+Failed asserting that 403 is identical to 404.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/TenantIsolationStressTest.php:131
+
+110) Tests\Feature\TenantIsolationStressTest::test_tenant_cannot_access_other_tenant_reports
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/TenantIsolationStressTest.php:158
+
+111) Tests\Feature\TerminalIdentityTest::test_order_attribution_to_waitress_id
+Expected response status code [201] but received 403.
+Failed asserting that 403 is identical to 201.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/TerminalIdentityTest.php:73
+
+112) Tests\Feature\TerminalIdentityTest::test_cannot_attribute_to_off_duty_staff
+Unable to find JSON fragment: 
+
+[{"message":"Staff member is not on duty."}]
+
+within
+
+[{"exception":"Symfony\\Component\\HttpKernel\\Exception\\HttpException","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Application.php","line":1440,"message":"Hardware Not Registered","trace":[{"file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/app\/Http\/Middleware\/SentryMiddleware.php","function":"abort","line":186},{"file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/bin\/phpunit","function":"include","line":122},{"class":"App\\Http\\Middleware\\ForceJsonResponse","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"App\\Http\\Middleware\\Security\\SecureHeadersMiddleware","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"App\\Http\\Middleware\\SentryMiddleware","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/app\/Http\/Middleware\/SentryMiddleware.php","function":"enforceGlobalHardwareSentry","line":54,"type":"->"},{"class":"App\\Http\\Middleware\\SentryMiddleware","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Foundation\\Application","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/helpers.php","function":"abort","line":67,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Kernel","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php","function":"sendRequestThroughRouter","line":144,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Kernel","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Testing\/Concerns\/MakesHttpRequests.php","function":"handle","line":607,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Kernel","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():197}","line":180,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/ConvertEmptyStringsToNull.php","function":"handle","line":31,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TrimStrings.php","function":"handle","line":51,"type":"->"},{"class":"Illuminate\\Foundation\\Http\\Middleware\\TrimStrings","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Foundation\\Testing\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/tests\/Feature\/TerminalIdentityTest.php","function":"postJson","line":106,"type":"->"},{"class":"Illuminate\\Foundation\\Testing\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/tests\/TestCase.php","function":"call","line":202,"type":"->"},{"class":"Illuminate\\Foundation\\Testing\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Testing\/Concerns\/MakesHttpRequests.php","function":"json","line":411,"type":"->"},{"class":"Illuminate\\Http\\Middleware\\HandleCors","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Http\\Middleware\\TrustProxies","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Http\\Middleware\\ValidatePathEncoding","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Http\\Middleware\\ValidatePostSize","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"handle","line":219,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/app\/Http\/Middleware\/ForceJsonResponse.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":19,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/app\/Http\/Middleware\/Security\/SecureHeadersMiddleware.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":21,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php","function":"then","line":175,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/InvokeDeferredCallbacks.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":22,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/PreventRequestsDuringMaintenance.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":109,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php","function":"{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():178}","line":21,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Middleware\/TransformsRequest.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":21,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Http\/Middleware\/HandleCors.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":74,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Http\/Middleware\/TrustProxies.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":58,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Http\/Middleware\/ValidatePathEncoding.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":26,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Http\/Middleware\/ValidatePostSize.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":27,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":137,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Pipeline\/Pipeline.php","function":"{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():194}:195}","line":137,"type":"->"},{"class":"Illuminate\\Pipeline\\Pipeline","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php","function":"then","line":821,"type":"->"},{"class":"Illuminate\\Routing\\Router","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Http\/Kernel.php","function":"dispatch","line":200,"type":"->"},{"class":"Illuminate\\Routing\\Router","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php","function":"dispatchToRoute","line":753,"type":"->"},{"class":"Illuminate\\Routing\\Router","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php","function":"runRoute","line":764,"type":"->"},{"class":"Illuminate\\Routing\\Router","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Router.php","function":"runRouteWithinStack","line":800,"type":"->"},{"class":"PHPUnit\\Framework\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestCase.php","function":"runTest","line":519,"type":"->"},{"class":"PHPUnit\\Framework\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestRunner\/TestRunner.php","function":"runBare","line":87,"type":"->"},{"class":"PHPUnit\\Framework\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestSuite.php","function":"run","line":369,"type":"->"},{"class":"PHPUnit\\Framework\\TestRunner","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestCase.php","function":"run","line":365,"type":"->"},{"class":"PHPUnit\\Framework\\TestSuite","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestSuite.php","function":"run","line":369,"type":"->"},{"class":"PHPUnit\\Framework\\TestSuite","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestSuite.php","function":"run","line":369,"type":"->"},{"class":"PHPUnit\\Framework\\TestSuite","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/TextUI\/TestRunner.php","function":"run","line":64,"type":"->"},{"class":"PHPUnit\\TextUI\\Application","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/phpunit","function":"run","line":104,"type":"->"},{"class":"PHPUnit\\TextUI\\TestRunner","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/TextUI\/Application.php","function":"run","line":211,"type":"->"},{"class":"Tests\\Feature\\TerminalIdentityTest","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/phpunit\/phpunit\/src\/Framework\/TestCase.php","function":"test_cannot_attribute_to_off_duty_staff","line":1667,"type":"->"},{"class":"Tests\\TestCase","file":"\/home\/micky\/DM-Tech-Hotel-saas-platform\/backend\/vendor\/laravel\/framework\/src\/Illuminate\/Foundation\/Testing\/Concerns\/MakesHttpRequests.php","function":"call","line":573,"type":"->"}]}].
+Failed asserting that false is true.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/AssertableJsonString.php:144
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:947
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/TerminalIdentityTest.php:109
+
+113) Tests\Feature\TerminalIdentityTest::test_filtering_orders_by_waiter_id
+Expected response status code [200] but received 403.
+Failed asserting that 403 is identical to 200.
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:174
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/TerminalIdentityTest.php:139
+
+ERRORS!
+Tests: 272, Assertions: 498, Errors: 4, Failures: 113, PHPUnit Deprecations: 8, Skipped: 1.

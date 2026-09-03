@@ -1,0 +1,67 @@
+PHPUnit 11.5.55 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.16
+Configuration: /home/micky/DM-Tech-Hotel-saas-platform/backend/phpunit.xml
+
+SIEM Warning: Stripping non-whitelisted key 'target_tenant' from telemetry.
+..E.                                                                4 / 4 (100%)
+
+Time: 00:01.019, Memory: 54.50 MB
+
+There was 1 error:
+
+1) Tests\Feature\HardwareAndAnalyticsIsolationTest::test_scenario_t_owner_master_analytics_summation
+Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 19 FOREIGN KEY constraint failed (Connection: sqlite, Database: :memory:, SQL: insert into "guest_portal_sessions" ("hotel_id", "status", "room_id", "session_token", "expires_at", "updated_at", "created_at") values (1, active, 1, t1, 2026-04-20 01:10:21, 2026-04-19 01:10:21, 2026-04-19 01:10:21))
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2235
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php:388
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1243
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Concerns/GuardsAttributes.php:157
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1242
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareAndAnalyticsIsolationTest.php:121
+
+Caused by
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 FOREIGN KEY constraint failed
+
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:584
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:537
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/Processor.php:32
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4140
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2235
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php:388
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1243
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Concerns/GuardsAttributes.php:157
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1242
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/home/micky/DM-Tech-Hotel-saas-platform/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/home/micky/DM-Tech-Hotel-saas-platform/backend/tests/Feature/HardwareAndAnalyticsIsolationTest.php:121
+
+ERRORS!
+Tests: 4, Assertions: 7, Errors: 1.
